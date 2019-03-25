@@ -3,16 +3,16 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="enterpriseForm" size="small" style="float: left;">
-			<el-form-item label="企业名称">
-				<el-input v-model.trim="enterpriseForm.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
-			</el-form-item>
-	</el-form>
+				<el-form-item label="企业名称">
+					<el-input v-model.trim="enterpriseForm.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
+				</el-form-item>
+			</el-form>
 		</el-col>
 
 		<!--列表-->
@@ -52,7 +52,7 @@
 	    
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
-			<el-form ref="addForm" :model="addForm" label-width="80px" :rules="addFormRules">
+			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
 				<el-form-item label="企业名称" prop="enterpriseName">
 					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
@@ -81,42 +81,42 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="addDialogVisible = false">取 消</el-button>
-    				<el-button type="primary" @click="addSubmit" :loading="addLoading">保 存</el-button>
+				<el-button type="primary" @click="addSubmit" :loading="addLoading">保 存</el-button>
 			</div>
 		</el-dialog>
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
-			<el-form ref="editForm" :model="editForm" label-width="80px" :rules="editFormRules">
+			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
 				<el-form-item label="企业名称" prop="enterpriseName">
-				<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="企业类型" prop="enterpriseType">
-				<el-select v-model.trim="editForm.enterpriseType" placeholder="请选择">
-	    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-	    		</el-select>
-			</el-form-item>
-			<el-form-item label="企业性质" prop="enterpriseNature">
-				<el-select v-model.trim="editForm.enterpriseNature" placeholder="请选择">
-					<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item label="企业电话" prop="enterpriseTelphone">
-				<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="企业传真" prop="enterpriseFax">
-				<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="版本号" prop="enterpriseTelphone">
-				<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="企业地址" prop="enterpriseAddr">
-				<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
-			</el-form-item>
+					<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业类型" prop="enterpriseType">
+					<el-select v-model.trim="editForm.enterpriseType" placeholder="请选择">
+		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+		    		</el-select>
+				</el-form-item>
+				<el-form-item label="企业性质" prop="enterpriseNature">
+					<el-select v-model.trim="editForm.enterpriseNature" placeholder="请选择">
+						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="企业电话" prop="enterpriseTelphone">
+					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业传真" prop="enterpriseFax">
+					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="版本号" prop="enterpriseTelphone">
+					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业地址" prop="enterpriseAddr">
+					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="editDialogVisible = false">取 消</el-button>
-    				<el-button type="primary" @click="editSubmit" :loading="editLoading">保 存</el-button>
+				<el-button type="primary" @click="editSubmit" :loading="editLoading">保 存</el-button>
 			</div>
 		</el-dialog>
 		
@@ -148,6 +148,9 @@
 				listLoading: false,
 				labelPosition: 'right',
 				addDialogVisible: false,//新增界面是否显示
+				//新增界面数据
+				addForm: {
+				}, 
 				addLoading: false,
 				addFormRules: {
 					enterpriseName: [
@@ -157,22 +160,19 @@
 						{ required: true, message: '请选择企业类型', trigger: 'blur' }
 					],
 				}, 
-				//新增界面数据
-				addForm: {
-				}, 
 				editDialogVisible: false,//编辑界面是否显示
+				//编辑界面数据
+				editForm: {
+				},
 				editLoading: false,
 				editFormRules: {
 					enterpriseName: [
 						{ required: true, message: '请输入企业名称', trigger: 'blur' }
-						],
-						type: [
-							{ required: true, message: '请选择企业类型', trigger: 'blur' }
-						],
+					],
+					type: [
+						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+					],
 				}, 
-				//新增界面数据
-				editForm: {
-				},
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
@@ -351,7 +351,11 @@
 						         	_this.loadData();
 									_this.addDialogVisible = false;
 								} else {
-									_this.$message.error(retMsg);
+									if(retCode == '00000002') {
+										_this.$message.error('保存失败');
+									} else {
+										_this.$message.error(retMsg);
+									}
 								}
 				              }).catch(function (error) {
 				                	console.log(error);
@@ -380,7 +384,11 @@
 									_this.loadData();
 						         	_this.editDialogVisible = false;
 								} else {
-									_this.$message.error(retMsg);
+									if(retCode == '00000002') {
+										_this.$message.error('保存失败');
+									} else {
+										_this.$message.error(retMsg);
+									}
 								}
 				              }).catch(function (error) {
 				        			console.log(error);
@@ -408,7 +416,11 @@
 							});
 							_this.loadData();
 						} else {
-							_this.$message.error(retMsg);
+							if(retCode == '00000002') {
+								_this.$message.error('删除失败');
+							} else {
+								_this.$message.error(retMsg);
+							}
 						}
 		              }).catch(function (error) {
 		                	console.log(error);
