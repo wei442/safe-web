@@ -93,8 +93,12 @@
     							//清除所有的key/value
     							sessionStorage.clear();
     							sessionStorage.setItem('token', response.data.result.token);
+    							sessionStorage.setItem('userAccount', response.data.result.userAccount);
+    							sessionStorage.setItem('userName', response.data.result.userName);
+    							_this.$router.push('/index');
     						} else if(retCode == '1010006') {
-    							_this.passwordVisible = true;
+    							var userAccount = _this.loginForm.userAccount;
+    							_this.$router.push({name: 'changePassword', params: {'userAccount': userAccount}});
     						} else {
     							_this.$message.error(retMsg);
     						}

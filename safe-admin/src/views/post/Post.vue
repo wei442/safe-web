@@ -2,9 +2,9 @@
 	<section>
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-			<el-form :inline="true" :model="enterpriseForm" size="small" style="float: left;">
-				<el-form-item label="企业名称">
-					<el-input v-model.trim="enterpriseForm.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
+			<el-form :inline="true" :model="postForm" size="small" style="float: left;">
+				<el-form-item label="岗位名称">
+					<el-input v-model.trim="postForm.postName" placeholder="请输入岗位名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -18,13 +18,13 @@
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseType" label="企业类型" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseFax" label="企业传真" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postName" label="岗位名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postType" label="岗位类型" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postNature" label="岗位性质" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postStatus" label="岗位状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postTelphone" label="岗位电话" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postFax" label="岗位传真" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="postAddr" label="岗位地址" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -53,30 +53,30 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="企业名称" prop="enterpriseName">
-					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
+				<el-form-item label="岗位名称" prop="postName">
+					<el-input v-model.trim="addForm.postName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业类型" prop="enterpriseType">
-					<el-select v-model.trim="addForm.enterpriseType" placeholder="请选择">
-		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+				<el-form-item label="岗位类型" prop="postType">
+					<el-select v-model.trim="addForm.postType" placeholder="请选择">
+		    			<el-option v-for="item in postTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 		    		</el-select>
 				</el-form-item>
-				<el-form-item label="企业性质" prop="enterpriseNature">
-					<el-select v-model.trim="addForm.enterpriseNature" placeholder="请选择">
-						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+				<el-form-item label="岗位性质" prop="postNature">
+					<el-select v-model.trim="addForm.postNature" placeholder="请选择">
+						<el-option v-for="item in postNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="企业电话" prop="enterpriseTelphone">
-					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="岗位电话" prop="postTelphone">
+					<el-input v-model.trim="addForm.postTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="addForm.enterpriseFax" auto-complete="off"></el-input>
+				<el-form-item label="岗位传真" prop="postFax">
+					<el-input v-model.trim="addForm.postFax" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="版本号" prop="postTelphone">
+					<el-input v-model.trim="addForm.postTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业地址" prop="enterpriseAddr">
-					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.enterpriseAddr" auto-complete="off"></el-input>
+				<el-form-item label="岗位地址" prop="postAddr">
+					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.postAddr" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -88,30 +88,30 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
 			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
-				<el-form-item label="企业名称" prop="enterpriseName">
-					<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
+				<el-form-item label="岗位名称" prop="postName">
+					<el-input v-model.trim="editForm.postName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业类型" prop="enterpriseType">
-					<el-select v-model.trim="editForm.enterpriseType" placeholder="请选择">
-		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+				<el-form-item label="岗位类型" prop="postType">
+					<el-select v-model.trim="editForm.postType" placeholder="请选择">
+		    			<el-option v-for="item in postTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 		    		</el-select>
 				</el-form-item>
-				<el-form-item label="企业性质" prop="enterpriseNature">
-					<el-select v-model.trim="editForm.enterpriseNature" placeholder="请选择">
-						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+				<el-form-item label="岗位性质" prop="postNature">
+					<el-select v-model.trim="editForm.postNature" placeholder="请选择">
+						<el-option v-for="item in postNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="企业电话" prop="enterpriseTelphone">
-					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="岗位电话" prop="postTelphone">
+					<el-input v-model.trim="editForm.postTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
+				<el-form-item label="岗位传真" prop="postFax">
+					<el-input v-model.trim="editForm.postFax" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="版本号" prop="postTelphone">
+					<el-input v-model.trim="editForm.postTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业地址" prop="enterpriseAddr">
-					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
+				<el-form-item label="岗位地址" prop="postAddr">
+					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.postAddr" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -123,11 +123,7 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="企业编码">{{ showForm.enterpriseCode }}</el-form-item>
-				<el-form-item label="企业名称">{{ showForm.enterpriseName }}</el-form-item>
-				<el-form-item label="企业内容">{{ showForm.content }}</el-form-item>
-				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="企业类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="岗位名称">{{ showForm.postName }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -143,7 +139,7 @@
 	export default {
 		data() {
 			return {
-				enterpriseForm: {},
+				postForm: {},
 				tableData: [],
 				listLoading: false,
 				labelPosition: 'right',
@@ -153,11 +149,11 @@
 				}, 
 				addLoading: false,
 				addFormRules: {
-					enterpriseName: [
-						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+					postName: [
+						{ required: true, message: '请输入岗位名称', trigger: 'blur' }
 					],
 					type: [
-						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+						{ required: true, message: '请选择岗位类型', trigger: 'blur' }
 					],
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
@@ -166,17 +162,17 @@
 				},
 				editLoading: false,
 				editFormRules: {
-					enterpriseName: [
-						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+					postName: [
+						{ required: true, message: '请输入岗位名称', trigger: 'blur' }
 					],
 					type: [
-						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+						{ required: true, message: '请选择岗位类型', trigger: 'blur' }
 					],
 				}, 
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				enterpriseTypeOptions: [
+				postTypeOptions: [
 					{
 						value: 1,
 						label: '政府部门'
@@ -191,19 +187,19 @@
 					},
 					{
 						value: '4',
-						label: '国有企业'
+						label: '国有岗位'
 					},
 					{
 						value: '5',
-						label: '集体企业'
+						label: '集体岗位'
 					},
 					{
 						value: '6',
-						label: '股份合作企业'
+						label: '股份合作岗位'
 					},
 					{
 						value: '7',
-						label: '联营企业'
+						label: '联营岗位'
 					},
 					{
 						value: '8',
@@ -215,22 +211,22 @@
 					},
 					{
 						value: '10',
-						label: '私营企业'
+						label: '私营岗位'
 					},
 					{
 						value: '11',
-						label: '港、澳、台商投资企业'
+						label: '港、澳、台商投资岗位'
 					},
 					{
 						value: '12',
-						label: '外商投资企业'
+						label: '外商投资岗位'
 					},
 					{
 						value: '13',
 						label: '其他'
 					}
 				],
-				enterpriseNatureOptions: [
+				postNatureOptions: [
 					{
 						value: '1',
 						label: '国有'
@@ -285,19 +281,19 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	//企业内容显示转换
+	      	//岗位内容显示转换
 	      	formatEnterpriseStatus: function (row, column) {
-				return row.enterpriseStatus == 1 ? '正常' : row.enterpriseStatus == 2 ? '冻结' : row.enterpriseStatus == 3 ? '注销': '';
+				return row.postStatus == 1 ? '正常' : row.postStatus == 2 ? '冻结' : row.postStatus == 3 ? '注销': '';
 			},
 			loadData: function() {
 				let params = {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
-					enterpriseName: this.enterpriseForm.enterpriseName
+					postName: this.postForm.postName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/enterprise/getListByPage', params).then(function(response) {
+				axios.post('/post/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -339,7 +335,7 @@
 							this.addLoading = true;
 							let params = this.addForm;
 							let _this = this;
-							axios.post('/enterprise/add', params).then(function(response) {
+							axios.post('/post/add', params).then(function(response) {
 								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -370,7 +366,7 @@
 							this.editLoading = true;
 							let params = this.editForm;
 							let _this = this;
-							axios.post('/enterprise/update', params).then(function(response) {
+							axios.post('/post/update', params).then(function(response) {
 								_this.editLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -398,10 +394,10 @@
 				this.$confirm('确认删除该记录吗？', '提示', { type: 'warning' }).then(() => {
 					this.listLoading = true;
 					let params = {
-						enterpriseId: row.enterpriseId
+						postId: row.postId
 					};
 					let _this = this;
-					axios.post('/enterprise/delete', params).then(function(response) {
+					axios.post('/post/delete', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;

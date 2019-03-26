@@ -6,6 +6,8 @@ import Home from '@/views/Home'
 import Register from '@/views/register/Register'
 import ChangePassword from '@/views/password/ChangePassword'
 import Enterprise from '@/views/enterprise/Enterprise'
+import Org from '@/views/org/Org'
+import Title from '@/views/title/Title'
 import Dict from '@/views/dict/Dict'
 
 Vue.use(Router)
@@ -36,19 +38,34 @@ export default new Router({
 	    	component: Home,
 	    	name: '',
 	    	children: [
-	    		{ 
-            	  path: '/index', 
-            	  name: '首页', 
+	    		{
+            	  path: '/index',
+            	  name: '首页',
+            	  meta: { requireAuth: true },
             	  component: Index,
 	    		},
-	    		{ 
-	    			path: '/enterprise', 
-	    			name: '企业管理', 
+	    		{
+	    			path: '/enterprise',
+	    			name: '企业管理',
+	    			meta: { requireAuth: true },
 	    			component: Enterprise,
 	    		},
-	    		{ 
-	    			path: '/dict', 
-	    			name: '字典管理', 
+	    		{
+	    			path: '/org',
+	    			name: '组织机构管理',
+	    			meta: { requireAuth: true },
+	    			component: Org,
+	    		},
+	    		{
+	    			path: '/title',
+	    			name: '岗位管理',
+	    			meta: { requireAuth: true },
+	    			component: Title,
+	    		},
+	    		{
+	    			path: '/dict',
+	    			name: '字典管理',
+	    			meta: { requireAuth: true },
 	    			component: Dict,
 	    		}
     		]

@@ -62,6 +62,8 @@
 </template>
 
 <script>
+	import axios from 'axios'
+
 	export default {
 		data() {
 			return {
@@ -125,15 +127,13 @@
 				console.log('submit!');
 			},
 			handleopen() {
-				//console.log('handleopen');
 			},
 			handleclose() {
-				//console.log('handleclose');
 			},
 			handleselect: function (a, b) {
 			},
 			//退出登录
-			logout: function () {
+			logout1: function () {
 				var _this = this;
 				this.$confirm('确认退出吗?', '提示', {
 					//type: 'warning'
@@ -144,6 +144,29 @@
 
 				});
 			},
+			//退出登录
+			logout: function () {
+				this.$confirm('确认退出吗？', '提示', {}).then(() => {
+					let params = {};
+					let _this = this;
+					axios.post('/user/logout', params).then(function(response) {
+						var retCode = response.data.retCode;
+						var retMsg = response.data.retMsg;
+						if(retCode == '0000000') {
+							sessionStorage.removeItem('token');
+							sessionStorage.removeItem('userAccount');
+							sessionStorage.removeItem('userName');
+							sessionStorage.clear();
+							_this.$router.push('/login');
+						} else {
+							_this.$message.error(retMsg);
+						}
+		              }).catch(function (error) {
+		                	console.log(error);
+		              });
+				});
+			},
+			
 			//折叠导航栏
 			collapse:function(){
 				this.collapsed=!this.collapsed;
