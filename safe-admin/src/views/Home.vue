@@ -106,8 +106,12 @@
 			            		name: '字典管理',
 			            	},
 			            	{
+			            		path: '/dictItem',
+			            		name: '字典子项管理',
+			            	},
+			            	{
 			            		path: '/post',
-			            		name: '岗位管理',
+			            		name: '岗位管理', 
 			            	},
 			            	{
 			            		path: '/title',
@@ -131,18 +135,6 @@
 			handleclose() {
 			},
 			handleselect: function (a, b) {
-			},
-			//退出登录
-			logout1: function () {
-				var _this = this;
-				this.$confirm('确认退出吗?', '提示', {
-					//type: 'warning'
-				}).then(() => {
-					sessionStorage.removeItem('user');
-					_this.$router.push('/login');
-				}).catch(() => {
-
-				});
 			},
 			//退出登录
 			logout: function () {

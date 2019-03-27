@@ -8,7 +8,9 @@ import ChangePassword from '@/views/password/ChangePassword'
 import Enterprise from '@/views/enterprise/Enterprise'
 import Org from '@/views/org/Org'
 import Title from '@/views/title/Title'
+import Post from '@/views/post/Post'
 import Dict from '@/views/dict/Dict'
+import DictItem from '@/views/dict/DictItem'
 
 Vue.use(Router)
 
@@ -20,17 +22,17 @@ export default new Router({
 	    },
 	    {
 	        path: '/login',
-	        name: 'login',
+	        name: '登录',
 	        component: Login
 	    },
 	    {
 	    	path: '/register',
-	    	name: 'register',
+	    	name: '注册',
 	    	component: Register
 	    },
 	    {
 	    	path: '/changePassword',
-	    	name: 'changePassword',
+	    	name: '修改密码',
 	    	component: ChangePassword
 	    },
 	    {
@@ -57,8 +59,14 @@ export default new Router({
 	    			component: Org,
 	    		},
 	    		{
-	    			path: '/title',
+	    			path: '/post',
 	    			name: '岗位管理',
+	    			meta: { requireAuth: true },
+	    			component: Post,
+	    		},
+	    		{
+	    			path: '/title',
+	    			name: '职务管理',
 	    			meta: { requireAuth: true },
 	    			component: Title,
 	    		},
@@ -67,7 +75,13 @@ export default new Router({
 	    			name: '字典管理',
 	    			meta: { requireAuth: true },
 	    			component: Dict,
-	    		}
+	    		},
+	    		{
+	    			path: '/dictItem',
+	    			name: '字典子项管理',
+	    			meta: { requireAuth: true },
+	    			component: DictItem,
+	    		},
     		]
 	    },
     ]
