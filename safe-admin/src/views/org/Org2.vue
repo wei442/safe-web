@@ -2,9 +2,9 @@
 	<section>
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-			<el-form :inline="true" :model="dictForm" size="small" style="float: left;">
-				<el-form-item label="字典名称">
-					<el-input v-model.trim="dictForm.dictName" placeholder="请输入字典名称" clearable></el-input>
+			<el-form :inline="true" :model="enterpriseForm2" size="small" style="float: left;">
+				<el-form-item label="企业名称">
+					<el-input v-model.trim="enterpriseForm2.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -16,16 +16,20 @@
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="tableData" @cell-click="handleDictItem1" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
+		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="dictName" label="字典名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="dictType" label="字典类型" header-align="center" align="center"></el-table-column>
-			<el-table-column label="操作" width="320" header-align="center" align="center">
+			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseType" label="企业类型" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseFax" label="企业传真" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
+			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 			        <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 			        <el-button size="small" @click="handleShow(scope.$index, scope.row)">查看</el-button>
-			        <el-button type="primary" size="small" @click="handleDictItem(scope.$index, scope.row)">字典子项</el-button>
 		  		</template>
 			</el-table-column>
 		</el-table>
@@ -49,13 +53,30 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="字典名称" prop="dictName">
-					<el-input v-model.trim="addForm.dictName" auto-complete="off"></el-input>
+				<el-form-item label="企业名称" prop="enterpriseName">
+					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="字典类型" prop="dictType">
-					<el-select v-model.trim="addForm.dictType" placeholder="请选择">
-		    			<el-option v-for="item in dictTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+				<el-form-item label="企业类型" prop="enterpriseType">
+					<el-select v-model.trim="addForm.enterpriseType" placeholder="请选择">
+		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 		    		</el-select>
+				</el-form-item>
+				<el-form-item label="企业性质" prop="enterpriseNature">
+					<el-select v-model.trim="addForm.enterpriseNature" placeholder="请选择">
+						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="企业电话" prop="enterpriseTelphone">
+					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业传真" prop="enterpriseFax">
+					<el-input v-model.trim="addForm.enterpriseFax" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="版本号" prop="enterpriseTelphone">
+					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业地址" prop="enterpriseAddr">
+					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.enterpriseAddr" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -67,13 +88,30 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
 			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
-				<el-form-item label="字典名称" prop="dictName">
-					<el-input v-model.trim="editForm.dictName" auto-complete="off"></el-input>
+				<el-form-item label="企业名称" prop="enterpriseName">
+					<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="字典类型" prop="dictType">
-					<el-select v-model.trim="editForm.dictType" placeholder="请选择">
-		    			<el-option v-for="item in dictTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+				<el-form-item label="企业类型" prop="enterpriseType">
+					<el-select v-model.trim="editForm.enterpriseType" placeholder="请选择">
+		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 		    		</el-select>
+				</el-form-item>
+				<el-form-item label="企业性质" prop="enterpriseNature">
+					<el-select v-model.trim="editForm.enterpriseNature" placeholder="请选择">
+						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="企业电话" prop="enterpriseTelphone">
+					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业传真" prop="enterpriseFax">
+					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="版本号" prop="enterpriseTelphone">
+					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业地址" prop="enterpriseAddr">
+					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -82,17 +120,8 @@
 			</div>
 		</el-dialog>
 		
-		<!--查看界面-->
-		<el-dialog title="查看" :visible.sync="showDialogVisible">
-			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="字典名称">{{ showForm.dictName }}</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="showDialogVisible = false">取 消</el-button>
-			</div>
-		</el-dialog>
-		
 	</section>
+	
 </template>
 
 <script>
@@ -101,7 +130,7 @@
 	export default {
 		data() {
 			return {
-				dictForm: {},
+				enterpriseForm2: {},
 				tableData: [],
 				listLoading: false,
 				labelPosition: 'right',
@@ -111,8 +140,11 @@
 				}, 
 				addLoading: false,
 				addFormRules: {
-					dictName: [
-						{ required: true, message: '请输入字典名称', trigger: 'blur' }
+					enterpriseName: [
+						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+					],
+					type: [
+						{ required: true, message: '请选择企业类型', trigger: 'blur' }
 					],
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
@@ -121,14 +153,17 @@
 				},
 				editLoading: false,
 				editFormRules: {
-					dictName: [
-						{ required: true, message: '请输入字典名称', trigger: 'blur' }
+					enterpriseName: [
+						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+					],
+					type: [
+						{ required: true, message: '请选择企业类型', trigger: 'blur' }
 					],
 				}, 
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				dictTypeOptions: [
+				enterpriseTypeOptions: [
 					{
 						value: 1,
 						label: '政府部门'
@@ -137,6 +172,88 @@
 						value: '2',
 						label: '院校'
 					},
+					{
+						value: '3',
+						label: '科研所'
+					},
+					{
+						value: '4',
+						label: '国有企业'
+					},
+					{
+						value: '5',
+						label: '集体企业'
+					},
+					{
+						value: '6',
+						label: '股份合作企业'
+					},
+					{
+						value: '7',
+						label: '联营企业'
+					},
+					{
+						value: '8',
+						label: '有限责任公司'
+					},
+					{
+						value: '9',
+						label: '股份有限公司'
+					},
+					{
+						value: '10',
+						label: '私营企业'
+					},
+					{
+						value: '11',
+						label: '港、澳、台商投资企业'
+					},
+					{
+						value: '12',
+						label: '外商投资企业'
+					},
+					{
+						value: '13',
+						label: '其他'
+					}
+				],
+				enterpriseNatureOptions: [
+					{
+						value: '1',
+						label: '国有'
+					},
+					{
+						value: '2',
+						label: '合作'
+					},
+					{
+						value: '3',
+						label: '合资'
+					},
+					{
+						value: '4',
+						label: '独资'
+					},
+					{
+						value: '5',
+						label: '集体'
+					},
+					{
+						value: '6',
+						label: '私营'
+					},
+					{
+						value: '7',
+						label: '个体工商户'
+					},
+					{
+						value: '8',
+						label: '报关'
+					},
+					{
+						value: '9',
+						label: '其他'
+					}
 				],
 			}
 		},
@@ -155,15 +272,19 @@
         		this.pageSize = val;
         		this.search();
 	      	},
+	      	//企业内容显示转换
+	      	formatEnterpriseStatus: function (row, column) {
+				return row.enterpriseStatus == 1 ? '正常' : row.enterpriseStatus == 2 ? '冻结' : row.enterpriseStatus == 3 ? '注销': '';
+			},
 			loadData: function() {
 				let params = {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
-					dictName: this.dictForm.dictName
+					enterpriseName: this.enterpriseForm2.enterpriseName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/dict/getListByPage', params).then(function(response) {
+				axios.post('/enterprise/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -205,7 +326,7 @@
 							this.addLoading = true;
 							let params = this.addForm;
 							let _this = this;
-							axios.post('/dict/add', params).then(function(response) {
+							axios.post('/enterprise/add', params).then(function(response) {
 								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -236,7 +357,7 @@
 							this.editLoading = true;
 							let params = this.editForm;
 							let _this = this;
-							axios.post('/dict/update', params).then(function(response) {
+							axios.post('/enterprise/update', params).then(function(response) {
 								_this.editLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -264,10 +385,10 @@
 				this.$confirm('确认删除该记录吗？', '提示', { type: 'warning' }).then(() => {
 					this.listLoading = true;
 					let params = {
-						dictId: row.dictId
+						enterpriseId: row.enterpriseId
 					};
 					let _this = this;
-					axios.post('/dict/delete', params).then(function(response) {
+					axios.post('/enterprise/delete', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -288,16 +409,6 @@
 		        }).catch(() => {
 		        });
 			},
-			//
-			handleDictItem2: function (row, column, cell, event) {
-				this.$router.push({name: 'dictItem', params: {dictId: row.dictId}});
-			}, 
-			
-			//
-			handleDictItem: function (index, row) {
-				this.$router.push({name: 'dictItem', params: {dictId: row.dictId}});
-			},
-			
 		},
 	}
 </script>

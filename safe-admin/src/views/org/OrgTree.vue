@@ -30,16 +30,14 @@
 			<el-form :inline="true" :model="orgForm" size="small" style="float: left;">
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-plus" size="small" @click="handlePersonAdd">新增人员</el-button>
-					<el-button type="primary" icon="el-icon-plus" size="small" @click="handlePersonBatchDelete(tableChecked)">批量删除</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
 		<!--列表-->
-		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="small" @selection-change="handleSelectionChange">
-			<el-table-column type="selection" width="55"></el-table-column>
+		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="small">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="userName" label="用户名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="userAccount" label="手机" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="orgName" label="部门名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="orgType" label="部门类型" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -87,10 +85,13 @@
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="addPersonForm.userAccount" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="邮箱" prop="userEmail">
+					<el-input v-model.trim="addPersonForm.userEmail" auto-complete="off"></el-input>
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="addPersonDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="addPersonSubmit" :loading="addPersonLoading">保 存</el-button>
+				<el-button type="primary" @click="addPersonSubmit" :loading="addLoading">保 存</el-button>
 			</div>
 		</el-dialog>
 
@@ -151,7 +152,7 @@
 					orgName: [
 						{ required: true, message: '请输入部门名称', trigger: 'blur' }
 					],
-					userName: [
+					type: [
 						{ required: true, message: '请选择部门类型', trigger: 'blur' }
 					],
 				}, 
@@ -168,15 +169,10 @@
 					orgName: [
 						{ required: true, message: '请输入部门名称', trigger: 'blur' }
 					],
-					userName: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					],
-					userAccount: [
-						{ required: true, message: '请输入手机', trigger: 'blur' }
+					parentOrgName: [
+						{ required: true, message: '请输入上级部门名称', trigger: 'blur' }
 					],
 				}, 
-				
-				tableChecked:[],
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -200,79 +196,25 @@
 			},
 			loadData: function() {
 				let params = {
+					orgName: this.orgForm.orgName
 				};
 				this.listLoading = true;
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.treeData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
+						_this.listLoading = false;
+						var retCode = response.data.retCode;
+						var retMsg = response.data.retMsg;
+						if(retCode == '0000000') {
+							_this.treeData = response.data.result.dataList;
+							_this.tableData = response.data.result.dataList;
+						} else {
+							_this.$message.error(retMsg);
+						}
 	        		}).catch(function (error) {
 	        			console.log(error);
 	        		}
 	        	);
-				this.loadTreeUserData();
 			}, 
-			
-			loadTreeData: function() {
-				let params = {
-				};
-				this.listLoading = true;
-				let _this = this;
-				axios.post('/org/getTreeList', params).then(function(response) {
-					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.treeData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
-	        		}).catch(function (error) {
-	        			console.log(error);
-	        		}
-	        	);
-				axios.post('/org/getTreeUserList', params).then(function(response) {
-					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.tableData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
-					}).catch(function (error) {
-						console.log(error);
-					}
-				);
-			},
-			
-			loadTreeUserData: function(orgId) {
-				let params = {
-					orgId:orgId
-				};
-				this.listLoading = true;
-				let _this = this;
-				axios.post('/org/getTreeUserList', params).then(function(response) {
-					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.tableData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
-					}).catch(function (error) {
-						console.log(error);
-					}
-				);
-			}, 
-			
 			//显示新增部门界面
 			handleAdd: function () {
 				if(this.$refs.tree.getCurrentKey() == null) {
@@ -395,11 +337,7 @@
 		        });
 			},
 			handleNodeClick(data) {
-				alert("data.parentOrgId==="+data.parentOrgId);
-				alert("data.orgId==="+data.orgId);
 				this.$refs.tree.setCurrentKey(-1);
-				this.loadTreeUserData(data.orgId);
-				this.addPersonForm.orgId=data.orgId;
 //				this.$router.push({name: 'org', params: {orgId: data.orgId}});
 	        },
 			
@@ -408,13 +346,11 @@
 				this.$refs.addPersonForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
-							this.addPersonLoading = true;
+							this.addLoading = true;
 							let params = this.addPersonForm;
 							let _this = this;
-							alert('this.addPersonForm.userName==='+this.addPersonForm.userName);
-							alert('this.addPersonForm.orgId==='+this.addPersonForm.orgId);
-							axios.post('/user/org/add', params).then(function(response) {
-								_this.addPersonLoading = false;
+							axios.post('/org/add', params).then(function(response) {
+								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
@@ -424,7 +360,6 @@
 									});
 						         	_this.loadData();
 									_this.addPersonDialogVisible = false;
-									_this.$refs.addPersonForm.resetFields();
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
 								} else {
@@ -437,44 +372,6 @@
 					}
 				});
 			},
-			
-			//删除
-			handlePersonBatchDelete: function (rows) {
-				rows.forEach(function(item){
-					alert('userOrgId==='+item.userOrgId);
-				})
-				
-				this.$confirm('确认批量删除记录吗？', '提示', { type: 'warning' }).then(() => {
-					this.listLoading = true;
-					let params = {
-						orgId: row.orgId
-					};
-					let _this = this;
-					axios.post('/user/org/delete1', params).then(function(response) {
-						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
-						if(retCode == '0000000') {
-							_this.$message({
-								message: '删除成功',
-								type: 'success'
-							});
-							_this.loadData();
-						} else if(retCode == '00000002') {
-							_this.$message.error('保存失败');
-						} else {
-							_this.$message.error(retMsg);
-						}
-		              }).catch(function (error) {
-		                	console.log(error);
-		              });
-		        }).catch(() => {
-		        });
-			},
-			handleSelectionChange(val) {
-				this.tableChecked = val;
-			}
-			
 		},
 	}
 </script>

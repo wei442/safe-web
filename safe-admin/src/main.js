@@ -13,12 +13,16 @@ Vue.use(ElementUI);
 
 router.beforeEach((to, from, next) => {
 	var token = sessionStorage.getItem('token');
-	if (!token && to.path != '/login') {
-		next({
-			path: '/login'
-	  	})
-	} else {
-	    next()
+	if (to.path == '/register' || to.path == '/changePassword') {
+		next()
+	}  else {
+		if (!token && to.path != '/login') {
+			next({
+				path: '/login'
+			})
+		} else {
+			next()
+		}
 	}
 })
 

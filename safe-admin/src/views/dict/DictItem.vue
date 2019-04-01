@@ -4,7 +4,7 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="dictItemForm" size="small" style="float: left;">
 				<el-form-item label="字典子项名称">
-					<el-input v-model.trim="dictItemForm.dictItemName" placeholder="请输入字典子项名称" clearable></el-input>
+					<el-input v-model.trim="dictItemForm.itemName" placeholder="请输入字典子项名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -18,8 +18,7 @@
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="dictItemName" label="字典子项名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="dictItemType" label="字典子项类型" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="itemName" label="字典子项名称" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -33,14 +32,9 @@
 	    
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
-			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="字典子项名称" prop="dictItemName">
-					<el-input v-model.trim="addForm.dictItemName" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="字典子项类型" prop="dictItemType">
-					<el-select v-model.trim="addForm.dictItemType" placeholder="请选择">
-		    			<el-option v-for="item in dictItemTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-		    		</el-select>
+			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="120px">
+				<el-form-item label="字典子项名称" prop="itemName">
+					<el-input v-model.trim="addForm.itemName" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -51,14 +45,9 @@
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
-			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
-				<el-form-item label="字典子项名称" prop="dictItemName">
-					<el-input v-model.trim="editForm.dictItemName" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="字典子项类型" prop="dictItemType">
-					<el-select v-model.trim="editForm.dictItemType" placeholder="请选择">
-		    			<el-option v-for="item in dictItemTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-		    		</el-select>
+			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="120px">
+				<el-form-item label="字典子项名称" prop="itemName">
+					<el-input v-model.trim="editForm.itemName" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -70,7 +59,7 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="字典子项名称">{{ showForm.dictItemName }}</el-form-item>
+				<el-form-item label="字典子项名称">{{ showForm.itemName }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -93,20 +82,22 @@
 				addDialogVisible: false,//新增界面是否显示
 				//新增界面数据
 				addForm: {
+					dictId: ''
 				}, 
 				addLoading: false,
 				addFormRules: {
-					dictItemName: [
+					itemName: [
 						{ required: true, message: '请输入字典子项名称', trigger: 'blur' }
 					],
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
 				editForm: {
+					dictId: ''
 				},
 				editLoading: false,
 				editFormRules: {
-					dictItemName: [
+					itemName: [
 						{ required: true, message: '请输入字典子项名称', trigger: 'blur' }
 					],
 				}, 
@@ -128,6 +119,7 @@
 		/*生命周期钩子方法，创建的时候调用该方法*/
 	    created: function () {
 	    	this.search();
+	    	this.addForm.dictId=this.$route.params.dictId;
 	    },
 		methods: {
 	      	//当前页
@@ -142,14 +134,12 @@
 	      	},
 			loadData: function() {
 				let params = {
-					pageNum: this.pageNum,
-					pageSize: this.pageSize,
 					dictId: this.$route.params.dictId,
-					dictItemName: this.dictItemForm.dictItemName
+					itemName: this.dictItemForm.itemName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/dictItem/getList', params).then(function(response) {
+				axios.post('/dict/item/getList', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -190,7 +180,7 @@
 							this.addLoading = true;
 							let params = this.addForm;
 							let _this = this;
-							axios.post('/dictItem/add', params).then(function(response) {
+							axios.post('/dict/item/add', params).then(function(response) {
 								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -221,7 +211,7 @@
 							this.editLoading = true;
 							let params = this.editForm;
 							let _this = this;
-							axios.post('/dictItem/update', params).then(function(response) {
+							axios.post('/dict/item/update', params).then(function(response) {
 								_this.editLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -252,7 +242,7 @@
 						dictItemId: row.dictItemId
 					};
 					let _this = this;
-					axios.post('/dictItem/delete', params).then(function(response) {
+					axios.post('/dict/item/delete', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;

@@ -98,7 +98,7 @@
     							_this.$router.push('/index');
     						} else if(retCode == '1010006') {
     							var userAccount = _this.loginForm.userAccount;
-    							_this.$router.push({name: 'changePassword', params: {'userAccount': userAccount}});
+    							_this.$router.push({name: 'changePassword', params: {userAccount: userAccount}});
     						} else {
     							_this.$message.error(retMsg);
     						}

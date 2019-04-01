@@ -6,9 +6,12 @@ import Home from '@/views/Home'
 import Register from '@/views/register/Register'
 import ChangePassword from '@/views/password/ChangePassword'
 import Enterprise from '@/views/enterprise/Enterprise'
+import OrgTree from '@/views/org/OrgTree'
 import Org from '@/views/org/Org'
+import OrgIndex from '@/views/org/OrgIndex'
 import Title from '@/views/title/Title'
 import Post from '@/views/post/Post'
+import Post2 from '@/views/post/Post2'
 import Dict from '@/views/dict/Dict'
 import DictItem from '@/views/dict/DictItem'
 
@@ -22,17 +25,29 @@ export default new Router({
 	    },
 	    {
 	        path: '/login',
-	        name: '登录',
+	        name: 'login',
+	        title: '登录',
+	        meta: { 
+				title: '登录', 
+			},
 	        component: Login
 	    },
 	    {
 	    	path: '/register',
-	    	name: '注册',
+	    	name: 'register',
+	    	title: '注册',
+	    	meta: { 
+				title: '注册', 
+			},
 	    	component: Register
 	    },
 	    {
 	    	path: '/changePassword',
-	    	name: '修改密码',
+	    	name: 'changePassword',
+	    	title: '修改密码',
+	    	meta: { 
+				title: '修改密码', 
+			},
 	    	component: ChangePassword
 	    },
 	    {
@@ -42,44 +57,92 @@ export default new Router({
 	    	children: [
 	    		{
             	  path: '/index',
-            	  name: '首页',
-            	  meta: { requireAuth: true },
+            	  name: 'index',
+            	  meta: { 
+	    				title: '首页', 
+	    				requireAuth: true 
+	    			},
             	  component: Index,
 	    		},
 	    		{
 	    			path: '/enterprise',
-	    			name: '企业管理',
-	    			meta: { requireAuth: true },
+	    			name: 'enterprise',
+	    			meta: { 
+	    				title: '企业管理', 
+	    				requireAuth: true 
+	    			},
 	    			component: Enterprise,
 	    		},
 	    		{
+	    			path: '/orgTree',
+	    			name: 'orgTree',
+	    			meta: { 
+	    				title: '组织机构树管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: OrgTree,
+	    		},
+	    		{
 	    			path: '/org',
-	    			name: '组织机构管理',
-	    			meta: { requireAuth: true },
+	    			name: 'org',
+	    			meta: { 
+	    				title: '组织机构管理', 
+	    				requireAuth: true 
+	    			},
 	    			component: Org,
 	    		},
 	    		{
+	    			path: '/orgIndex',
+	    			name: 'orgIndex',
+	    			meta: { 
+	    				title: '组织机构管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: OrgIndex,
+	    		},
+	    		{
 	    			path: '/post',
-	    			name: '岗位管理',
-	    			meta: { requireAuth: true },
+	    			name: 'post',
+	    			meta: { 
+	    				title: '岗位管理', 
+	    				requireAuth: true 
+	    			},
 	    			component: Post,
 	    		},
 	    		{
+	    			path: '/post2',
+	    			name: 'post2',
+	    			meta: { 
+	    				title: '岗位管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: Post2,
+	    		},
+	    		{
 	    			path: '/title',
-	    			name: '职务管理',
-	    			meta: { requireAuth: true },
+	    			name: 'title',
+	    			meta: { 
+	    				title: '职务管理', 
+	    				requireAuth: true 
+	    			},
 	    			component: Title,
 	    		},
 	    		{
 	    			path: '/dict',
-	    			name: '字典管理',
-	    			meta: { requireAuth: true },
+	    			name: 'dict',
+	    			meta: { 
+	    				title: '字典管理', 
+	    				requireAuth: true 
+	    			},
 	    			component: Dict,
 	    		},
 	    		{
 	    			path: '/dictItem',
-	    			name: '字典子项管理',
-	    			meta: { requireAuth: true },
+	    			name: 'dictItem',
+	    			meta: { 
+	    				title: '字典子项管理', 
+	    				requireAuth: true 
+	    			},
 	    			component: DictItem,
 	    		},
     		]

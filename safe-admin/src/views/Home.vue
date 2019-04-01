@@ -4,11 +4,6 @@
 			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
 				{{collapsed?'':sysName}}
 			</el-col>
-			<!--<el-col :span="10">-->
-				<!--<div class="tools" @click.prevent="collapse">-->
-					<!--<i class="fa fa-align-justify"></i>-->
-				<!--</div>-->
-			<!--</el-col>-->
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
@@ -28,7 +23,7 @@
 				        <template v-if="item.child">
 				    		<el-submenu :index="item.path">
 				            	<template slot="title"><i :class="item.icon"></i>{{ item.name }}</template>
-				            		<el-menu-item v-for="(subItem,i) in item.child" :key="i" :index="subItem.path">{{ subItem.name }}
+				            		<el-menu-item v-for="(subItem,i) in item.child" :key="i" :index="subItem.path" v-if="!subItem.hidden">{{ subItem.name }}
 				            	</el-menu-item>
 			            	</el-submenu>
 				        </template>
@@ -43,10 +38,10 @@
 			<section class="content-container">
 				<div class="grid-content bg-purple-light">
 					<el-col :span="24" class="breadcrumb-container">
-						<strong class="title">{{$route.name}}</strong>
+						<strong class="title">{{ $route.meta.title }}</strong>
 						<el-breadcrumb separator="/" class="breadcrumb-inner">
 							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-								{{ item.name }}
+								{{ item.meta.title }}
 							</el-breadcrumb-item>
 						</el-breadcrumb>
 					</el-col>
@@ -98,6 +93,14 @@
 			            		name: '企业管理',
 			            	},
 			            	{
+			            		path: '/orgIndex',
+			            		name: '组织机构首页管理',
+			            	},
+			            	{
+			            		path: '/orgTree',
+			            		name: '组织机构树管理',
+			            	},
+			            	{
 			            		path: '/org',
 			            		name: '组织机构管理',
 			            	},
@@ -108,6 +111,7 @@
 			            	{
 			            		path: '/dictItem',
 			            		name: '字典子项管理',
+			            		hidden: true,
 			            	},
 			            	{
 			            		path: '/post',
@@ -164,8 +168,6 @@
 				this.collapsed=!this.collapsed;
 			},
 		},
-		mounted() {
-		},
 		computed: {
 			onRoutes() {
 				return this.$route.path.replace('/', '');
@@ -176,136 +178,136 @@
 </script>
 
 <style scoped lang="scss">
-	
-	.container {
-		position: absolute;
-		top: 0px;
-		bottom: 0px;
-		width: 100%;
-		.header {
-			height: 60px;
-			line-height: 60px;
-			background: #ffffff;
-			border-bottom: 5px solid green;
-			color:green;
-			.userinfo {
-				text-align: right;
-				padding-right: 35px;
-				float: right;
-				.userinfo-inner {
-					cursor: pointer;
-					color:green;
-					img {
-						width: 40px;
-						height: 40px;
-						border-radius: 20px;
-						margin: 10px 0px 10px 10px;
-						float: right;
-					}
-				}
-			}
-			.logo {
-				//width:230px;
-				height:160px;
-				font-size: 22px;
-				padding-left:20px;
-				padding-right:20px;
-				border-color: #f0f0f0;
-				border-right-width: 1px;
-				border-right-style: solid;
-				background: url("http://img4.duitang.com/uploads/item/201511/26/20151126112617_vUaQf.jpeg") no-repeat center;
-				background-size: 60%;
-				background-color: #ffffff;
+
+.container {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	width: 100%;
+	.header {
+		height: 60px;
+		line-height: 60px;
+		background: #ffffff;
+		border-bottom: 5px solid #72bff3;
+		color:#72bff3;
+		.userinfo {
+			text-align: right;
+			padding-right: 35px;
+			float: right;
+			.userinfo-inner {
+				cursor: pointer;
+				color:#72bff3;
 				img {
 					width: 40px;
-					float: left;
-					margin: 10px 10px 10px 18px;
+					height: 40px;
+					border-radius: 20px;
+					margin: 10px 0px 10px 10px;
+					float: right;
 				}
-				.txt {
-					color:#fff;
-				}
-			}
-			.logo-width{
-				width:230px;
-			}
-			.logo-collapse-width{
-				width:60px
-			}
-			.tools{
-				padding: 0px 23px;
-				width:14px;
-				height: 60px;
-				line-height: 60px;
-				cursor: pointer;
 			}
 		}
-		.main {
-			display: flex;
-			// background: #324057;
-			position: absolute;
-			top: 60px;
-			bottom: 0px;
-			overflow: hidden;
-			aside {
-				flex:0 0 230px;
-				width: 230px;
-				// position: absolute;
-				// top: 0px;
-				// bottom: 0px;
-				.el-menu{
-					height: 100%;
+		.logo {
+			//width:230px;
+			height:160px;
+			font-size: 22px;
+			padding-left:20px;
+			padding-right:20px;
+			border-color: #f0f0f0;
+			border-right-width: 1px;
+			border-right-style: solid;
+			background: url("http://img4.duitang.com/uploads/item/201511/26/20151126112617_vUaQf.jpeg") no-repeat center;
+			background-size: 60%;
+			background-color: #ffffff;
+			img {
+				width: 40px;
+				float: left;
+				margin: 10px 10px 10px 18px;
+			}
+			.txt {
+				color:#fff;
+			}
+		}
+		.logo-width{
+			width:230px;
+		}
+		.logo-collapse-width{
+			width:60px
+		}
+		.tools{
+			padding: 0px 23px;
+			width:14px;
+			height: 60px;
+			line-height: 60px;
+			cursor: pointer;
+		}
+	}
+	.main {
+		display: flex;
+		// background: #324057;
+		position: absolute;
+		top: 60px;
+		bottom: 0px;
+		overflow: hidden;
+		aside {
+			flex:0 0 230px;
+			width: 230px;
+			// position: absolute;
+			// top: 0px;
+			// bottom: 0px;
+			.el-menu{
+				height: 100%;
+			}
+			.collapsed{
+				width:60px;
+				.item{
+					position: relative;
 				}
-				.collapsed{
-					width:60px;
-					.item{
-						position: relative;
-					}
-					.submenu{
-						position:absolute;
-						top:0px;
-						left:60px;
-						z-index:99999;
-						height:auto;
-						display:none;
-					}
+				.submenu{
+					position:absolute;
+					top:0px;
+					left:60px;
+					z-index:99999;
+					height:auto;
+					display:none;
+				}
 
+			}
+		}
+		.menu-collapsed{
+			flex:0 0 60px;
+			width: 60px;
+		}
+		.menu-expanded{
+			flex:0 0 230px;
+			width: 230px;
+			padding-top: 100px;
+		}
+		.content-container {
+			// background: #f1f2f7;
+			flex:1;
+			// position: absolute;
+			// right: 0px;
+			// top: 0px;
+			// bottom: 0px;
+			// left: 230px;
+			overflow-y: scroll;
+			padding: 20px;
+			.breadcrumb-container {
+				//margin-bottom: 15px;
+				.title {
+					width: 200px;
+					float: left;
+					color: #475669;
+				}
+				.breadcrumb-inner {
+					float: right;
 				}
 			}
-			.menu-collapsed{
-				flex:0 0 60px;
-				width: 60px;
-			}
-			.menu-expanded{
-				flex:0 0 230px;
-				width: 230px;
-				padding-top: 100px;
-			}
-			.content-container {
-				// background: #f1f2f7;
-				flex:1;
-				// position: absolute;
-				// right: 0px;
-				// top: 0px;
-				// bottom: 0px;
-				// left: 230px;
-				overflow-y: scroll;
-				padding: 20px;
-				.breadcrumb-container {
-					//margin-bottom: 15px;
-					.title {
-						width: 200px;
-						float: left;
-						color: #475669;
-					}
-					.breadcrumb-inner {
-						float: right;
-					}
-				}
-				.content-wrapper {
-					background-color: #fff;
-					box-sizing: border-box;
-				}
+			.content-wrapper {
+				background-color: #fff;
+				box-sizing: border-box;
 			}
 		}
 	}
+}
 </style>
