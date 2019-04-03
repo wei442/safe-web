@@ -96,9 +96,10 @@
     							sessionStorage.setItem('userAccount', response.data.result.userAccount);
     							sessionStorage.setItem('userName', response.data.result.userName);
     							_this.$router.push('/index');
-    						} else if(retCode == '1010006') {
-    							var userAccount = _this.loginForm.userAccount;
-    							_this.$router.push({name: 'changePassword', params: {userAccount: userAccount}});
+    						} else if(retCode == '0000008') {
+    							var enterpriseId = response.data.result.enterpriseId;
+    							var userId = response.data.result.userId;
+    							_this.$router.push({name: 'changePassword', params: {enterpriseId: enterpriseId, userId: userId}});
     						} else {
     							_this.$message.error(retMsg);
     						}

@@ -27,14 +27,33 @@
 				passwordLoading: false,
 				passwordFormRules: {
 					password: [
-						{ required: true, message: '请输入登录密码', trigger: 'blur' }
+						{ required: true, message: '请输入登录密码', trigger: 'blur' },
+						{ validator: validatePass, trigger: "blur" }
 					],
 					confirmPassword: [
-						{ required: true, message: '请重复输入登录密码', trigger: 'blur' }
+						{ required: true, message: '请重复输入登录密码', trigger: 'blur' },
+						{ validator: validatePass, trigger: "blur" }
 					],
 				},
 				passwordLoading: false,
-	      };
+			};
+			
+			//密码
+			var validatePass = (rule, value, callback) => {
+				if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,20}$/.test(value) == false) {
+					callback(new Error("请输入6-20位密码，必须包含大小写字母和数字"));
+				} else {
+		            callback();
+		    	}
+			};
+			//手机号
+		    var validatePhone = (rule, value, callback) => {
+		      if (/^1[34578]{1}\d{9}$/.test(value) == false) {
+		        callback(new Error("请输入正确的手机号"));
+		      } else {
+		        callback();
+		      }
+		    };
 	    },
 		/*生命周期钩子方法，创建的时候调用该方法*/
 	    created: function () {
@@ -48,7 +67,9 @@
 	    					this.$message.error('登录密码和确认密码不一致');
 	    				} else {
 							let params = {
-								userAccount: this.$route.params.userAccount,
+								enterpriseId: this.$route.params.enterpriseId,
+								userId: this.$route.params.userId,
+								password: this.passwordForm.password, 
 								userPassword: this.passwordForm.confirmPassword
 	    					};
 							let _this = this;

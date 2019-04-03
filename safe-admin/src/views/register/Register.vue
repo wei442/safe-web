@@ -2,8 +2,11 @@
 	<el-form :model="registerForm" :rules="registerFormRule" ref="registerForm" label-position="left" label-width="0px" class="demo-ruleForm login-container">
 	    <h3 class="title">系统注册</h3>
 	    <el-form-item prop="userAccount">
-	  		<el-input type="text" v-model="registerForm.userAccount" auto-complete="off" placeholder="账号"></el-input>
+	  		<el-input type="text" v-model="registerForm.userAccount" auto-complete="off" placeholder="手机号码"></el-input>
 	    </el-form-item>
+	    <el-form-item prop="userName">
+  			<el-input type="text" v-model="registerForm.userName" auto-complete="off" placeholder="用户名字"></el-input>
+		</el-form-item>
 	    <el-form-item prop="enterpriseName">
 	   		<el-input type="text" v-model="registerForm.enterpriseName" auto-complete="off" placeholder="企业名称"></el-input>
 	    </el-form-item>
@@ -25,14 +28,25 @@
 		        },
 		        registerFormRule: {
 		        	userAccount: [
-		        		{ required: true, message: '请输入账号', trigger: 'blur' },
+		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
 	        		],
+	        		userName: [
+	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
+        			],
 	        		enterpriseName: [
 	        			{ required: true, message: '请输入企业名称', trigger: 'blur' },
         			]
 		        },
 		        checked: true
 	      };
+	      //手机号
+		    var validatePhone = (rule, value, callback) => {
+		      if (/^1[34578]{1}\d{9}$/.test(value) == false) {
+		        callback(new Error("请输入正确的手机号"));
+		      } else {
+		        callback();
+		      }
+		    };
 	    },
 		/*生命周期钩子方法，创建的时候调用该方法*/
 	    created: function () {
@@ -47,6 +61,7 @@
 	    			if (valid) {
     					let params = {
 							userAccount: this.registerForm.userAccount, 
+							userName: this.registerForm.userName, 
 							enterpriseName: this.registerForm.enterpriseName
     					};
     					let _this = this;

@@ -289,6 +289,10 @@
 	      	formatEnterpriseStatus: function (row, column) {
 				return row.enterpriseStatus == 1 ? '正常' : row.enterpriseStatus == 2 ? '冻结' : row.enterpriseStatus == 3 ? '注销': '';
 			},
+			//搜索
+	        search: function(){
+	            this.loadData();
+	        },
 			loadData: function() {
 				let params = {
 					pageNum: this.pageNum,
@@ -327,10 +331,6 @@
 				this.showDialogVisible = true;
         		this.showForm = Object.assign({}, row);
 			},
-			//搜索
-	        search: function(){
-	            this.loadData();
-	        },
 			//新增
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
