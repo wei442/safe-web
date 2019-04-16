@@ -14,6 +14,13 @@ import Post from '@/views/post/Post'
 import Post2 from '@/views/post/Post2'
 import Dict from '@/views/dict/Dict'
 import DictItem from '@/views/dict/DictItem'
+import OrgQuality from '@/views/quality/OrgQuality'
+import UserQuality from '@/views/quality/UserQuality'
+import LawRule from '@/views/rule/LawRule'
+import ProductionRule from '@/views/rule/ProductionRule'
+import OperationRule from '@/views/rule/OperationRule'
+import ActivitySummary from '@/views/activity/ActivitySummary'
+import ActivityPublic from '@/views/activity/ActivityPublic'
 
 Vue.use(Router)
 
@@ -74,15 +81,6 @@ export default new Router({
 	    			component: Enterprise,
 	    		},
 	    		{
-	    			path: '/orgTree',
-	    			name: 'orgTree',
-	    			meta: { 
-	    				title: '组织机构树管理', 
-	    				requireAuth: true 
-	    			},
-	    			component: OrgTree,
-	    		},
-	    		{
 	    			path: '/org',
 	    			name: 'org',
 	    			meta: { 
@@ -90,15 +88,6 @@ export default new Router({
 	    				requireAuth: true 
 	    			},
 	    			component: Org,
-	    		},
-	    		{
-	    			path: '/orgIndex',
-	    			name: 'orgIndex',
-	    			meta: { 
-	    				title: '组织机构管理', 
-	    				requireAuth: true 
-	    			},
-	    			component: OrgIndex,
 	    		},
 	    		{
 	    			path: '/post',
@@ -144,6 +133,71 @@ export default new Router({
 	    				requireAuth: true 
 	    			},
 	    			component: DictItem,
+	    		},
+	    		
+	    		{
+	    			path: '/orgQuality',
+	    			name: 'orgQuality',
+	    			meta: { 
+	    				title: '机构资质管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: OrgQuality,
+	    		},
+	    		{
+	    			path: '/userQuality',
+	    			name: 'userQuality',
+	    			meta: { 
+	    				title: '用户资质管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: UserQuality,
+	    		},
+	    		
+	    		{
+	    			path: '/lawRule',
+	    			name: 'lawRule',
+	    			meta: { 
+	    				title: '法律法规与制度管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: LawRule,
+	    		},
+	    		{
+	    			path: '/productionRule',
+	    			name: 'productionRule',
+	    			meta: { 
+	    				title: '安全生产管理制度管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: ProductionRule,
+	    		},
+	    		{
+	    			path: '/operationRule',
+	    			name: 'operationRule',
+	    			meta: { 
+	    				title: '安全操作规程管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: OperationRule,
+	    		},
+	    		{
+	    			path: '/activitySummary',
+	    			name: 'activitySummary',
+	    			meta: { 
+	    				title: '活动总结管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: ActivitySummary,
+	    		},
+	    		{
+	    			path: '/activityPublic',
+	    			name: 'activityPublic',
+	    			meta: { 
+	    				title: '文化宣传管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: ActivityPublic,
 	    		},
     		]
 	    },

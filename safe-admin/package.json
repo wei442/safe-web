@@ -17,6 +17,7 @@
     "echarts": "^4.1.0",
     "element-ui": "^2.6.1",
     "es6-promise": "^4.2.6",
+    "file-saver": "^2.0.1",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "vue": "^2.5.2",

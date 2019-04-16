@@ -13,7 +13,7 @@
 					<!--工具条-->
 					<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 						<el-form :inline="true" :model="orgForm" size="small" style="float: left;">
-							<h3 class="title">{{orgForm.orgName}}</h3>
+							<h3 class="title">{{orgForm.orgName}}  <el-button type="primary" size="small" @click="handleOrgEdit">编辑</el-button></h3>
 							<el-form-item>
 								<el-button type="primary" icon="el-icon-plus" size="small" @click="handleOrgAdd">新增子部门</el-button>
 							</el-form-item>
@@ -73,6 +73,27 @@
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="addOrgDialogVisible = false">取 消</el-button>
 				<el-button type="primary" @click="addOrgSubmit" :loading="addOrgLoading">保 存</el-button>
+			</div>
+		</el-dialog>
+		
+		<!--编辑部门界面-->
+		<el-dialog title="编辑部门" :visible.sync="editOrgDialogVisible">
+			<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+				<h3 class="title">部门信息</h3>
+			</el-col>
+		
+			<el-form ref="editOrgForm" :model="editOrgForm" :rules="editOrgFormRules" label-width="120px">
+				<el-form-item label="部门名称" prop="orgName">
+					<el-input v-model.trim="editOrgForm.orgName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="上级部门" prop="parentOrgName">
+					<el-input v-model.trim="editOrgForm.parentOrgName" auto-complete="off"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="editOrgDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="deleteOrgSubmit" :loading="editOrgLoading">删 除</el-button>
+				<el-button type="primary" @click="editOrgSubmit" :loading="editOrgLoading">保 存</el-button>
 			</div>
 		</el-dialog>
 		
@@ -140,7 +161,7 @@
 				orgForm: {},
 				labelPosition: 'right',
 				addOrgDialogVisible: false,//新增界面是否显示
-				//新增界面数据
+				//新增部门数据
 				addOrgForm: {
 					orgName: '',
 					parentOrgId: '',
@@ -148,6 +169,22 @@
 				}, 
 				addOrgLoading: false,
 				addOrgFormRules: {
+					orgName: [
+						{ required: true, message: '请输入部门名称', trigger: 'blur' }
+					],
+					parentOrgName: [
+						{ required: true, message: '请输入上级部门名称', trigger: 'blur' }
+					],
+				}, 
+				editOrgDialogVisible: false,//编辑界面是否显示
+				//编辑部门数据
+				editOrgForm: {
+					orgName: '',
+					parentOrgId: '',
+					parentOrgName: '',
+				}, 
+				editOrgLoading: false,
+				editOrgFormRules: {
 					orgName: [
 						{ required: true, message: '请输入部门名称', trigger: 'blur' }
 					],
@@ -284,6 +321,29 @@
 					this.addOrgForm.parentOrgName = this.$refs.tree.getCurrentNode().orgName;
 				}
 			},
+			//显示编辑部门界面
+			handleOrgEdit: function () {
+				this.editOrgDialogVisible = true;
+				alert('this.$refs.tree.getCurrentNode().orgId;=='+this.$refs.tree.getCurrentNode().orgId);
+				
+				let params = {
+					orgId: this.$refs.tree.getCurrentNode().orgId
+				};
+				
+				axios.post('/org/getDetail', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						alert('response.data.result==='+response.data.result);
+						_this.editOrgForm = Object.assign({}, response.data.result);
+						_this.editOrgForm.orgName = response.data.result.orgName;
+					} else {
+						_this.$message.error(retMsg);
+					}
+	              }).catch(function (error) {
+	                	console.log(error);
+	              });
+			},
 			//显示新增部门人员界面
 			handlePersonAdd: function () {
 				if(this.$refs.tree.getCurrentKey() == null) {
@@ -313,6 +373,37 @@
 							let _this = this;
 							axios.post('/org/add', params).then(function(response) {
 								_this.addOrgLoading = false;
+								var retCode = response.data.retCode;
+								var retMsg = response.data.retMsg;
+								if(retCode == '0000000') {
+									_this.$message({
+										message: '保存成功',
+										type: 'success'
+									});
+						         	_this.loadData();
+									_this.addOrgDialogVisible = false;
+								} else if(retCode == '00000002') {
+									_this.$message.error('保存失败');
+								} else {
+									_this.$message.error(retMsg);
+								}
+				              }).catch(function (error) {
+				                	console.log(error);
+				              });
+						});
+					}
+				});
+			},
+			//编辑部门
+			editOrgSubmit: function () {
+				this.$refs.addOrgForm.validate((valid) => {
+					if (valid) {
+						this.$confirm('确认保存吗？', '提示', {}).then(() => {
+							this.editOrgLoading = true;
+							let params = this.addOrgForm;
+							let _this = this;
+							axios.post('/org/update', params).then(function(response) {
+								_this.editOrgLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
 								if(retCode == '0000000') {

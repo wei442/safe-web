@@ -39,28 +39,6 @@ axios.interceptors.request.use(function (config) {
 	return Promise.reject(error);
 });
 
-//添加一个返回拦截器
-axios.interceptors.response.use(function(response){
-    //对返回的数据进行一些处理
-	var retCode = response.data.retCode;
-	var retInfo = response.data.retInfo;
-	if(retCode == '0000004') {
-		router.push('/');
-	}
-    return response;
-},function(error){
-    //对返回的错误进行一些处理
-	if (error.response) {
-        switch (error.response.status) {
-            case 404:
-            		router.push('/404');
-            default:
-            	  router.push('/error');
-        }
-    }
-    return Promise.reject(error);
-});
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

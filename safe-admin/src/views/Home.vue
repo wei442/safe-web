@@ -93,14 +93,6 @@
 			            		name: '企业管理',
 			            	},
 			            	{
-			            		path: '/orgIndex',
-			            		name: '组织机构首页管理',
-			            	},
-			            	{
-			            		path: '/orgTree',
-			            		name: '组织机构树管理',
-			            	},
-			            	{
 			            		path: '/org',
 			            		name: '组织机构管理',
 			            	},
@@ -120,6 +112,55 @@
 			            	{
 			            		path: '/title',
 			            		name: '职务管理',
+			            	},
+			        	]
+			      	},
+			      	{
+			      		path: '3',
+			      		name: '资质管理',
+			            icon: 'el-icon-menu',
+			            child: [
+			            	{
+			            		path: '/orgQuality',
+			            		name: '机构资质管理',
+			            	},
+			            	{
+			            		path: '/userQuality',
+			            		name: '用户资质管理',
+			            	}
+			        	]
+			      	},
+			      	{
+			      		path: '4',
+			      		name: '规范性文件管理',
+			            icon: 'el-icon-menu',
+			            child: [
+			            	{
+			            		path: '/lawRule',
+			            		name: '法律法规与制度管理',
+			            	},
+			            	{
+			            		path: '/productionRule',
+			            		name: '安全生产管理制度管理',
+			            	},
+			            	{
+			            		path: '/operationRule',
+			            		name: '安全操作规程管理',
+			            	}
+			        	]
+			      	},
+			      	{
+			      		path: '5',
+			      		name: '安全生产活动管理',
+			            icon: 'el-icon-menu',
+			            child: [
+			            	{
+			            		path: '/activitySummary',
+			            		name: '活动总结管理',
+			            	},
+			            	{
+			            		path: '/activityPublic',
+			            		name: '活动宣传管理',
 			            	},
 			        	]
 			      	},

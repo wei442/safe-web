@@ -2,9 +2,9 @@
 	<section>
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-			<el-form :inline="true" :model="enterpriseForm" size="small" style="float: left;">
-				<el-form-item label="企业名称">
-					<el-input v-model.trim="enterpriseForm.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
+			<el-form :inline="true" :model="userQualityForm" size="small" style="float: left;">
+				<el-form-item label="资质名称">
+					<el-input v-model.trim="userQualityForm.qualityName" placeholder="请输入资质名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -18,13 +18,8 @@
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseType" label="企业类型" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseFax" label="企业传真" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="qualityName" label="资质名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="userName" label="所属人" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -53,30 +48,17 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="企业名称" prop="enterpriseName">
-					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
+				<el-form-item label="资质名称" prop="qualityName">
+					<el-input v-model.trim="addForm.qualityName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业类型" prop="enterpriseType">
-					<el-select v-model.trim="addForm.enterpriseType" placeholder="请选择">
-		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-		    		</el-select>
+				<el-form-item label="所属人" prop="userName">
+					<el-input v-model.trim="addForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业性质" prop="enterpriseNature">
-					<el-select v-model.trim="addForm.enterpriseNature" placeholder="请选择">
-						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="企业电话" prop="enterpriseTelphone">
-					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="addForm.enterpriseFax" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="企业地址" prop="enterpriseAddr">
-					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.enterpriseAddr" auto-complete="off"></el-input>
+				<el-form-item label="相关文件">
+					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
+						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
+					</el-upload>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -88,30 +70,17 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
 			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
-				<el-form-item label="企业名称" prop="enterpriseName">
-					<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
+				<el-form-item label="资质名称" prop="qualityName">
+					<el-input v-model.trim="editForm.qualityName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业类型" prop="enterpriseType">
-					<el-select v-model.trim="editForm.enterpriseType" placeholder="请选择">
-		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-		    		</el-select>
+				<el-form-item label="所属人" prop="userName">
+					<el-input v-model.trim="editForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业性质" prop="enterpriseNature">
-					<el-select v-model.trim="editForm.enterpriseNature" placeholder="请选择">
-						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="企业电话" prop="enterpriseTelphone">
-					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="企业地址" prop="enterpriseAddr">
-					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
+				<el-form-item label="相关文件">
+					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
+						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
+					</el-upload>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -123,11 +92,11 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="企业编码">{{ showForm.enterpriseCode }}</el-form-item>
-				<el-form-item label="企业名称">{{ showForm.enterpriseName }}</el-form-item>
-				<el-form-item label="企业内容">{{ showForm.content }}</el-form-item>
+				<el-form-item label="资质编码">{{ showForm.userQualityCode }}</el-form-item>
+				<el-form-item label="资质名称">{{ showForm.userQualityName }}</el-form-item>
+				<el-form-item label="资质内容">{{ showForm.content }}</el-form-item>
 				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="企业类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="资质类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -139,11 +108,12 @@
 
 <script>
 	import axios from 'axios'
+	import FileSaver from 'file-saver'
 
 	export default {
 		data() {
 			return {
-				enterpriseForm: {},
+				userQualityForm: {},
 				tableData: [],
 				listLoading: false,
 				labelPosition: 'right',
@@ -153,11 +123,11 @@
 				}, 
 				addLoading: false,
 				addFormRules: {
-					enterpriseName: [
-						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+					qualityName: [
+						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
-					type: [
-						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+					userName: [
+						{ required: true, message: '请选择所属人', trigger: 'blur' }
 					],
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
@@ -166,108 +136,17 @@
 				},
 				editLoading: false,
 				editFormRules: {
-					enterpriseName: [
-						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+					qualityName: [
+						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
-					type: [
-						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+					userName: [
+						{ required: true, message: '请选择所属人', trigger: 'blur' }
 					],
 				}, 
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				enterpriseTypeOptions: [
-					{
-						value: 1,
-						label: '政府部门'
-					},
-					{
-						value: 2,
-						label: '院校'
-					},
-					{
-						value: 3,
-						label: '科研所'
-					},
-					{
-						value: 4,
-						label: '国有企业'
-					},
-					{
-						value: 5,
-						label: '集体企业'
-					},
-					{
-						value: 6,
-						label: '股份合作企业'
-					},
-					{
-						value: 7,
-						label: '联营企业'
-					},
-					{
-						value: 8,
-						label: '有限责任公司'
-					},
-					{
-						value: 9,
-						label: '股份有限公司'
-					},
-					{
-						value: 10,
-						label: '私营企业'
-					},
-					{
-						value: 11,
-						label: '港、澳、台商投资企业'
-					},
-					{
-						value: 12,
-						label: '外商投资企业'
-					},
-					{
-						value: 13,
-						label: '其他'
-					}
-				],
-				enterpriseNatureOptions: [
-					{
-						value: 1,
-						label: '国有'
-					},
-					{
-						value: 2,
-						label: '合作'
-					},
-					{
-						value: 3,
-						label: '合资'
-					},
-					{
-						value: 4,
-						label: '独资'
-					},
-					{
-						value: 5,
-						label: '集体'
-					},
-					{
-						value: 6,
-						label: '私营'
-					},
-					{
-						value: 7,
-						label: '个体工商户'
-					},
-					{
-						value: 8,
-						label: '报关'
-					},
-					{
-						value: 9,
-						label: '其他'
-					}
-				],
+				fileList: []
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -285,10 +164,38 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	//企业内容显示转换
-	      	formatEnterpriseStatus: function (row, column) {
-				return row.enterpriseStatus == 1 ? '正常' : row.enterpriseStatus == 2 ? '冻结' : row.enterpriseStatus == 3 ? '注销': '';
-			},
+	      	handleRemove(file, fileList) {
+	            this.fileList = fileList;
+	      	},
+	      	handlePreview(file) {
+	      		let params = {
+      				fileName: file.name,
+	      			fileUrl: file.url
+      			};
+	      		axios.post('/fastdfs/downloadFile', params).then(function(response) {
+	      			let blob = new Blob([response.data], {type: "application/octet-stream"});
+	      			FileSaver.saveAs(blob, file.name);
+        		}).catch(function (error) {
+        		});
+	      	},
+	      	handleSuccess(res, file, fileList) {
+	            this.fileList = fileList;
+	      	},
+	      	beforeRemove(file, fileList) {
+	        	return this.$confirm(`确定移除 ${ file.name }？`);
+	      	},
+	      	beforeUpload(file) {
+	      		if(!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
+	      	        this.$message({
+	      	        	message: '请上传格式为image/png, image/gif, image/jpg, image/jpeg的图片',
+	      	        	type: 'warning'
+			        });
+	      		}
+	      		var isLt10M = file.size > 10*1024*1024 ? true:false;
+	      	    if (isLt10M) {
+	      	    	this.$message.error('上传文件大小不能超过 10MB!');
+	      	    };
+	      	},
 			//搜索
 	        search: function(){
 	            this.loadData();
@@ -297,11 +204,11 @@
 				let params = {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
-					enterpriseName: this.enterpriseForm.enterpriseName
+					qualityName: this.userQualityForm.qualityName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/enterprise/getListByPage', params).then(function(response) {
+				axios.post('/user/quality/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -316,6 +223,24 @@
 	        		}
 	        	);
 			}, 
+			//获取用户资质附件列表
+			loadUserQualityAttachmentList: function (ruleId) {
+				let params = {
+					ruleId : ruleId
+				};
+        		let _this = this;
+				axios.post('/user/quality/attachment/getList', params, params).then(function (response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.fileList = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+                }).catch(function (error) {
+                    console.log(error);
+                });
+			},
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
@@ -325,11 +250,15 @@
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
 				this.editForm = Object.assign({}, row);
+				this.loadUserQualityAttachmentList(this.showForm.ruleId);
+        		this.$refs.uploadfile.clearFiles();
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
         		this.showForm = Object.assign({}, row);
+        		this.loadUserQualityAttachmentList(this.showForm.ruleId);
+        		this.$refs.uploadfile.clearFiles();
 			},
 			//新增
 			addSubmit: function () {
@@ -337,9 +266,22 @@
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addLoading = true;
-							let params = this.addForm;
+							let formData = new FormData();
+							formData.set('ruleName', this.addForm.ruleName);
+							formData.set('ruleCategory', this.addForm.ruleCategory);
+							formData.set('ruleNo', this.addForm.ruleNo);
+							formData.set('orgName', this.addForm.orgName);
+							formData.set('keyWord', this.addForm.keyWord);
+							this.fileList.forEach(function(item, index){
+								if(item != null && item.raw != null) {
+									formData.append('fileList', item.raw);
+								}
+							});
+							let headers = {
+                                headers: {'Content-Type': 'multipart/form-data'}
+                            }
 							let _this = this;
-							axios.post('/enterprise/add', params).then(function(response) {
+							axios.post('/user/quality/add', formData, headers).then(function(response) {
 								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -368,9 +310,27 @@
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editLoading = true;
-							let params = this.editForm;
+							let formData = new FormData();
+							formData.set('ruleId', this.editForm.ruleId);
+							formData.set('ruleName', this.editForm.ruleName);
+							formData.set('ruleCategory', this.editForm.ruleCategory);
+							formData.set('ruleNo', this.editForm.ruleNo);
+							formData.set('orgName', this.editForm.orgName);
+							formData.set('keyWord', this.editForm.keyWord);
+							this.fileList.forEach(function(item, index){
+								if(item != null) {
+									if(item.raw != null && item.ruleAttachmentId == null) {
+										formData.append('fileList', item.raw);
+									} else {
+										formData.append('ruleAttachmentIds', item.ruleAttachmentId);
+									}
+								}
+							});
+							let headers = {
+                                headers: {'Content-Type': 'multipart/form-data'}
+                            }
 							let _this = this;
-							axios.post('/enterprise/update', params).then(function(response) {
+							axios.post('/user/quality/update', formData, headers).then(function(response) {
 								_this.editLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -398,10 +358,10 @@
 				this.$confirm('确认删除该记录吗？', '提示', { type: 'warning' }).then(() => {
 					this.listLoading = true;
 					let params = {
-						enterpriseId: row.enterpriseId
+						userQualityId: row.userQualityId
 					};
 					let _this = this;
-					axios.post('/enterprise/delete', params).then(function(response) {
+					axios.post('/user/quality/delete', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
