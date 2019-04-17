@@ -92,11 +92,11 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="资质编码">{{ showForm.userQualityCode }}</el-form-item>
-				<el-form-item label="资质名称">{{ showForm.userQualityName }}</el-form-item>
-				<el-form-item label="资质内容">{{ showForm.content }}</el-form-item>
-				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="资质类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="资质名称">{{ showForm.qualityName }}</el-form-item>
+				<el-form-item label="所属人">{{ showForm.userName }}</el-form-item>
+				<el-form-item label="相关文件">
+					<el-upload class="upload-demo" ref="uploadfile" :on-preview="handlePreview" :file-list="fileList"></el-upload>
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -224,9 +224,9 @@
 	        	);
 			}, 
 			//获取用户资质附件列表
-			loadUserQualityAttachmentList: function (ruleId) {
+			loadUserQualityAttachmentList: function (userQualityId) {
 				let params = {
-					ruleId : ruleId
+					userQualityId : userQualityId
 				};
         		let _this = this;
 				axios.post('/user/quality/attachment/getList', params, params).then(function (response) {
@@ -244,21 +244,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.editForm = Object.assign({}, row);
-				this.loadUserQualityAttachmentList(this.showForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
+				this.loadUserQualityAttachmentList(this.editForm.userQualityId);
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
-        		this.loadUserQualityAttachmentList(this.showForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
+        		this.loadUserQualityAttachmentList(this.showForm.userQualityId);
 			},
 			//新增
 			addSubmit: function () {
@@ -267,11 +268,8 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let formData = new FormData();
-							formData.set('ruleName', this.addForm.ruleName);
-							formData.set('ruleCategory', this.addForm.ruleCategory);
-							formData.set('ruleNo', this.addForm.ruleNo);
-							formData.set('orgName', this.addForm.orgName);
-							formData.set('keyWord', this.addForm.keyWord);
+							formData.set('qualityName', this.addForm.qualityName);
+							formData.set('userName', this.addForm.userName);
 							this.fileList.forEach(function(item, index){
 								if(item != null && item.raw != null) {
 									formData.append('fileList', item.raw);
@@ -311,18 +309,15 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editLoading = true;
 							let formData = new FormData();
-							formData.set('ruleId', this.editForm.ruleId);
-							formData.set('ruleName', this.editForm.ruleName);
-							formData.set('ruleCategory', this.editForm.ruleCategory);
-							formData.set('ruleNo', this.editForm.ruleNo);
-							formData.set('orgName', this.editForm.orgName);
-							formData.set('keyWord', this.editForm.keyWord);
+							formData.set('userQualityId', this.editForm.userQualityId);
+							formData.set('qualityName', this.editForm.qualityName);
+							formData.set('userName', this.editForm.userName);
 							this.fileList.forEach(function(item, index){
 								if(item != null) {
-									if(item.raw != null && item.ruleAttachmentId == null) {
+									if(item.raw != null && item.userQualityAttachmentId == null) {
 										formData.append('fileList', item.raw);
 									} else {
-										formData.append('ruleAttachmentIds', item.ruleAttachmentId);
+										formData.append('userQualityAttachmentIds', item.userQualityAttachmentId);
 									}
 								}
 							});

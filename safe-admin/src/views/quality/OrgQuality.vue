@@ -54,11 +54,10 @@
 				<el-form-item label="所属机构" prop="orgName">
 					<el-input v-model.trim="addForm.orgName" auto-complete="off"></el-input>
 				</el-form-item>
-				
-				<el-form-item label="相关文件" prop="fileList">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-change="handleChange" :file-list="fileList">
+				<el-form-item label="相关文件">
+					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
-						<div slot="tip" class="el-upload__tip">只能上传图片</div>
+						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
 				</el-form-item>
 			</el-form>
@@ -93,11 +92,11 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="资质编码">{{ showForm.orgQualityCode }}</el-form-item>
-				<el-form-item label="资质名称">{{ showForm.orgQualityName }}</el-form-item>
-				<el-form-item label="资质内容">{{ showForm.content }}</el-form-item>
-				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="资质类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="资质名称">{{ showForm.qualityName }}</el-form-item>
+				<el-form-item label="所属机构">{{ showForm.orgName }}</el-form-item>
+				<el-form-item label="相关文件">
+					<el-upload class="upload-demo" ref="uploadfile" :on-preview="handlePreview" :file-list="fileList"></el-upload>
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -168,6 +167,9 @@
 	      	handleRemove(file, fileList) {
 	            this.fileList = fileList;
 	      	},
+	      	handleRemove(file, fileList) {
+	            this.fileList = fileList;
+	      	},
 	      	handlePreview(file) {
 	      		let params = {
       				fileName: file.name,
@@ -225,9 +227,9 @@
 	        	);
 			}, 
 			//获取机构资质附件列表
-			loadOrgQualityAttachmentList: function (ruleId) {
+			loadOrgQualityAttachmentList: function (orgQualityId) {
 				let params = {
-					ruleId : ruleId
+					orgQualityId : orgQualityId
 				};
         		let _this = this;
 				axios.post('/org/quality/attachment/getList', params, params).then(function (response) {
@@ -245,21 +247,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.editForm = Object.assign({}, row);
-				this.loadOrgQualityAttachmentList(this.editForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
+				this.loadOrgQualityAttachmentList(this.editForm.orgQualityId);
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
-        		this.loadOrgQualityAttachmentList(this.showForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
+        		this.loadOrgQualityAttachmentList(this.showForm.orgQualityId);
 			},
 			//新增
 			addSubmit: function () {
@@ -268,12 +271,8 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let formData = new FormData();
-							formData.set('ruleType', 1);
-							formData.set('ruleName', this.addForm.ruleName);
-							formData.set('ruleCategory', this.addForm.ruleCategory);
-							formData.set('ruleNo', this.addForm.ruleNo);
+							formData.set('qualityName', this.addForm.qualityName);
 							formData.set('orgName', this.addForm.orgName);
-							formData.set('keyWord', this.addForm.keyWord);
 							this.fileList.forEach(function(item, index){
 								if(item != null && item.raw != null) {
 									formData.append('fileList', item.raw);
@@ -313,19 +312,15 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editLoading = true;
 							let formData = new FormData();
-							formData.set('ruleType', 1);
-							formData.set('ruleId', this.editForm.ruleId);
-							formData.set('ruleName', this.editForm.ruleName);
-							formData.set('ruleCategory', this.editForm.ruleCategory);
-							formData.set('ruleNo', this.editForm.ruleNo);
+							formData.set('orgQualityId', this.editForm.orgQualityId);
+							formData.set('qualityName', this.editForm.qualityName);
 							formData.set('orgName', this.editForm.orgName);
-							formData.set('keyWord', this.editForm.keyWord);
 							this.fileList.forEach(function(item, index){
 								if(item != null) {
-									if(item.raw != null && item.ruleAttachmentId == null) {
+									if(item.raw != null && item.orgQualityIdId == null) {
 										formData.append('fileList', item.raw);
 									} else {
-										formData.append('ruleAttachmentIds', item.ruleAttachmentId);
+										formData.append('orgQualityIdIds', item.orgQualityIdId);
 									}
 								}
 							});

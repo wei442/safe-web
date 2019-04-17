@@ -114,8 +114,7 @@
 				<el-form-item label="适用范围">{{ showForm.orgName }}</el-form-item>
 				<el-form-item label="关键字">{{ showForm.keyWord }}</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :on-preview="handlePreview" :file-list="fileList">
-					</el-upload>
+					<el-upload class="upload-demo" ref="uploadfile" :on-preview="handlePreview" :file-list="fileList"></el-upload>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -272,27 +271,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
-				this.editForm = Object.assign({}, row);
-				let params = {
-					ruleId : this.editForm.ruleId
-				};
-				this.loadRuleAttachmentList(this.editForm.ruleId);
 				this.$refs.uploadfile.clearFiles();
+				this.editForm = Object.assign({}, row);
+				this.loadRuleAttachmentList(this.editForm.ruleId);
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
-        		let params = {
-					ruleId : this.showForm.ruleId
-				};
         		this.loadRuleAttachmentList(this.showForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
 			},
 			//新增
 			addSubmit: function () {

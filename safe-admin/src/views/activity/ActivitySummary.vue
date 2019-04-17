@@ -169,7 +169,7 @@
 						{ required: true, message: '请选择活动结束时间', trigger: 'blur' }
 					],
 					activitySite: [
-						{ required: true, message: '请输入开展地质', trigger: 'blur' }
+						{ required: true, message: '请输入开展地点', trigger: 'blur' }
 					],
 					content: [
 						{ required: true, message: '请输入开展流程', trigger: 'blur' }
@@ -197,7 +197,7 @@
 						{ required: true, message: '请选择活动结束时间', trigger: 'blur' }
 					],
 					activitySite: [
-						{ required: true, message: '请输入开展地质', trigger: 'blur' }
+						{ required: true, message: '请输入开展地点', trigger: 'blur' }
 					],
 					content: [
 						{ required: true, message: '请输入开展流程', trigger: 'blur' }
@@ -212,46 +212,6 @@
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				activityTypeOptions: [
-					{
-						value: 1,
-						label: '政府部门'
-					},
-					{
-						value: 2,
-						label: '院校'
-					},
-					{
-						value: 3,
-						label: '科研所'
-					},
-					{
-						value: 4,
-						label: '国有活动'
-					},
-					{
-						value: 5,
-						label: '集体活动'
-					},
-				],
-				activityNatureOptions: [
-					{
-						value: 1,
-						label: '国有'
-					},
-					{
-						value: 2,
-						label: '合作'
-					},
-					{
-						value: 3,
-						label: '合资'
-					},
-					{
-						value: 4,
-						label: '独资'
-					},
-				],
 				fileList: []
 			}
 		},
@@ -354,21 +314,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
 				this.editForm = Object.assign({}, row);
 				this.loadActivityAttachmentList(this.editForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
+				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
         		this.loadActivityAttachmentList(this.showForm.ruleId);
-        		this.$refs.uploadfile.clearFiles();
 			},
 			//新增
 			addSubmit: function () {
@@ -377,11 +338,13 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let formData = new FormData();
-							formData.set('ruleName', this.addForm.ruleName);
-							formData.set('ruleCategory', this.addForm.ruleCategory);
-							formData.set('ruleNo', this.addForm.ruleNo);
-							formData.set('orgName', this.addForm.orgName);
-							formData.set('keyWord', this.addForm.keyWord);
+							formData.set('activityName', this.addForm.activityName);
+							formData.set('activityStartTime', this.addForm.activityStartTime);
+							formData.set('activityEndTime', this.addForm.activityEndTime);
+							formData.set('activitySite', this.addForm.activitySite);
+							formData.set('content', this.addForm.content);
+							formData.set('experience', this.addForm.experience);
+							formData.set('lesson', this.addForm.lesson);
 							this.fileList.forEach(function(item, index){
 								if(item != null && item.raw != null) {
 									formData.append('fileList', item.raw);
@@ -421,12 +384,14 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editLoading = true;
 							let formData = new FormData();
-							formData.set('ruleId', this.editForm.ruleId);
-							formData.set('ruleName', this.editForm.ruleName);
-							formData.set('ruleCategory', this.editForm.ruleCategory);
-							formData.set('ruleNo', this.editForm.ruleNo);
-							formData.set('orgName', this.editForm.orgName);
-							formData.set('keyWord', this.editForm.keyWord);
+							formData.set('activityId', this.editForm.activityId);
+							formData.set('activityName', this.addForm.activityName);
+							formData.set('activityStartTime', this.addForm.activityStartTime);
+							formData.set('activityEndTime', this.addForm.activityEndTime);
+							formData.set('activitySite', this.addForm.activitySite);
+							formData.set('content', this.addForm.content);
+							formData.set('experience', this.addForm.experience);
+							formData.set('lesson', this.addForm.lesson);
 							this.fileList.forEach(function(item, index){
 								if(item != null) {
 									if(item.raw != null && item.ruleAttachmentId == null) {

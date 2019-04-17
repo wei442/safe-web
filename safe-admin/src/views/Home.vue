@@ -164,6 +164,59 @@
 			            	},
 			        	]
 			      	},
+			      	
+			      	{
+			      		path: '6',
+			      		name: '风险管控管理',
+			            icon: 'el-icon-menu',
+			            child: [
+			            	{
+			            		path: '/enterprise',
+			            		name: '风险因素管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '控制措施验收管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '风险档案管理',
+			            	}
+			        	]
+			      	},
+			      	
+			      	{
+			      		path: '7',
+			      		name: '安全隐患管理',
+			            icon: 'el-icon-menu',
+			            child: [
+			            	{
+			            		path: '/enterprise',
+			            		name: '岗位排查清单管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '排查任务指派度管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '排查结果统计管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '隐患快报管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '隐患抽查管理',
+			            	},
+			            	{
+			            		path: '/enterprise',
+			            		name: '隐患台账管理',
+			            	},
+			        	]
+			      	},
+			      	
 		        ]
 				
 			}
