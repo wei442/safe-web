@@ -4,7 +4,16 @@
 		<el-container style="height: 560px; border: 1px solid #eee">
 			<el-aside width="220px" style="background-color: rgb(238, 241, 246)">
 				<h3>组织机构</h3>
-				<el-tree :data="treeData" default-expand-all node-key="orgId" ref="tree" highlight-current @node-click="handleNodeClick" :props="defaultProps"></el-tree>
+				<el-tree
+	                ref="tree"
+	                :data="treeData"
+	                :node-key="orgId"
+	                :props="defaultProps"
+					default-expand-all
+	                :highlight-current="true"
+                	:expand-on-click-node="false"
+					@node-click="handleNodeClick">
+				</el-tree>
 			</el-aside>
 			<br>
 			
@@ -61,13 +70,12 @@
 			<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 				<h3 class="title">部门信息</h3>
 			</el-col>
-		
 			<el-form ref="addOrgForm" :model="addOrgForm" :rules="addOrgFormRules" label-width="120px">
 				<el-form-item label="部门名称" prop="orgName">
 					<el-input v-model.trim="addOrgForm.orgName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="上级部门" prop="parentOrgName">
-					<el-input v-model.trim="addOrgForm.parentOrgName" auto-complete="off"></el-input>
+					<el-input v-model.trim="addOrgForm.parentOrgName" @focus="handleOrgAddParentOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -75,6 +83,48 @@
 				<el-button type="primary" @click="addOrgSubmit" :loading="addOrgLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--新增部门-选择上级部门-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="addOrgSelectParentOrgDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleAddOrgSelectParentOrgNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	 					<el-button type="primary" icon="el-icon-arrow-right" circle :disabled="canAddNode" @click="handleAdd"></el-button>
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li" v-if="targetNodes.orgName">
+				           			<label>{{targetNodes[defaultProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" @click="handleAddOrgSelectParentOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+           			</div>
+       			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="addOrgSelectParentOrgSubmit">确定</el-button>
+		    		<el-button size="medium" @click="addOrgSelectParentOrgDialogVisible = false">取消</el-button>
+	    		</span>
+    		</el-dialog>
+		</div>
 		
 		<!--编辑部门界面-->
 		<el-dialog title="编辑部门" :visible.sync="editOrgDialogVisible">
@@ -87,15 +137,58 @@
 					<el-input v-model.trim="editOrgForm.orgName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="上级部门" prop="parentOrgName">
-					<el-input v-model.trim="editOrgForm.parentOrgName" auto-complete="off"></el-input>
+					<el-input v-model.trim="editOrgForm.parentOrgName" @focus="handleOrgEditParentOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="editOrgDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="deleteOrgSubmit" :loading="editOrgLoading">删 除</el-button>
+				<el-button type="danger" @click="deleteOrgSubmit" :loading="editOrgLoading">删 除</el-button>
 				<el-button type="primary" @click="editOrgSubmit" :loading="editOrgLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--编辑部门-选择上级部门-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="editOrgSelectParentOrgDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleEditOrgSelectParentOrgNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	 					<el-button type="primary" icon="el-icon-arrow-right" circle :disabled="canEditNode" @click="handleEdit"></el-button>
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li" v-if="targetNodes != null && targetNodes != ''">
+				           			<label>{{targetNodes[defaultProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" v-if="targetNodes != null && targetNodes != ''" @click="handleEditOrgSelectParentOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+           			</div>
+       			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="editOrgSelectParentOrgSubmit">确定</el-button>
+		    		<el-button size="medium" @click="editOrgSelectParentOrgDialogVisible = false">取消</el-button>
+	    		</span>
+    		</el-dialog>
+		</div>
+		
 		
 		<!--新增部门人员界面-->
 		<el-dialog title="新增部门人员" :visible.sync="addPersonDialogVisible">
@@ -103,14 +196,14 @@
 				<h3 class="title">人员信息</h3>
 			</el-col>
 			<el-form ref="addPersonForm" :model="addPersonForm" :rules="addPersonFormRules" label-width="120px">
-				<el-form-item label="部门" prop="orgName">
-					<el-input v-model.trim="addPersonForm.orgName" auto-complete="off"></el-input>
-				</el-form-item>
 				<el-form-item label="姓名" prop="userName">
 					<el-input v-model.trim="addPersonForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="addPersonForm.userAccount" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="部门" prop="orgName">
+					<el-input v-model.trim="addPersonForm.orgName" @focus="handlePersonAddParentPersonName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -118,6 +211,47 @@
 				<el-button type="primary" @click="addPersonSubmit" :loading="addPersonLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--新增部门人员-选择上级部门-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="addPersonSelectParentPersonDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleAddPersonSelectParentPersonNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li" v-if="targetNodes.orgName">
+				           			<label>{{targetNodes[defaultProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" @click="handleAddPersonSelectParentPersonDeleteItem(targetNodes[nodeKey])">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+           			</div>
+       			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="addPersonSelectParentPersonSubmit">确定</el-button>
+		    		<el-button size="medium" @click="addPersonSelectParentPersonDialogVisible = false">取消</el-button>
+	    		</span>
+    		</el-dialog>
+		</div>
 
 		<!--编辑部门人员界面-->
 		<el-dialog title="编辑部门人员" :visible.sync="editPersonDialogVisible">
@@ -125,14 +259,14 @@
 				<h3 class="title">人员信息</h3>
 			</el-col>
 			<el-form ref="editPersonForm" :model="editPersonForm" :rules="editPersonFormRules" label-width="80px">
-				<el-form-item label="部门" prop="orgName">
-					<el-input v-model.trim="editPersonForm.orgName" auto-complete="off"></el-input>
-				</el-form-item>
 				<el-form-item label="姓名" prop="userName">
 					<el-input v-model.trim="editPersonForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="editPersonForm.userAccount" auto-complete="off" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="部门" prop="orgName">
+					<el-input v-model.trim="editPersonForm.orgName" @focus="handlePersonEditParentPersonName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -141,6 +275,48 @@
 			</div>
 		</el-dialog>
 		
+		<!--编辑部门-选择上级部门-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="editPersonSelectParentPersonDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleEditPersonSelectParentPersonNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	 					<el-button type="primary" icon="el-icon-arrow-right" circle :disabled="canEditNode" @click="handleEdit"></el-button>
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li" v-if="targetNodes != null && targetNodes != ''">
+				           			<label>{{targetNodes[defaultProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" v-if="targetNodes != null && targetNodes != ''" @click="handleEditPersonSelectParentPersonDeleteItem(targetNodes[nodeKey])">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+           			</div>
+       			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="editPersonSelectParentPersonSubmit">确定</el-button>
+		    		<el-button size="medium" @click="editPersonSelectParentPersonDialogVisible = false">取消</el-button>
+	    		</span>
+    		</el-dialog>
+		</div>
+		
 	</section>
 </template>
 
@@ -148,12 +324,24 @@
 	import axios from 'axios'
 
 	export default {
+		props: {
+		    // 宽度
+		    width: {
+		      type: String,
+		      default: '500px',
+		    },
+		    // 高度
+		    height: {
+		      type: String,
+		      default: '1000px',
+		    },
+		},
 		data() {
 			return {
 				treeData: [],
 				defaultProps: {
-					children: 'orgList',
-					label: 'orgName'
+					label: 'orgName',
+					children: 'orgList'
 		        },
 		        
 		        tableOrgData: [],
@@ -232,12 +420,19 @@
 					],
 				}, 
 				
+				//新增子部门-选择部门
+				treeTransferData: [],
+		        addOrgSelectParentOrgDialogVisible: false,
+		        targetNodes: {},
+		        editOrgSelectParentOrgDialogVisible: false,
+		        //新增部门人员-选择部门
+		        addPersonSelectParentPersonDialogVisible: false,
+		        editPersonSelectParentPersonDialogVisible: false,
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
 	    created: function () {
 	    	this.search();
-	    	this.handleNodeClick();
 	    },
 		methods: {
 	    	//搜索
@@ -257,8 +452,10 @@
 						_this.treeData = response.data.result.dataList;
 						_this.tableOrgData = response.data.result.dataList;
 						var orgId = response.data.result.dataList[0].orgId;
-						_this.$refs.tree.setCurrentKey(orgId);
-						this.loadUserOrgData(orgId);
+						var orgName = response.data.result.dataList[0].orgName;
+						_this.loadUserOrgData(orgId);
+						var node = {orgId : orgId, orgName : orgName};
+						_this.handleNodeClick(node);
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -310,43 +507,51 @@
 				);
 			}, 
 			
+			handleNodeClick(data) {
+//				alert("data.parentOrgId==="+data.parentOrgId);
+//				alert("data.orgId==="+data.orgId);
+				this.loadOrgData(data.orgId);
+				this.loadUserOrgData(data.orgId);
+				this.addPersonForm.orgId = data.orgId;
+				this.orgForm.orgName = data.orgName;
+	        },
+	        
 			//显示新增部门界面
 			handleOrgAdd: function () {
-				if(this.$refs.tree.getCurrentKey() == null) {
+				if(this.$refs.tree.getCurrentNode() == null) {
 					this.$message.error('请选择一个部门，继续新增子部门');
 				} else {
 					this.addOrgDialogVisible = true;
-					this.addOrgForm.orgName = '';
 					this.addOrgForm.parentOrgId = this.$refs.tree.getCurrentNode().orgId;
 					this.addOrgForm.parentOrgName = this.$refs.tree.getCurrentNode().orgName;
 				}
 			},
 			//显示编辑部门界面
 			handleOrgEdit: function () {
-				this.editOrgDialogVisible = true;
-				alert('this.$refs.tree.getCurrentNode().orgId;=='+this.$refs.tree.getCurrentNode().orgId);
-				
-				let params = {
-					orgId: this.$refs.tree.getCurrentNode().orgId
-				};
-				
-				axios.post('/org/getDetail', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						alert('response.data.result==='+response.data.result);
-						_this.editOrgForm = Object.assign({}, response.data.result);
-						_this.editOrgForm.orgName = response.data.result.orgName;
-					} else {
-						_this.$message.error(retMsg);
-					}
-	              }).catch(function (error) {
-	                	console.log(error);
-	              });
+				if(this.$refs.tree.getCurrentNode() == null) {
+					this.$message.error('请选择一个部门');
+				} else {
+					this.editOrgDialogVisible = true;
+					let params = {
+						orgId: this.$refs.tree.getCurrentNode().orgId
+					};
+					let _this = this;
+					axios.post('/org/getDetail', params).then(function(response) {
+						var retCode = response.data.retCode;
+						var retMsg = response.data.retMsg;
+						if(retCode == '0000000') {
+							_this.editOrgForm = response.data.result;
+						} else {
+							_this.$message.error(retMsg);
+						}
+					}).catch(function (error) {
+						console.log(error);
+					});
+				}
 			},
 			//显示新增部门人员界面
 			handlePersonAdd: function () {
-				if(this.$refs.tree.getCurrentKey() == null) {
+				if(this.$refs.tree.getCurrentNode() == null) {
 					this.$message.error('请选择一个部门，继续新增人员');
 				} else {
 					this.addPersonDialogVisible = true;
@@ -425,15 +630,74 @@
 					}
 				});
 			},
-			handleNodeClick(data) {
-				alert("data.parentOrgId==="+data.parentOrgId);
-				alert("data.orgId==="+data.orgId);
-				this.$refs.tree.setCurrentKey(-1);
-				this.loadOrgData(data.orgId);
-				this.loadUserOrgData(data.orgId);
-				this.addPersonForm.orgId = data.orgId;
-				this.orgForm.orgName=data.orgName;
-	        },
+			
+			//新增子部门-选择上级部门
+			handleOrgAddParentOrgName() {
+				this.addOrgSelectParentOrgDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+				var node = {orgId : this.addOrgForm.parentOrgId, orgName : this.addOrgForm.parentOrgName};
+				this.targetNodes = node;
+		   	},
+		   	handleAddOrgSelectParentOrgNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleAddOrgSelectParentOrgDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			addOrgSelectParentOrgSubmit() {
+				this.$emit('close');
+				this.addOrgSelectParentOrgDialogVisible = false;
+				this.addOrgForm.parentOrgId = this.targetNodes.orgId;
+				this.addOrgForm.parentOrgName = this.targetNodes.orgName;
+			},
+			
+			//编辑部门-选择上级部门
+			handleOrgEditParentOrgName() {
+				this.editOrgSelectParentOrgDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+				var node = {orgId : this.editOrgForm.parentOrgId, orgName : this.editOrgForm.parentOrgName};
+				this.targetNodes = node;
+		   	},
+		   	handleEditOrgSelectParentOrgNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleEditOrgSelectParentOrgDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			editOrgSelectParentOrgSubmit() {
+				this.$emit('close');
+				this.editOrgSelectParentOrgDialogVisible = false;
+				this.editOrgForm.parentOrgId = this.targetNodes.orgId;
+				this.editOrgForm.parentOrgName = this.targetNodes.orgName;
+			},
 			
 			//新增部门人员
 			addPersonSubmit: function () {
@@ -467,7 +731,7 @@
 					}
 				});
 			},
-			//编辑
+			//编辑部门人员
 			editPersonSubmit: function () {
 				this.$refs.editPersonForm.validate((valid) => {
 					if (valid) {
@@ -562,11 +826,234 @@
 			},
 			handleSelectionChange(val) {
 				this.tableChecked = val;
-			}
+			},
+			
+			//新增部门人员-选择上级部门
+			handlePersonAddParentPersonName() {
+				this.addPersonSelectParentPersonDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+				var node = {orgId : this.addPersonForm.parentPersonId, orgName : this.addPersonForm.parentPersonName};
+				this.targetNodes = node;
+		   	},
+		   	handleAddPersonSelectParentPersonNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleAddPersonSelectParentPersonDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			addPersonSelectParentPersonSubmit() {
+				this.$emit('close');
+				this.addPersonSelectParentPersonDialogVisible = false;
+				this.addPersonForm.orgId = this.targetNodes.orgId;
+				this.addPersonForm.orgName = this.targetNodes.orgName;
+			},
+			
+			//编辑部门人员-选择上级部门
+			handlePersonEditParentPersonName() {
+				this.editPersonSelectParentPersonDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+				var node = {orgId : this.editPersonForm.parentPersonId, orgName : this.editPersonForm.parentPersonName};
+				this.targetNodes = node;
+		   	},
+		   	handleEditPersonSelectParentPersonNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleEditPersonSelectParentPersonDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			editPersonSelectParentPersonSubmit() {
+				this.$emit('close');
+				this.editPersonSelectParentPersonDialogVisible = false;
+				this.editPersonForm.orgId = this.targetNodes.orgId;
+				this.editPersonForm.orgName = this.targetNodes.orgName;
+			},
+			
+			
+			
+		   	handleAdd() {
+				const currNode = this.$refs.tree.getCurrentNode();
+				const existed = this.isExistedTargetNode(currNode);
+				if (!existed) {
+					this.targetNodes.push(currNode);
+					this.canAddNode = true;
+				}
+			},
+			clearTargetNodes() {
+				this.targetNodes = {};
+			},
+			isExistedTargetNode(node) {
+				return this.targetNodes.some(item => item[this.nodeKey] === node[this.nodeKey]);
+			},
+			handleDialogOpen() {
+			},
+			modalClose() {
+				this.$emit('close');
+				this.addOrgSelectParentOrgDialogVisible = false;
+			},
+			beforeunloadHandler() {
+				this.targetNodes = [];
+			},
 		},
 		
 		mounted() {
 			this.$refs.tree.setCurrentKey(-1);
-		}
+		},
+		
+		computed: {
+			sourceTitle() {
+				return this.transferTitle[0];
+			},
+			targetTitle() {
+				return this.transferTitle[1];
+			},
+		},
+		
+		watch: {
+			dialogVisible(newValue) {
+				this.visible = newValue;
+			},
+		},
+		mounted() {
+			window.addEventListener('beforeunload', e => this.beforeunloadHandler(e));
+		},
+		destroyed() {
+			window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e));
+		},
+		
+		
 	}
 </script>
+
+<style lang="less">
+.tree-transfer {
+  h3, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .tree-transfer__content {
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+
+    .tree-transfer__title {
+      border-bottom: 1px solid #ebeef5;
+      padding: 0 15px;
+      height: 40px;
+      line-height: 40px;
+      color: #333;
+      font-size: 16px;
+      background-color: #f5f7fa;
+    }
+
+    .tree-transfer__list {
+      padding: 10px;
+      height: calc(100% - 41px);
+      box-sizing: border-box;
+      overflow: auto;
+    }
+
+    .tree-transfer__left {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .tree-transfer__middle {
+      position: absolute;
+      top: 50%;
+      left: 40%;
+      width: 20%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+
+    .tree-transfer__right {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      .tree-transfer__right-close {
+        float: right;
+        color: #67c23a;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .tree-transfer__list-ul {
+        padding-bottom: 20px;
+      }
+
+      .tree-transfer__list-li {
+        position: relative;
+        padding: 4px 24px 4px 10px;
+        border-radius: 3px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .tree-transfer__list-li:hover {
+        background-color: #f5f7fa;
+      }
+
+      .tree-transfer__list-li:hover .tree-transfer__list-delete {
+        display: block;
+      }
+
+      .tree-transfer__list-delete {
+        display: none;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        margin-top: -10px;
+        color: #f56c6c;
+        cursor: pointer;
+        text-align: center;
+      }
+    }
+
+    .tree-transfer__left,
+    .tree-transfer__right {
+      border: 1px solid #ebeef5;
+      width: 40%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 5px;
+      vertical-align: middle;
+    }
+  }
+  .el-dialog__footer {
+    text-align: center;
+  }
+
+}
+</style>

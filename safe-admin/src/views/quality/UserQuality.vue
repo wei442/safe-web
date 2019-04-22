@@ -52,7 +52,7 @@
 					<el-input v-model.trim="addForm.qualityName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="所属人" prop="userName">
-					<el-input v-model.trim="addForm.userName" auto-complete="off"></el-input>
+					<el-input v-model.trim="addForm.userName" @focus="handleUserAddUserName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
@@ -66,6 +66,56 @@
 				<el-button type="primary" @click="addSubmit" :loading="addLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--新增界面-选择所属人-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="addUserDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleAddOrgNodeClick">
+			 				</el-tree>
+			 				
+			 				<br>
+			 				&nbsp
+			 				<el-tree v-if="userData.length>0"
+			                    :data="userData"
+			                    :node-key="userId"
+			                    :props="defaultUserProps"
+		 						@node-click="handleAddUserNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list" v-if="targetNodes.userName">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li">
+				           			<label>{{targetNodes[defaultUserProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" @click="handleAddUserDeleteItem(targetNodes.userId)">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+           			</div>
+       			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="addUserSubmit">确定</el-button>
+		    		<el-button size="medium" @click="addUserDialogVisible = false">取消</el-button>
+	    		</span>
+    		</el-dialog>
+		</div>
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
@@ -74,7 +124,7 @@
 					<el-input v-model.trim="editForm.qualityName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="所属人" prop="userName">
-					<el-input v-model.trim="editForm.userName" auto-complete="off"></el-input>
+					<el-input v-model.trim="editForm.userName" @focus="handleUserEditUserName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
@@ -88,6 +138,57 @@
 				<el-button type="primary" @click="editSubmit" :loading="editLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--编辑部门-选择所属人-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="editUserDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleEditOrgNodeClick">
+			 				</el-tree>
+			 				
+			 				<br>
+			 				&nbsp
+			 				<el-tree v-if="userData.length>0"
+			                    :data="userData"
+			                    :node-key="userId"
+			                    :props="defaultUserProps"
+		                    	:highlight-current="true"
+		 						@node-click="handleEditUserNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li" v-if="targetNodes.userName">
+				           			<label>{{targetNodes[defaultUserProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" @click="handleEditUserDeleteItem(targetNodes.userId)">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+	       			</div>
+	   			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="editUserSubmit">确定</el-button>
+		    		<el-button size="medium" @click="editUserDialogVisible = false">取消</el-button>
+	    		</span>
+			</el-dialog>
+		</div>
 		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
@@ -111,6 +212,18 @@
 	import FileSaver from 'file-saver'
 
 	export default {
+		props: {
+		    // 宽度
+		    width: {
+		      type: String,
+		      default: '500px',
+		    },
+		    // 高度
+		    height: {
+		      type: String,
+		      default: '1000px',
+		    },
+		},
 		data() {
 			return {
 				userQualityForm: {},
@@ -146,7 +259,20 @@
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				fileList: []
+				fileList: [],
+				//新增界面-选择部门
+				treeTransferData: [],
+				defaultProps: {
+					label: 'orgName',
+					children: 'orgList'
+				},
+		        addUserDialogVisible: false,
+		        targetNodes: {},
+		        editUserDialogVisible: false,
+				userData: [],
+				defaultUserProps: {
+					label: 'userName',
+				},
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -250,15 +376,15 @@
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
 				this.editForm = Object.assign({}, row);
+				this.$refs.uploadfile.clearFiles();
 				this.loadUserQualityAttachmentList(this.editForm.userQualityId);
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
+        		this.$refs.uploadfile.clearFiles();
         		this.loadUserQualityAttachmentList(this.showForm.userQualityId);
 			},
 			//新增
@@ -377,6 +503,204 @@
 		        }).catch(() => {
 		        });
 			},
+			
+			//新增界面-选择所属人
+			handleUserAddUserName() {
+				this.addUserDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+		   	},
+		   	handleAddOrgNodeClick(node) {
+		   		let params = {
+					orgId:node.orgId
+				};
+				this.listPersonLoading = true;
+				let _this = this;
+				axios.post('/user/org/getList', params).then(function(response) {
+					_this.listPersonLoading = false;
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.userData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+		   	},
+		   	handleAddUserDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			addUserSubmit() {
+				this.$emit('close');
+				this.addUserDialogVisible = false;
+				this.addForm.userId = this.targetNodes.userId;
+				this.addForm.userName = this.targetNodes.userName;
+			},
+			
+			//编辑界面-选择所属人
+			handleUserEditUserName() {
+				this.editUserDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+		   	},
+		   	handleEditOrgNodeClick(node) {
+		   		let params = {
+					orgId:node.orgId
+				};
+				this.listPersonLoading = true;
+				let _this = this;
+				axios.post('/user/org/getList', params).then(function(response) {
+					_this.listPersonLoading = false;
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.userOrgData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+		   	},
+		   	handleEditUserDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			editUserSubmit() {
+				this.$emit('close');
+				this.editUserDialogVisible = false;
+				this.editForm.userId = this.targetNodes.userId;
+				this.editForm.userName = this.targetNodes.userName;
+			},
+			
+			handleAddUserNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleEditUserNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	
 		},
 	}
 </script>
+
+<style lang="less">
+.tree-transfer {
+	h3, ul, li {
+		margin: 0;
+		padding: 0;
+	}
+	.tree-transfer__content {
+		position: relative;
+		overflow: hidden;
+		height: 400px;
+		.tree-transfer__title {
+			border-bottom: 1px solid #ebeef5;
+			padding: 0 15px;
+			height: 40px;
+			line-height: 40px;
+	      	color: #333;
+	      	font-size: 16px;
+	      	background-color: #f5f7fa;
+		}
+		.tree-transfer__list {
+			padding: 10px;
+			height: calc(100% - 41px);
+			box-sizing: border-box;
+			overflow: auto;
+		}
+		.tree-transfer__left {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		.tree-transfer__middle {
+			position: absolute;
+			top: 50%;
+			left: 40%;
+			width: 20%;
+			transform: translateY(-50%);
+			text-align: center;
+		}
+		.tree-transfer__right {
+			position: absolute;
+			top: 0;
+			right: 0;
+		.tree-transfer__right-close {
+			float: right;
+			color: #67c23a;
+			font-size: 14px;
+			cursor: pointer;
+		}
+		.tree-transfer__list-ul {
+			padding-bottom: 20px;
+		}
+		.tree-transfer__list-li {
+			position: relative;
+			padding: 4px 24px 4px 10px;
+			border-radius: 3px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+		.tree-transfer__list-li:hover {
+			background-color: #f5f7fa;
+		}
+		.tree-transfer__list-li:hover .tree-transfer__list-delete {
+			display: block;
+		}
+		.tree-transfer__list-delete {
+	        display: block;
+	        position: absolute;
+	        top: 50%;
+	        right: 10px;
+	        margin-top: -10px;
+	        color: #f56c6c;
+	        cursor: pointer;
+	        text-align: center;
+		}
+	}
+	.tree-transfer__left,
+		.tree-transfer__right {
+	      	border: 1px solid #ebeef5;
+	      	width: 40%;
+	      	height: 100%;
+	      	box-sizing: border-box;
+	      	border-radius: 5px;
+	      	vertical-align: middle;
+		}
+	}
+	.el-dialog__footer {
+		text-align: center;
+	}
+}
+</style>

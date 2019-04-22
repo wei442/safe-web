@@ -52,7 +52,7 @@
 					<el-input v-model.trim="addForm.qualityName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="所属机构" prop="orgName">
-					<el-input v-model.trim="addForm.orgName" auto-complete="off"></el-input>
+					<el-input v-model.trim="addForm.orgName" @focus="handleOrgAddOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
@@ -66,6 +66,47 @@
 				<el-button type="primary" @click="addSubmit" :loading="addLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--新增界面-选择所属机构-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="addOrgDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleAddOrgNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list" v-if="targetNodes.orgName">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li">
+				           			<label>{{targetNodes[defaultProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" @click="handleAddOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+           			</div>
+       			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="addOrgSubmit">确定</el-button>
+		    		<el-button size="medium" @click="addOrgDialogVisible = false">取消</el-button>
+	    		</span>
+    		</el-dialog>
+		</div>
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
@@ -74,7 +115,7 @@
 					<el-input v-model.trim="editForm.qualityName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="所属机构" prop="orgName">
-					<el-input v-model.trim="editForm.orgName" auto-complete="off"></el-input>
+					<el-input v-model.trim="editForm.orgName" @focus="handleOrgEditOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
@@ -88,6 +129,47 @@
 				<el-button type="primary" @click="editSubmit" :loading="editLoading">保 存</el-button>
 			</div>
 		</el-dialog>
+		
+		<!--新增界面-选择所属机构-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="editOrgDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleEditOrgNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li" v-if="targetNodes.orgName">
+				           			<label>{{targetNodes[defaultProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete"  @click="handleEditOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+			           			</li>
+		           			</ul>
+	           			</div>
+	       			</div>
+	   			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="editOrgSubmit">确定</el-button>
+		    		<el-button size="medium" @click="editOrgDialogVisible = false">取消</el-button>
+	    		</span>
+			</el-dialog>
+		</div>
 		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
@@ -111,6 +193,18 @@
 	import FileSaver from 'file-saver'
 
 	export default {
+		props: {
+		    // 宽度
+		    width: {
+		      type: String,
+		      default: '500px',
+		    },
+		    // 高度
+		    height: {
+		      type: String,
+		      default: '1000px',
+		    },
+		},
 		data() {
 			return {
 				orgQualityForm: {},
@@ -146,7 +240,16 @@
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				fileList: []
+				fileList: [],
+				//新增界面-选择部门
+				treeTransferData: [],
+				defaultProps: {
+					label: 'orgName',
+					children: 'orgList'
+				},
+		        addOrgDialogVisible: false,
+		        targetNodes: {},
+		        editOrgDialogVisible: false,
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -253,15 +356,15 @@
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
 				this.editForm = Object.assign({}, row);
+				this.$refs.uploadfile.clearFiles();
 				this.loadOrgQualityAttachmentList(this.editForm.orgQualityId);
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
+        		this.$refs.uploadfile.clearFiles();
         		this.loadOrgQualityAttachmentList(this.showForm.orgQualityId);
 			},
 			//新增
@@ -380,6 +483,180 @@
 		        }).catch(() => {
 		        });
 			},
+			
+			//新增界面-选择所属机构
+			handleOrgAddOrgName() {
+				this.addOrgDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+				var node = {orgId : this.addForm.orgId, orgName : this.addForm.orgName};
+				this.targetNodes = node;
+		   	},
+		   	handleAddOrgNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleAddOrgDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			addOrgSubmit() {
+				this.$emit('close');
+				this.addOrgDialogVisible = false;
+				this.addForm.orgId = this.targetNodes.orgId;
+				this.addForm.orgName = this.targetNodes.orgName;
+			},
+			
+			//编辑界面-选择所属机构
+			handleOrgEditOrgName() {
+				this.editOrgDialogVisible = true;
+			    let params = {};
+				let _this = this;
+				axios.post('/org/getTreeList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.treeTransferData = response.data.result.dataList;
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
+				this.targetNodes = {};
+				var node = {orgId : this.editForm.orgId, orgName : this.editForm.orgName};
+				this.targetNodes = node;
+		   	},
+		   	handleEditOrgNodeClick(node) {
+		   		this.targetNodes = node;
+		   	},
+		   	handleEditOrgDeleteItem(id) {
+				this.targetNodes = {};
+			},
+			editOrgSubmit() {
+				this.$emit('close');
+				this.editOrgDialogVisible = false;
+				this.editForm.orgId = this.targetNodes.orgId;
+				this.editForm.orgName = this.targetNodes.orgName;
+			},
 		},
 	}
 </script>
+
+<style lang="less">
+.tree-transfer {
+  h3, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .tree-transfer__content {
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+
+    .tree-transfer__title {
+      border-bottom: 1px solid #ebeef5;
+      padding: 0 15px;
+      height: 40px;
+      line-height: 40px;
+      color: #333;
+      font-size: 16px;
+      background-color: #f5f7fa;
+    }
+
+    .tree-transfer__list {
+      padding: 10px;
+      height: calc(100% - 41px);
+      box-sizing: border-box;
+      overflow: auto;
+    }
+
+    .tree-transfer__left {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .tree-transfer__middle {
+      position: absolute;
+      top: 50%;
+      left: 40%;
+      width: 20%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+
+    .tree-transfer__right {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      .tree-transfer__right-close {
+        float: right;
+        color: #67c23a;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .tree-transfer__list-ul {
+        padding-bottom: 20px;
+      }
+
+      .tree-transfer__list-li {
+        position: relative;
+        padding: 4px 24px 4px 10px;
+        border-radius: 3px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .tree-transfer__list-li:hover {
+        background-color: #f5f7fa;
+      }
+
+      .tree-transfer__list-li:hover .tree-transfer__list-delete {
+        display: block;
+      }
+
+      .tree-transfer__list-delete {
+        display: none;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        margin-top: -10px;
+        color: #f56c6c;
+        cursor: pointer;
+        text-align: center;
+      }
+    }
+
+    .tree-transfer__left,
+    .tree-transfer__right {
+      border: 1px solid #ebeef5;
+      width: 40%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 5px;
+      vertical-align: middle;
+    }
+  }
+  .el-dialog__footer {
+    text-align: center;
+  }
+
+}
+</style>

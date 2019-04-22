@@ -11,7 +11,6 @@ import Org from '@/views/org/Org'
 import OrgIndex from '@/views/org/OrgIndex'
 import Title from '@/views/title/Title'
 import Post from '@/views/post/Post'
-import Post2 from '@/views/post/Post2'
 import Dict from '@/views/dict/Dict'
 import DictItem from '@/views/dict/DictItem'
 import OrgQuality from '@/views/quality/OrgQuality'
@@ -97,15 +96,6 @@ export default new Router({
 	    				requireAuth: true 
 	    			},
 	    			component: Post,
-	    		},
-	    		{
-	    			path: '/post2',
-	    			name: 'post2',
-	    			meta: { 
-	    				title: '岗位管理', 
-	    				requireAuth: true 
-	    			},
-	    			component: Post2,
 	    		},
 	    		{
 	    			path: '/title',
