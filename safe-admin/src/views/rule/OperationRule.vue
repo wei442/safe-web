@@ -66,7 +66,7 @@
 					<el-input v-model.trim="addForm.keyWord" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" :file-list="fileAddList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件不能超过50M</div>
 					</el-upload>
@@ -106,7 +106,7 @@
 			          		<ul class="tree-transfer__list-ul">
 			           			<li class="tree-transfer__list-li">
 				           			<label>{{targetNodes[defaultProps.label]}}</label>
-				           			<span class="tree-transfer__list-delete" @click="handleAddOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+				           			<span class="tree-transfer__list-delete" @click="handleAddOrgDeleteItem(targetNodes.orgId)">删除</span>
 			           			</li>
 		           			</ul>
 	           			</div>
@@ -135,7 +135,7 @@
 					<el-input v-model.trim="editForm.keyWord" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" :file-list="fileEditList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件不能超过50M</div>
 					</el-upload>
@@ -175,7 +175,7 @@
 			          		<ul class="tree-transfer__list-ul">
 			           			<li class="tree-transfer__list-li" v-if="targetNodes.orgName">
 				           			<label>{{targetNodes[defaultProps.label]}}</label>
-				           			<span class="tree-transfer__list-delete" @click="handleEditOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+				           			<span class="tree-transfer__list-delete" @click="handleEditOrgDeleteItem(targetNodes.orgId)">删除</span>
 			           			</li>
 		           			</ul>
 	           			</div>
@@ -196,7 +196,7 @@
 				<el-form-item label="适用范围">{{ showForm.orgName }}</el-form-item>
 				<el-form-item label="关键字">{{ showForm.keyWord }}</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :on-preview="handlePreview" :file-list="fileList"></el-upload>
+					<el-upload class="upload-demo" ref="uploadShowfile" :on-preview="handlePreview" :file-list="fileShowList"></el-upload>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -249,6 +249,7 @@
 						{ required: true, message: '请输入关键字', trigger: 'blur' }
 					],
 				}, 
+				fileAddList: [],
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
 				editForm: {
@@ -268,10 +269,11 @@
 						{ required: true, message: '请输入关键字', trigger: 'blur' }
 					],
 				}, 
+				fileEditList: [],
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				fileList: [],
+				fileShowList: [],
 				//新增界面-选择部门
 				treeTransferData: [],
 				defaultProps: {
@@ -298,9 +300,23 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	handleRemove(file, fileList) {
-	            this.fileList = fileList;
+	      //新增-文件列表移除
+	      	handleAddRemove(file, fileList) {
+	      		this.fileAddList = fileList;
 	      	},
+	      	//新增-文件上传成功
+	      	handleAddSuccess(res, file, fileList) {
+	      		this.fileAddList = fileList;
+	      	},
+	      	//编辑-文件列表移除
+	      	handleEditRemove(file, fileList) {
+	      		this.fileEditList = fileList;
+	      	},
+	      	//编辑-文件上传成功
+	      	handleEditSuccess(res, file, fileList) {
+	      		this.fileEditList = fileList;
+	      	},
+	      	//点击已上传的文件
 	      	handlePreview(file) {
 	      		let params = {
       				fileName: file.name,
@@ -312,12 +328,11 @@
         		}).catch(function (error) {
         		});
 	      	},
-	      	handleSuccess(res, file, fileList) {
-	            this.fileList = fileList;
-	      	},
+	      	//删除文件之前
 	      	beforeRemove(file, fileList) {
 	        	return this.$confirm(`确定移除 ${ file.name }？`);
 	      	},
+	      	//上传文件之前
 	      	beforeUpload(file) {
 	      		var isLt50M = file.size > 50*1024*1024 ? true:false;
 	      	    if (isLt50M) {
@@ -353,17 +368,20 @@
 	        	);
 			}, 
 			//获取规范附件列表
-			loadRuleAttachmentList: function (ruleId) {
+			loadRuleAttachmentList: function (ruleId, type) {
 				let params = {
 					ruleId : ruleId
 				};
         		let _this = this;
-        		//获取规范附件列表
 				axios.post('/rule/attachment/getList', params, params).then(function (response) {
 					var retCode = response.data.retCode;
 					var retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
-						_this.fileList = response.data.result.dataList;
+						if(type == 'edit') {
+							_this.fileEditList = response.data.result.dataList;
+			            } else if(type == 'show') {
+			            	_this.fileShowList = response.data.result.dataList;
+			            }
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -374,22 +392,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
+				this.$refs.uploadAddfile.clearFiles();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
 				this.editForm = Object.assign({}, row);
-				this.$refs.uploadfile.clearFiles();
 				this.loadRuleAttachmentList(this.editForm.ruleId);
+				this.$refs.uploadEditfile.clearFiles();
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
         		this.showForm = Object.assign({}, row);
-        		this.$refs.uploadfile.clearFiles();
         		this.loadRuleAttachmentList(this.showForm.ruleId);
+        		this.$refs.uploadShowfile.clearFiles();
 			},
 			//新增
 			addSubmit: function () {
@@ -403,10 +421,8 @@
 							formData.set('ruleNo', this.addForm.ruleNo);
 							formData.set('orgName', this.addForm.orgName);
 							formData.set('keyWord', this.addForm.keyWord);
-							this.fileList.forEach(function(item, index){
-								if(item != null && item.raw != null) {
-									formData.append('fileList', item.raw);
-								}
+							this.fileAddList.forEach(function(item, index){
+								formData.append('fileList', item.raw);
 							});
 							let headers = {
                                 headers: {'Content-Type': 'multipart/form-data'}
@@ -448,13 +464,11 @@
 							formData.set('ruleNo', this.editForm.ruleNo);
 							formData.set('orgName', this.editForm.orgName);
 							formData.set('keyWord', this.editForm.keyWord);
-							this.fileList.forEach(function(item, index){
-								if(item != null) {
-									if(item.raw != null && item.ruleAttachmentId == null) {
-										formData.append('fileList', item.raw);
-									} else {
-										formData.append('ruleAttachmentIds', item.ruleAttachmentId);
-									}
+							this.fileEditList.forEach(function(item, index){
+								if(item.raw != null) {
+									formData.append('fileList', item.raw);
+								} else if(item.ruleAttachmentId != null) {
+									formData.append('ruleAttachmentIds', item.ruleAttachmentId);
 								}
 							});
 							let headers = {

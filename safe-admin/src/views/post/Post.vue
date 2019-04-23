@@ -9,11 +9,11 @@
 				<br>
 				<el-menu :data="treeData" :default-active="onRoutes" default-active="2" class="el-menu-vertical-demo" unique-opened router default-openeds="[1]">
 					<el-submenu index="1">
-					 	<template slot="title">
-						      <span slot="title">岗位</span>
-					     </template>
+						<template slot="title">
+							<span slot="title">岗位</span>
+						</template>
 					 	<template v-for="(item,i) in treeData">
-							<el-menu-item @click="handlePostPerson(item.postId, item.postName)">{{ item.postName }}</el-menu-item>
+					 		<el-menu-item @click="handlePostPerson(item.postId, item.postName)">{{ item.postName }}</el-menu-item>
 						</template>
 					</el-submenu>
 				</el-menu>
@@ -24,7 +24,7 @@
 				<!--工具条-->
 				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 					<el-form :inline="true" :model="postForm" size="small" style="float: left;">
-						<h3 class="title">{{ postForm.postName }}  <el-button type="primary" size="small" @click="handlePostEdit">编辑</el-button></h3>
+						<h3 class="title">{{ postName }}  <el-button type="primary" size="small" @click="handlePostEdit">编辑</el-button></h3>
 						<el-form-item>
 							<el-button type="primary" icon="el-icon-plus" size="small" @click="handleUserAddUserName">新增人员</el-button>
 						</el-form-item>
@@ -129,7 +129,6 @@
 		</el-dialog>
 	</div>
 	
-	
 	<!--新增人员界面-->
 	<el-dialog title="新增人员" :visible.sync="addPersonDialogVisible">
 		<el-form ref="addPersonForm" :model="addPersonForm" :rules="addPersonFormRules" label-width="80px">
@@ -174,6 +173,7 @@
 			return {
 				treeData: [],
 				postForm: {},
+				postName: {},
 				tableData: [],
 				listLoading: false,
 				labelPosition: 'right',
@@ -198,7 +198,6 @@
 						{ required: true, message: '请输入岗位名称', trigger: 'blur' }
 					],
 				}, 
-				
 				
 				editPostDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
@@ -258,6 +257,26 @@
 						var postId = response.data.result.dataList[0].postId;
 						var postName = response.data.result.dataList[0].postName;
 						_this.handlePostPerson(postId, postName);
+					} else {
+						_this.$message.error(retMsg);
+					}
+	        		}).catch(function (error) {
+	        			console.log(error);
+	        		}
+	        	);
+			}, 
+			loadUserPostData: function(postId) {
+				let params = {
+					postId : postId
+				};
+				this.listLoading = true;
+				let _this = this;
+				axios.post('/user/post/getList', params).then(function(response) {
+					_this.listLoading = false;
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.tableData = response.data.result.dataList;
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -384,9 +403,11 @@
 			handlePostPerson: function (postId, postName) {
 				this.postForm.postId = postId;
 				this.postForm.postName = postName;
+				this.postName = postName;
+				this.loadUserPostData(postId);
 			},
 			
-			//新增界面-选择所属人
+			//新增界面-选择人员
 			handleUserAddUserName() {
 				this.addUserDialogVisible = true;
 			    let params = {};
@@ -404,6 +425,7 @@
 					}
 				);
 				this.targetNodes = [];
+				this.userData = [];
 		   	},
 		   	handleAddOrgNodeClick(node) {
 		   		let params = {
@@ -431,8 +453,22 @@
 			addUserSubmit() {
 				this.$emit('close');
 				this.addUserDialogVisible = false;
-				
-				alert('this.targetNodes==='+this.targetNodes);
+				var postId = this.postForm.postId;
+				var postName = this.postForm.postName;
+				let params = {postId:postId, userList:this.targetNodes};
+				let _this = this;
+				axios.post('/user/post/addList', params).then(function(response) {
+					var retCode = response.data.retCode;
+					var retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.handlePostPerson(postId, postName);
+					} else {
+						_this.$message.error(retMsg);
+					}
+					}).catch(function (error) {
+						console.log(error);
+					}
+				);
 			},
 			
 			handleAddUserNodeClick(node) {
