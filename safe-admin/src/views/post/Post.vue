@@ -2,7 +2,6 @@
 	<section>
 		<el-container style="height: 560px; border: 1px solid #eee">
 			<el-aside width="220px" style="background-color: rgb(238, 241, 246)">
-				<!--列表-->
 				<h5>岗位</h5>
 				&#12288;<el-button type="primary" icon="el-icon-plus" size="mini" @click="handlePostAdd">新增岗位</el-button>
 				<br>
@@ -19,137 +18,129 @@
 				</el-menu>
 			</el-aside>
 
-		<el-container>
-			<el-main>
-				<!--工具条-->
-				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-					<el-form :inline="true" :model="postForm" size="small" style="float: left;">
-						<h3 class="title">{{ postName }}  <el-button type="primary" size="small" @click="handlePostEdit">编辑</el-button></h3>
-						<el-form-item>
-							<el-button type="primary" icon="el-icon-plus" size="small" @click="handleUserAddUserName">新增人员</el-button>
-						</el-form-item>
-						<el-form-item>
-							<el-button type="primary" icon="el-icon-plus" size="small" @click="handlePersonBatchDelete">批量删除</el-button>
-						</el-form-item>
-					</el-form>
-				</el-col>
-				
-				<!--列表-->
-				<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
-					<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-					<el-table-column prop="userName" label="姓名" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="orgName" label="部门" header-align="center" align="center"></el-table-column>
-					<el-table-column label="操作" width="240" header-align="center" align="center">
-						<template slot-scope="scope">
-					        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-					        <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-					        <el-button size="small" @click="handleShow(scope.$index, scope.row)">查看</el-button>
-				  		</template>
-					</el-table-column>
-				</el-table>
-		    </el-main>
-	    </el-container>
-    </el-container>
+			<el-container>
+				<el-main>
+					<!--工具条-->
+					<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+						<el-form :inline="true" :model="postForm" size="small" style="float: left;">
+							<h3 class="title">{{ postName }}  <el-button type="primary" size="small" @click="handlePostEdit">编辑</el-button></h3>
+							<el-form-item>
+								<el-button type="primary" icon="el-icon-plus" size="small" @click="handleUserAddUserName">新增人员</el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="danger" icon="el-icon-delete" size="small" @click="handlePersonBatchDelete(tableChecked)"">批量删除</el-button>
+							</el-form-item>
+						</el-form>
+					</el-col>
+					
+					<!--列表-->
+					<el-table :data="tableData" border fit highlight-current-row v-loading="listPersonLoading" stripe style="width:100%;" size="small" @selection-change="handleSelectionChange">
+						<el-table-column type="selection" width="55"></el-table-column>	
+						<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
+						<el-table-column prop="userName" label="姓名" header-align="center" align="center"></el-table-column>
+						<el-table-column prop="orgName" label="部门" header-align="center" align="center"></el-table-column>
+						<!--
+						<el-table-column label="操作" width="240" header-align="center" align="center">
+							<template slot-scope="scope">
+						        <el-button type="primary" size="small" @click="handlePersonEdit(scope.$index, scope.row)">编辑</el-button>
+						        <el-button type="danger" size="small" @click="handlePersonDelete(scope.$index, scope.row)">删除</el-button>
+						        <el-button size="small" @click="handlePersonShow(scope.$index, scope.row)">查看</el-button>
+					  		</template>
+						</el-table-column>
+						-->
+					</el-table>
+			    </el-main>
+		    </el-container>
+		    </el-container>
     
-    <!--新增岗位界面-->
-	<el-dialog title="新增岗位" :visible.sync="addPostDialogVisible">
-		<el-form ref="addPostForm" :model="addPostForm" :rules="addPostFormRules" label-width="80px">
-			<el-form-item label="岗位名称" prop="postName">
-				<el-input v-model.trim="addPostForm.postName" auto-complete="off"></el-input>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click="addPostDialogVisible = false">取 消</el-button>
-			<el-button type="primary" @click="addPostSubmit" :loading="addPostLoading">保 存</el-button>
-		</div>
-	</el-dialog>
-	
-	<!-- 编辑岗位界面-->
-	<el-dialog title="编辑岗位" :visible.sync="editPostDialogVisible">
-		<el-form ref="editPostForm" :model="editPostForm" :rules="editPostFormRules" label-width="80px">
-			<el-form-item label="岗位名称" prop="postName">
-				<el-input v-model.trim="editPostForm.postName" auto-complete="off"></el-input>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click="editPostDialogVisible = false">取 消</el-button>
-			<el-button type="danger" @click="deletePostSubmit" :loading="editPostLoading">删 除</el-button>
-			<el-button type="primary" @click="editPostSubmit" :loading="editPostLoading">保 存</el-button>
-		</div>
-	</el-dialog>
-	
-	<!--新增界面-选择所属人-->
-	<div class="tree-transfer" :style="{width,height}">
-		<el-dialog title="选择部门" :visible.sync="addUserDialogVisible" class="tree-transfer__dialog">
-			<section class="tree-transfer__content">
-	 			<div class="tree-transfer__left">
-	 				<h3 class="tree-transfer__title">选择</h3>
-	 				<div class="tree-transfer__list">
-	 					<el-tree
-		                    :data="treeTransferData"
-		                    :node-key="orgId"
-		                    :props="defaultProps"
-		                    :highlight-current="true"
-		                    :expand-on-click-node="false"
-	 						@node-click="handleAddOrgNodeClick">
-		 				</el-tree>
-		 				
-		 				<br>
-		 				&nbsp
-		 				<el-tree v-if="userData.length>0"
-		                    :data="userData"
-		                    :node-key="userId"
-	                    	show-checkbox
-		                    :props="defaultUserProps"
-	 						@node-click="handleAddUserNodeClick">
-		 				</el-tree>
-	 				</div>
- 				</div>
- 				<div class="tree-transfer__middle">
-                </div>
-                <div class="tree-transfer__right">
-                	<h3 class="tree-transfer__title">
-                  		<span>已选</span>
-                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
-	              	</h3>
-	              	<div class="tree-transfer__list" v-if="targetNodes">
-		          		<ul class="tree-transfer__list-ul">
-		           			<li class="tree-transfer__list-li"  v-for="(item, index) of targetNodes" :key="item.userId">
-		           				<label>{{index + 1 + '.' + item[defaultUserProps.label]}}</label>
-		           				<span class="tree-transfer__list-delete" @click="handleAddUserDeleteItem(item.userId)">删除</span>
-		                    </li>
-	           			</ul>
-           			</div>
-       			</div>
-   			</section>
-			<span slot="footer" class="dialog-footer">
-	    		<el-button size="medium" type="primary" @click="addUserSubmit">确定</el-button>
-	    		<el-button size="medium" @click="addUserDialogVisible = false">取消</el-button>
-    		</span>
+	    <!--新增岗位界面-->
+		<el-dialog title="新增岗位" :visible.sync="addPostDialogVisible">
+			<el-form ref="addPostForm" :model="addPostForm" :rules="addPostFormRules" label-width="80px">
+				<el-form-item label="岗位名称" prop="postName">
+					<el-input v-model.trim="addPostForm.postName" auto-complete="off"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="addPostDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="addPostSubmit" :loading="addPostLoading">保 存</el-button>
+			</div>
 		</el-dialog>
-	</div>
-	
-	<!--新增人员界面-->
-	<el-dialog title="新增人员" :visible.sync="addPersonDialogVisible">
-		<el-form ref="addPersonForm" :model="addPersonForm" :rules="addPersonFormRules" label-width="80px">
-			<el-transfer v-model="value1" :data="data" :titles="['选择', '已选']"></el-transfer>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click="addPersonDialogVisible = false">取 消</el-button>
-			<el-button type="primary" @click="addersonSubmit" :loading="addPersonLoading">保 存</el-button>
+		
+		<!-- 编辑岗位界面-->
+		<el-dialog title="编辑岗位" :visible.sync="editPostDialogVisible">
+			<el-form ref="editPostForm" :model="editPostForm" :rules="editPostFormRules" label-width="80px">
+				<el-form-item label="岗位名称" prop="postName">
+					<el-input v-model.trim="editPostForm.postName" auto-complete="off"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="editPostDialogVisible = false">取 消</el-button>
+				<el-button type="danger" @click="deletePostSubmit" :loading="editPostLoading">删 除</el-button>
+				<el-button type="primary" @click="editPostSubmit" :loading="editPostLoading">保 存</el-button>
+			</div>
+		</el-dialog>
+		
+		<!--新增人员-->
+		<div class="tree-transfer" :style="{width,height}">
+			<el-dialog title="选择部门" :visible.sync="addUserDialogVisible" class="tree-transfer__dialog">
+				<section class="tree-transfer__content">
+		 			<div class="tree-transfer__left">
+		 				<h3 class="tree-transfer__title">选择</h3>
+		 				<div class="tree-transfer__list">
+		 					<el-tree
+			                    :data="treeTransferData"
+			                    :node-key="orgId"
+			                    :props="defaultProps"
+			                    :highlight-current="true"
+			                    :expand-on-click-node="false"
+		 						@node-click="handleAddOrgNodeClick">
+			 				</el-tree>
+			 				
+			 				<br>
+			 				&nbsp
+			 				<el-tree v-if="userData.length>0"
+			                    :data="userData"
+			                    :node-key="userId"
+		                    	show-checkbox
+			                    :props="defaultUserProps"
+		 						@node-click="handleAddUserNodeClick">
+			 				</el-tree>
+		 				</div>
+	 				</div>
+	 				<div class="tree-transfer__middle">
+	                </div>
+	                <div class="tree-transfer__right">
+	                	<h3 class="tree-transfer__title">
+	                  		<span>已选</span>
+	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
+		              	</h3>
+		              	<div class="tree-transfer__list" v-if="targetNodes">
+			          		<ul class="tree-transfer__list-ul">
+			           			<li class="tree-transfer__list-li"  v-for="(item, index) of targetNodes" :key="item.userId">
+			           				<label>{{index + 1 + '.' + item[defaultUserProps.label]}}</label>
+			           				<span class="tree-transfer__list-delete" @click="handleAddUserDeleteItem(item.userId)">删除</span>
+			                    </li>
+		           			</ul>
+	           			</div>
+	       			</div>
+	   			</section>
+				<span slot="footer" class="dialog-footer">
+		    		<el-button size="medium" type="primary" @click="addUserSubmit">确定</el-button>
+		    		<el-button size="medium" @click="addUserDialogVisible = false">取消</el-button>
+	    		</span>
+			</el-dialog>
 		</div>
-	</el-dialog>
-	
-	
-	<!--查看界面-->
-	<el-dialog title="查看" :visible.sync="showDialogVisible">
-		<el-form :model="showForm" label-width="80px">
-			<el-form-item label="岗位名称">{{ showForm.postName }}</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click="showDialogVisible = false">取 消</el-button>
-		</div>
-	</el-dialog>
+		
+		<!--新增人员界面-->
+		<el-dialog title="新增人员" :visible.sync="addPersonDialogVisible">
+			<el-form ref="addPersonForm" :model="addPersonForm" :rules="addPersonFormRules" label-width="80px">
+				<el-transfer v-model="value1" :data="data" :titles="['选择', '已选']"></el-transfer>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="addPersonDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="addersonSubmit" :loading="addPersonLoading">保 存</el-button>
+			</div>
+		</el-dialog>
     </section>
 </template>
 
@@ -173,7 +164,7 @@
 			return {
 				treeData: [],
 				postForm: {},
-				postName: {},
+				postName: '',
 				tableData: [],
 				listLoading: false,
 				labelPosition: 'right',
@@ -209,9 +200,6 @@
 						{ required: true, message: '请输入岗位名称', trigger: 'blur' }
 					],
 				}, 
-				showDialogVisible: false,//查看界面是否显示
-				showForm: {
-				},
 				
 				//新增界面-选择部门
 				treeTransferData: [],
@@ -300,11 +288,6 @@
 				this.addPersonDialogVisible = true;
 				this.$refs.addPostForm.resetFields();
 			},
-			//显示查看界面
-			handleShow: function (index, row) {
-				this.showDialogVisible = true;
-        		this.showForm = Object.assign({}, row);
-			},
 			//搜索
 	        search: function(){
 	            this.loadData();
@@ -372,10 +355,10 @@
 				});
 			},
 			//删除岗位
-			deletePostSubmit: function (index, row) {
+			deletePostSubmit: function () {
 				this.$confirm('确认删除该记录吗？', '提示', { type: 'warning' }).then(() => {
 					let params = {
-						postId: this.postId
+						postId: this.editPostForm.postId
 					};
 					let _this = this;
 					axios.post('/post/delete', params).then(function(response) {
@@ -387,13 +370,14 @@
 								type: 'success'
 							});
 							_this.loadData();
+							_this.editPostDialogVisible = false;
 						} else if(retCode == '00000002') {
 							_this.$message.error('保存失败');
 						} else {
 							_this.$message.error(retMsg);
 						}
 		              }).catch(function (error) {
-		                	console.log(error);
+		               		console.log(error);
 		              });
 		        }).catch(() => {
 		        });
@@ -407,7 +391,7 @@
 				this.loadUserPostData(postId);
 			},
 			
-			//新增界面-选择人员
+			//新增人员
 			handleUserAddUserName() {
 				this.addUserDialogVisible = true;
 			    let params = {};
@@ -470,6 +454,41 @@
 					}
 				);
 			},
+			//批量删除人员
+			handlePersonBatchDelete: function (rows) {
+				if(rows == null) {
+					this.$message.error('请选择要删除的人员');
+				} else {
+					this.$confirm('确认批量删除记录吗？', '提示', { type: 'warning' }).then(() => {
+						this.listPersonLoading = true;
+						let params = {
+							userPostIds: rows
+						};
+						let postId = this.postForm.postId;
+						let _this = this;
+						axios.post('/user/post/batchDelete', params).then(function(response) {
+							_this.listPersonLoading = false;
+							var retCode = response.data.retCode;
+							var retMsg = response.data.retMsg;
+							if(retCode == '0000000') {
+								_this.$message({
+									message: '删除成功',
+									type: 'success'
+								});
+								_this.loadUserPostData(postId);
+							} else if(retCode == '00000002') {
+								_this.$message.error('保存失败');
+							} else {
+								_this.$message.error(retMsg);
+							}
+						}).catch(function (error) {
+							console.log(error);
+						});
+					}).catch(() => {
+					});
+				}
+				
+			},
 			
 			handleAddUserNodeClick(node) {
 		   		const existed = this.isExistedTargetNode(node);
@@ -483,6 +502,14 @@
 			clearTargetNodes() {
 				this.targetNodes = [];
 		    },
+		    
+		    handleSelectionChange(val) {
+		    	let userPostIds = [];
+		    	val.forEach(function(item){
+					userPostIds.push(item.userPostId);
+				});
+				this.tableChecked = userPostIds;
+			},
 		},
 		computed: {
 			isTargetNodesEmpty() {
