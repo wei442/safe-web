@@ -456,7 +456,7 @@
 			},
 			//批量删除人员
 			handlePersonBatchDelete: function (rows) {
-				if(rows == null) {
+				if(rows == null || rows == '') {
 					this.$message.error('请选择要删除的人员');
 				} else {
 					this.$confirm('确认批量删除记录吗？', '提示', { type: 'warning' }).then(() => {
@@ -487,7 +487,6 @@
 					}).catch(() => {
 					});
 				}
-				
 			},
 			
 			handleAddUserNodeClick(node) {

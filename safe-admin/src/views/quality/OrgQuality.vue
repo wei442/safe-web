@@ -55,7 +55,7 @@
 					<el-input v-model.trim="addForm.orgName" @focus="handleOrgAddOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" :file-list="fileAddList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -118,7 +118,7 @@
 					<el-input v-model.trim="editForm.orgName" @focus="handleOrgEditOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" :file-list="fileEditList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -177,7 +177,7 @@
 				<el-form-item label="资质名称">{{ showForm.qualityName }}</el-form-item>
 				<el-form-item label="所属机构">{{ showForm.orgName }}</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :on-preview="handlePreview" :file-list="fileList"></el-upload>
+					<el-upload class="upload-demo" ref="uploadShowfile" :on-preview="handlePreview" :file-list="fileShowList"></el-upload>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -224,6 +224,7 @@
 						{ required: true, message: '请选择所属机构', trigger: 'blur' }
 					],
 				}, 
+				fileAddList: [],
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
 				editForm: {
@@ -237,10 +238,11 @@
 						{ required: true, message: '请选择所属机构', trigger: 'blur' }
 					],
 				}, 
+				fileEditList: [],
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				fileList: [],
+				fileShowList: [],
 				//新增界面-选择部门
 				treeTransferData: [],
 				defaultProps: {
@@ -267,12 +269,23 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	handleRemove(file, fileList) {
-	            this.fileList = fileList;
+	      	//新增-文件列表移除
+	      	handleAddRemove(file, fileList) {
+	      		this.fileAddList = fileList;
 	      	},
-	      	handleRemove(file, fileList) {
-	            this.fileList = fileList;
+	      	//新增-文件上传成功
+	      	handleAddSuccess(res, file, fileList) {
+	      		this.fileAddList = fileList;
 	      	},
+	      	//编辑-文件列表移除
+	      	handleEditRemove(file, fileList) {
+	      		this.fileEditList = fileList;
+	      	},
+	      	//编辑-文件上传成功
+	      	handleEditSuccess(res, file, fileList) {
+	      		this.fileEditList = fileList;
+	      	},
+	      	//点击已上传的文件
 	      	handlePreview(file) {
 	      		let params = {
       				fileName: file.name,
@@ -284,9 +297,7 @@
         		}).catch(function (error) {
         		});
 	      	},
-	      	handleSuccess(res, file, fileList) {
-	            this.fileList = fileList;
-	      	},
+	      	//删除文件之前
 	      	beforeRemove(file, fileList) {
 	        	return this.$confirm(`确定移除 ${ file.name }？`);
 	      	},
@@ -299,7 +310,7 @@
 	      		}
 	      		var isLt10M = file.size > 10*1024*1024 ? true:false;
 	      	    if (isLt10M) {
-	      	    	this.$message.error('上传文件大小不能超过 10MB!');
+	      	    	this.$message.error('上传图片大小不能超过 10MB!');
 	      	    };
 	      	},
 			//搜索
@@ -339,7 +350,11 @@
 					var retCode = response.data.retCode;
 					var retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
-						_this.fileList = response.data.result.dataList;
+						if(type == 'edit') {
+							_this.fileEditList = response.data.result.dataList;
+			            } else if(type == 'show') {
+			            	_this.fileShowList = response.data.result.dataList;
+			            }
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -350,22 +365,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
+				this.$refs.uploadAddfile.clearFiles();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
 				this.editForm = Object.assign({}, row);
-				this.$refs.uploadfile.clearFiles();
-				this.loadOrgQualityAttachmentList(this.editForm.orgQualityId);
+				this.loadOrgQualityAttachmentList(this.editForm.orgQualityId, 'edit');
+				this.$refs.uploadEditfile.clearFiles();
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
         		this.showForm = Object.assign({}, row);
-        		this.$refs.uploadfile.clearFiles();
-        		this.loadOrgQualityAttachmentList(this.showForm.orgQualityId);
+        		this.loadOrgQualityAttachmentList(this.showForm.orgQualityId, 'show');
+        		this.$refs.uploadShowfile.clearFiles();
 			},
 			//新增
 			addSubmit: function () {
@@ -376,10 +391,8 @@
 							let formData = new FormData();
 							formData.set('qualityName', this.addForm.qualityName);
 							formData.set('orgName', this.addForm.orgName);
-							this.fileList.forEach(function(item, index){
-								if(item != null && item.raw != null) {
-									formData.append('fileList', item.raw);
-								}
+							this.fileAddList.forEach(function(item, index){
+								formData.append('fileList', item.raw);
 							});
 							let headers = {
                                 headers: {'Content-Type': 'multipart/form-data'}
@@ -418,13 +431,11 @@
 							formData.set('orgQualityId', this.editForm.orgQualityId);
 							formData.set('qualityName', this.editForm.qualityName);
 							formData.set('orgName', this.editForm.orgName);
-							this.fileList.forEach(function(item, index){
-								if(item != null) {
-									if(item.raw != null && item.orgQualityIdId == null) {
-										formData.append('fileList', item.raw);
-									} else {
-										formData.append('orgQualityIdIds', item.orgQualityIdId);
-									}
+							this.fileEditList.forEach(function(item, index){
+								if(item.raw != null) {
+									formData.append('fileList', item.raw);
+								} else if(item.ruleAttachmentId != null) {
+									formData.append('ruleAttachmentIds', item.ruleAttachmentId);
 								}
 							});
 							let headers = {

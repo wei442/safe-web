@@ -113,6 +113,10 @@
 			            		path: '/title',
 			            		name: '职务管理',
 			            	},
+			            	{
+			            		path: '/setting',
+			            		name: '设置管理',
+			            	},
 			        	]
 			      	},
 			      	{
@@ -171,54 +175,51 @@
 			            icon: 'el-icon-menu',
 			            child: [
 			            	{
-			            		path: '/enterprise',
+			            		path: '/risk',
 			            		name: '风险因素管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
+			            		path: '/riskAccept',
 			            		name: '控制措施验收管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
+			            		path: '/riskFile',
 			            		name: '风险档案管理',
 			            	}
 			        	]
 			      	},
-			      	
 			      	{
 			      		path: '7',
 			      		name: '安全隐患管理',
 			            icon: 'el-icon-menu',
 			            child: [
 			            	{
-			            		path: '/enterprise',
+			            		path: '/postCheck',
 			            		name: '岗位排查清单管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
-			            		name: '排查任务指派度管理',
+			            		path: '/postCheckSend',
+			            		name: '排查任务指派管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
+			            		path: '/postCheckStatistics',
 			            		name: '排查结果统计管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
+			            		path: '/dangerExpress',
 			            		name: '隐患快报管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
+			            		path: '/dangerCheck',
 			            		name: '隐患抽查管理',
 			            	},
 			            	{
-			            		path: '/enterprise',
+			            		path: '/dangerBook',
 			            		name: '隐患台账管理',
 			            	},
 			        	]
 			      	},
-			      	
 		        ]
-				
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -341,7 +342,7 @@
 		position: absolute;
 		top: 60px;
 		bottom: 0px;
-		overflow: hidden;
+		overflow: auto;
 		aside {
 			flex:0 0 230px;
 			width: 230px;

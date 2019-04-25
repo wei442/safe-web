@@ -12,6 +12,9 @@
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
 				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleReturn">返回字典</el-button>
+				</el-form-item>
 			</el-form>
 		</el-col>
 
@@ -58,7 +61,7 @@
 		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
-			<el-form :model="showForm" label-width="80px">
+			<el-form :model="showForm" label-width="120px">
 				<el-form-item label="字典子项名称">{{ showForm.itemName }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -167,6 +170,10 @@
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
         		this.showForm = Object.assign({}, row);
+			},
+			//返回字典子项
+			handleReturn: function () {
+				this.$router.push('/dict');
 			},
 			//搜索
 	        search: function(){

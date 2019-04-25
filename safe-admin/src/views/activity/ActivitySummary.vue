@@ -76,7 +76,7 @@
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.lesson" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" :file-list="fileAddList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -113,7 +113,7 @@
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.lesson" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleRemove" :on-success="handleSuccess" :file-list="fileList">
+					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" :file-list="fileEditList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -133,6 +133,9 @@
 				<el-form-item label="活动内容">{{ showForm.content }}</el-form-item>
 				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
 				<el-form-item label="活动类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="相关文件">
+					<el-upload class="upload-demo" ref="uploadShowfile" :on-preview="handlePreview" :file-list="fileShowList"></el-upload>
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -181,6 +184,7 @@
 						{ required: true, message: '请输入教训', trigger: 'blur' }
 					],
 				}, 
+				fileAddList: [],
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
 				editForm: {
@@ -209,10 +213,11 @@
 						{ required: true, message: '请输入教训', trigger: 'blur' }
 					],
 				}, 
+				fileEditList: [],
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				fileList: []
+				fileShowList: [],
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -230,9 +235,23 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	handleRemove(file, fileList) {
-	            this.fileList = fileList;
+	      //新增-文件列表移除
+	      	handleAddRemove(file, fileList) {
+	      		this.fileAddList = fileList;
 	      	},
+	      	//新增-文件上传成功
+	      	handleAddSuccess(res, file, fileList) {
+	      		this.fileAddList = fileList;
+	      	},
+	      	//编辑-文件列表移除
+	      	handleEditRemove(file, fileList) {
+	      		this.fileEditList = fileList;
+	      	},
+	      	//编辑-文件上传成功
+	      	handleEditSuccess(res, file, fileList) {
+	      		this.fileEditList = fileList;
+	      	},
+	      	//点击已上传的文件
 	      	handlePreview(file) {
 	      		let params = {
       				fileName: file.name,
@@ -244,9 +263,7 @@
         		}).catch(function (error) {
         		});
 	      	},
-	      	handleSuccess(res, file, fileList) {
-	            this.fileList = fileList;
-	      	},
+	      	//删除文件之前
 	      	beforeRemove(file, fileList) {
 	        	return this.$confirm(`确定移除 ${ file.name }？`);
 	      	},
@@ -259,7 +276,7 @@
 	      		}
 	      		var isLt10M = file.size > 10*1024*1024 ? true:false;
 	      	    if (isLt10M) {
-	      	    	this.$message.error('上传文件大小不能超过 10MB!');
+	      	    	this.$message.error('上传图片大小不能超过 10MB!');
 	      	    };
 	      	},
 	      	//活动内容显示转换
@@ -294,16 +311,20 @@
 	        	);
 			}, 
 			//获取活动附件列表
-			loadActivityAttachmentList: function (ruleId) {
+			loadActivityAttachmentList: function (activityId) {
 				let params = {
-					ruleId : ruleId
+					activityId : activityId
 				};
         		let _this = this;
 				axios.post('/activity/attachment/getList', params, params).then(function (response) {
 					var retCode = response.data.retCode;
 					var retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
-						_this.fileList = response.data.result.dataList;
+						if(type == 'edit') {
+							_this.fileEditList = response.data.result.dataList;
+			            } else if(type == 'show') {
+			            	_this.fileShowList = response.data.result.dataList;
+			            }
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -314,22 +335,22 @@
 			//显示新增界面
 			handleAdd: function () {
 				this.addDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
 				this.$refs.addForm.resetFields();
+				this.$refs.uploadAddfile.clearFiles();
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
 				this.editForm = Object.assign({}, row);
-				this.loadActivityAttachmentList(this.editForm.ruleId);
+				this.loadActivityAttachmentList(this.editForm.activityId, 'edit');
+				this.$refs.uploadEditfile.clearFiles();
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
 				this.showDialogVisible = true;
-				this.$refs.uploadfile.clearFiles();
         		this.showForm = Object.assign({}, row);
-        		this.loadActivityAttachmentList(this.showForm.ruleId);
+        		this.loadActivityAttachmentList(this.showForm.activityId, 'show');
+        		this.$refs.uploadShowfile.clearFiles();
 			},
 			//新增
 			addSubmit: function () {
@@ -345,10 +366,8 @@
 							formData.set('content', this.addForm.content);
 							formData.set('experience', this.addForm.experience);
 							formData.set('lesson', this.addForm.lesson);
-							this.fileList.forEach(function(item, index){
-								if(item != null && item.raw != null) {
-									formData.append('fileList', item.raw);
-								}
+							this.fileAddList.forEach(function(item, index){
+								formData.append('fileList', item.raw);
 							});
 							let headers = {
                                 headers: {'Content-Type': 'multipart/form-data'}
@@ -392,13 +411,11 @@
 							formData.set('content', this.addForm.content);
 							formData.set('experience', this.addForm.experience);
 							formData.set('lesson', this.addForm.lesson);
-							this.fileList.forEach(function(item, index){
-								if(item != null) {
-									if(item.raw != null && item.ruleAttachmentId == null) {
-										formData.append('fileList', item.raw);
-									} else {
-										formData.append('ruleAttachmentIds', item.ruleAttachmentId);
-									}
+							this.fileEditList.forEach(function(item, index){
+								if(item.raw != null) {
+									formData.append('fileList', item.raw);
+								} else if(item.activityAttachmentId != null) {
+									formData.append('activityAttachmentIds', item.activityAttachmentId);
 								}
 							});
 							let headers = {

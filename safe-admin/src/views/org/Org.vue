@@ -22,15 +22,14 @@
 					<!--工具条-->
 					<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 						<el-form :inline="true" :model="orgForm" size="small" style="float: left;">
-							<h3 class="title">{{orgForm.orgName}}  <el-button type="primary" size="small" @click="handleOrgEdit">编辑</el-button></h3>
+							<h3 class="title">{{ orgForm.orgName }}  <el-button type="primary" size="small" @click="handleOrgEdit">编辑</el-button></h3>
 							<el-form-item>
 								<el-button type="primary" icon="el-icon-plus" size="small" @click="handleOrgAdd">新增子部门</el-button>
 							</el-form-item>
 						</el-form>
 					</el-col>
 					<!--列表-->
-					<el-table :data="tableOrgData" border fit highlight-current-row v-loading="listOrgLoading" stripe style="width:100%;" size="small" @selection-change="handleSelectionChange">
-						<el-table-column type="selection" width="55"></el-table-column>
+					<el-table :data="tableOrgData" border fit highlight-current-row v-loading="listOrgLoading" stripe style="width:100%;" size="small">
 						<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
 						<el-table-column prop="orgName" label="部门" header-align="center" align="center"></el-table-column>
 					</el-table>
@@ -42,23 +41,24 @@
 							<h3 class="title">部门人员</h3>
 							<el-form-item>
 								<el-button type="primary" icon="el-icon-plus" size="small" @click="handlePersonAdd">新增人员</el-button>
-								<el-button type="primary" icon="el-icon-plus" size="small" @click="handlePersonBatchDelete(tableChecked)">批量删除</el-button>
+								<el-button type="danger" icon="el-icon-delete" size="small" @click="handlePersonBatchDelete(tableChecked)">批量删除</el-button>
 							</el-form-item>
 						</el-form>
 					</el-col>
 					<!--列表-->
-					<el-table :data="tablePersonData" border fit highlight-current-row v-loading="listPersonLoading" stripe style="width:100%;" size="small" @selection-change="handleSelectionChange">
+					<el-table :data="tablePersonData" border fit highlight-current-row v-loading="listPersonLoading" stripe style="width:100%;" size="small" @row-click="handlePersonClick" @selection-change="handleSelectionChange">
 						<el-table-column type="selection" width="55"></el-table-column>
 						<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-						<el-table-column prop="orgName" label="部门" header-align="center" align="center"></el-table-column>
 						<el-table-column prop="userName" label="用户名称" header-align="center" align="center"></el-table-column>
 						<el-table-column prop="userAccount" label="手机" header-align="center" align="center"></el-table-column>
+						<!-- 
 						<el-table-column label="操作" width="240" header-align="center" align="center">
 							<template slot-scope="scope">
 						        <el-button type="primary" size="small" @click="handlePersonEdit(scope.$index, scope.row)">编辑</el-button>
 						        <el-button type="danger" size="small" @click="handlePersonDelete(scope.$index, scope.row)">删除</el-button>
 					  		</template>
 						</el-table-column>
+						-->
 					</el-table>
 				</el-main>
 			</el-container>
@@ -102,7 +102,6 @@
 		 				</div>
 	 				</div>
 	 				<div class="tree-transfer__middle">
-	 					<el-button type="primary" icon="el-icon-arrow-right" circle :disabled="canAddNode" @click="handleAdd"></el-button>
 	                </div>
 	                <div class="tree-transfer__right">
 	                	<h3 class="tree-transfer__title">
@@ -165,7 +164,6 @@
 		 				</div>
 	 				</div>
 	 				<div class="tree-transfer__middle">
-	 					<el-button type="primary" icon="el-icon-arrow-right" circle :disabled="canEditNode" @click="handleEdit"></el-button>
 	                </div>
 	                <div class="tree-transfer__right">
 	                	<h3 class="tree-transfer__title">
@@ -188,7 +186,6 @@
 	    		</span>
     		</el-dialog>
 		</div>
-		
 		
 		<!--新增部门人员界面-->
 		<el-dialog title="新增部门人员" :visible.sync="addPersonDialogVisible">
@@ -455,7 +452,7 @@
 						var orgName = response.data.result.dataList[0].orgName;
 						_this.loadUserOrgData(orgId);
 						var node = {orgId : orgId, orgName : orgName};
-						_this.handleNodeClick(node);
+//						_this.handleNodeClick(node);
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -508,12 +505,14 @@
 			}, 
 			
 			handleNodeClick(data) {
-//				alert("data.parentOrgId==="+data.parentOrgId);
-//				alert("data.orgId==="+data.orgId);
 				this.loadOrgData(data.orgId);
 				this.loadUserOrgData(data.orgId);
-				this.addPersonForm.orgId = data.orgId;
+				this.orgForm.orgId = data.orgId;
 				this.orgForm.orgName = data.orgName;
+				this.addOrgForm.parentOrgId = data.orgId;
+				this.addOrgForm.parentOrgName = data.orgName;
+				this.addPersonForm.orgId = data.orgId;
+				this.addPersonForm.orgName = data.orgName;
 	        },
 	        
 			//显示新增部门界面
@@ -522,8 +521,9 @@
 					this.$message.error('请选择一个部门，继续新增子部门');
 				} else {
 					this.addOrgDialogVisible = true;
-					this.addOrgForm.parentOrgId = this.$refs.tree.getCurrentNode().orgId;
-					this.addOrgForm.parentOrgName = this.$refs.tree.getCurrentNode().orgName;
+					this.$refs.addOrgForm.resetFields();
+					this.addOrgForm.parentOrgId = this.orgForm.orgId;
+					this.addOrgForm.parentOrgName = this.orgForm.orgName;
 				}
 			},
 			//显示编辑部门界面
@@ -555,11 +555,18 @@
 					this.$message.error('请选择一个部门，继续新增人员');
 				} else {
 					this.addPersonDialogVisible = true;
+					this.$refs.addPersonForm.resetFields();
+					this.addPersonForm.orgId = this.$refs.tree.getCurrentNode().orgId;
 					this.addPersonForm.orgName = this.$refs.tree.getCurrentNode().orgName;
 				}
 			},
 			//显示编辑界面
 			handlePersonEdit: function (index, row) {
+				this.editPersonDialogVisible = true;
+				this.editPersonForm = Object.assign({}, row);
+			},
+			//显示编辑界面
+			handlePersonClick: function (row, event, column) {
 				this.editPersonDialogVisible = true;
 				this.editPersonForm = Object.assign({}, row);
 			},
@@ -574,6 +581,7 @@
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addOrgLoading = true;
+							let orgId = this.orgForm.orgId;
 							let params = this.addOrgForm;
 							let _this = this;
 							axios.post('/org/add', params).then(function(response) {
@@ -585,7 +593,8 @@
 										message: '保存成功',
 										type: 'success'
 									});
-						         	_this.loadData();
+						         	_this.loadOrgData(orgId);
+						         	_this.handleNodeClick(orgId);
 									_this.addOrgDialogVisible = false;
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
@@ -601,11 +610,13 @@
 			},
 			//编辑部门
 			editOrgSubmit: function () {
-				this.$refs.addOrgForm.validate((valid) => {
+				this.$refs.editOrgForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editOrgLoading = true;
-							let params = this.addOrgForm;
+							let orgId = this.orgForm.orgId;
+							let params = this.editOrgForm;
+							this.orgForm.orgName = this.editOrgForm.orgName;
 							let _this = this;
 							axios.post('/org/update', params).then(function(response) {
 								_this.editOrgLoading = false;
@@ -616,8 +627,9 @@
 										message: '保存成功',
 										type: 'success'
 									});
-						         	_this.loadData();
-									_this.addOrgDialogVisible = false;
+									_this.loadData();
+									_this.loadOrgData(orgId);
+									_this.editOrgDialogVisible = false;
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
 								} else {
@@ -629,6 +641,33 @@
 						});
 					}
 				});
+			},
+			//删除部门
+			deleteOrgSubmit: function () {
+				this.$confirm('确认删除该记录吗？', '提示', { type: 'warning' }).then(() => {
+					let params = {
+						orgId: this.editOrgForm.orgId
+					};
+					let _this = this;
+					axios.post('/org/delete', params).then(function(response) {
+						var retCode = response.data.retCode;
+						var retMsg = response.data.retMsg;
+						if(retCode == '0000000') {
+							_this.$message({
+								message: '删除成功',
+								type: 'success'
+							});
+							_this.loadData();
+						} else if(retCode == '00000002') {
+							_this.$message.error('保存失败');
+						} else {
+							_this.$message.error(retMsg);
+						}
+		              }).catch(function (error) {
+		               		console.log(error);
+		              });
+		        }).catch(() => {
+		        });
 			},
 			
 			//新增子部门-选择上级部门
@@ -705,6 +744,7 @@
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addPersonLoading = true;
+							let orgId = this.orgForm.orgId;
 							let params = this.addPersonForm;
 							let _this = this;
 							axios.post('/user/org/add', params).then(function(response) {
@@ -716,9 +756,8 @@
 										message: '保存成功',
 										type: 'success'
 									});
-						         	_this.loadData();
+						         	_this.loadUserOrgData(orgId);
 									_this.addPersonDialogVisible = false;
-									_this.$refs.addPersonForm.resetFields();
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
 								} else {
@@ -737,6 +776,7 @@
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editPersonLoading = true;
+							let orgId = this.orgForm.orgId;
 							let params = this.editPersonForm;
 							let _this = this;
 							axios.post('/user/org/update', params).then(function(response) {
@@ -748,7 +788,7 @@
 										message: '保存成功',
 										type: 'success'
 									});
-									_this.loadData();
+									_this.loadUserOrgData(orgId);
 						         	_this.editPersonDialogVisible = false;
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
@@ -779,7 +819,7 @@
 								message: '删除成功',
 								type: 'success'
 							});
-							_this.loadData();
+							_this.loadUserOrgData(orgId);
 						} else if(retCode == '00000002') {
 							_this.$message.error('保存失败');
 						} else {
@@ -793,39 +833,44 @@
 			},
 			//批量删除人员
 			handlePersonBatchDelete: function (rows) {
-				rows.forEach(function(item){
-					alert('userOrgId==='+item.userOrgId);
-				})
-				
-				this.$confirm('确认批量删除记录吗？', '提示', { type: 'warning' }).then(() => {
-					this.listPersonLoading = true;
-					let params = {
-						orgId: row.orgId
-					};
-					let _this = this;
-					axios.post('/user/org/delete1', params).then(function(response) {
-						_this.listPersonLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
-						if(retCode == '0000000') {
-							_this.$message({
-								message: '删除成功',
-								type: 'success'
-							});
-							_this.loadData();
-						} else if(retCode == '00000002') {
-							_this.$message.error('保存失败');
-						} else {
-							_this.$message.error(retMsg);
-						}
-		              }).catch(function (error) {
-		                	console.log(error);
-		              });
-		        }).catch(() => {
-		        });
+				if(rows == null || rows == '') {
+					this.$message.error('请选择要删除的人员');
+				} else {
+					this.$confirm('确认批量删除记录吗？', '提示', { type: 'warning' }).then(() => {
+						this.listPersonLoading = true;
+						let orgId = this.orgForm.orgId;
+						let params = {
+							userOrgIds: rows
+						};
+						let _this = this;
+						axios.post('/user/org/batchDelete', params).then(function(response) {
+							_this.listPersonLoading = false;
+							var retCode = response.data.retCode;
+							var retMsg = response.data.retMsg;
+							if(retCode == '0000000') {
+								_this.$message({
+									message: '删除成功',
+									type: 'success'
+								});
+								_this.loadUserOrgData(orgId);
+							} else if(retCode == '00000002') {
+								_this.$message.error('保存失败');
+							} else {
+								_this.$message.error(retMsg);
+							}
+						}).catch(function (error) {
+							console.log(error);
+						});
+					}).catch(() => {
+					});
+				}
 			},
 			handleSelectionChange(val) {
-				this.tableChecked = val;
+				let userOrgIds = [];
+		    	val.forEach(function(item){
+		    		userOrgIds.push(item.userOrgId);
+				});
+				this.tableChecked = userOrgIds;
 			},
 			
 			//新增部门人员-选择上级部门
@@ -896,56 +941,14 @@
 				this.editPersonForm.orgName = this.targetNodes.orgName;
 			},
 			
-			
-			
-		   	handleAdd() {
-				const currNode = this.$refs.tree.getCurrentNode();
-				const existed = this.isExistedTargetNode(currNode);
-				if (!existed) {
-					this.targetNodes.push(currNode);
-					this.canAddNode = true;
-				}
-			},
-			clearTargetNodes() {
-				this.targetNodes = {};
-			},
-			isExistedTargetNode(node) {
-				return this.targetNodes.some(item => item[this.nodeKey] === node[this.nodeKey]);
-			},
-			handleDialogOpen() {
-			},
-			modalClose() {
-				this.$emit('close');
-				this.addOrgSelectParentOrgDialogVisible = false;
-			},
-			beforeunloadHandler() {
-				this.targetNodes = [];
-			},
 		},
 		
 		mounted() {
 			this.$refs.tree.setCurrentKey(-1);
 		},
-		
 		computed: {
-			sourceTitle() {
-				return this.transferTitle[0];
-			},
-			targetTitle() {
-				return this.transferTitle[1];
-			},
 		},
-		
 		watch: {
-			dialogVisible(newValue) {
-				this.visible = newValue;
-			},
-		},
-		mounted() {
-			window.addEventListener('beforeunload', e => this.beforeunloadHandler(e));
-		},
-		destroyed() {
-			window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e));
 		},
 		
 		
