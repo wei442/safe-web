@@ -6,10 +6,6 @@ import Home from '@/views/Home'
 import Register from '@/views/register/Register'
 import ChangePassword from '@/views/password/ChangePassword'
 import Enterprise from '@/views/enterprise/Enterprise'
-import EnterpriseSetting from '@/views/enterprise/EnterpriseSetting'
-import MasterAdmin from '@/views/enterprise/MasterAdmin'
-import SlaveAdmin from '@/views/enterprise/SlaveAdmin'
-import SlaveAdminAdd from '@/views/enterprise/SlaveAdminAdd'
 import OrgTree from '@/views/org/OrgTree'
 import Org from '@/views/org/Org'
 import OrgIndex from '@/views/org/OrgIndex'
@@ -34,7 +30,6 @@ import PostCheck from '@/views/danger/PostCheck'
 import PostCheckSend from '@/views/danger/PostCheckSend'
 import PostCheckStatistics from '@/views/danger/PostCheckStatistics'
 import DangerExpress from '@/views/danger/DangerExpress'
-import Danger from '@/views/danger/Danger'
 import DangerCheck from '@/views/danger/DangerCheck'
 import DangerBook from '@/views/danger/DangerBook'
 
@@ -95,42 +90,6 @@ export default new Router({
 	    				requireAuth: true 
 	    			},
 	    			component: Enterprise,
-	    		},
-	    		{
-	    			path: '/enterpriseSetting',
-	    			name: 'enterpriseSetting',
-	    			meta: { 
-	    				title: '企业设置', 
-	    				requireAuth: true 
-	    			},
-	    			component: EnterpriseSetting,
-	    		},
-	    		{
-	    			path: '/masterAdmin',
-	    			name: 'masterAdmin',
-	    			meta: { 
-	    				title: '更换主管理员', 
-	    				requireAuth: true 
-	    			},
-	    			component: MasterAdmin,
-	    		},
-	    		{
-	    			path: '/slaveAdmin',
-	    			name: 'slaveAdmin',
-	    			meta: { 
-	    				title: '设置子管理员', 
-	    				requireAuth: true 
-	    			},
-	    			component: SlaveAdmin,
-	    		},
-	    		{
-	    			path: '/slaveAdminAdd',
-	    			name: 'slaveAdminAdd',
-	    			meta: { 
-	    				title: '添加子管理员', 
-	    				requireAuth: true 
-	    			},
-	    			component: SlaveAdminAdd,
 	    		},
 	    		{
 	    			path: '/org',
@@ -307,19 +266,19 @@ export default new Router({
 	    			component: PostCheckStatistics,
 	    		},
 	    		{
-	    			path: '/danger',
-	    			name: 'danger',
+	    			path: '/dangerExpress',
+	    			name: 'dangerExpress',
 	    			meta: { 
-	    				title: '隐患快报', 
+	    				title: '隐患快报管理', 
 	    				requireAuth: true 
 	    			},
-	    			component: Danger,
+	    			component: DangerExpress,
 	    		},
 	    		{
 	    			path: '/dangerCheck',
 	    			name: 'dangerCheck',
 	    			meta: { 
-	    				title: '隐患抽查', 
+	    				title: '隐患抽查管理', 
 	    				requireAuth: true 
 	    			},
 	    			component: DangerCheck,
@@ -328,7 +287,7 @@ export default new Router({
 	    			path: '/dangerBook',
 	    			name: 'dangerBook',
 	    			meta: { 
-	    				title: '隐患台账', 
+	    				title: '隐患台账管理', 
 	    				requireAuth: true 
 	    			},
 	    			component: DangerBook,
