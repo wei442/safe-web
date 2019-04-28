@@ -84,6 +84,25 @@
 		            	icon: 'el-icon-menu'
 			      	},
 			      	{
+			      		path: '1',
+			      		name: '企业管理',
+			            icon: 'el-icon-menu',
+			            child: [
+			            	{
+			            		path: '/enterpriseSetting',
+			            		name: '企业设置',
+			            	},
+			            	{
+			            		path: '/masterAdmin',
+			            		name: '更换主管理员',
+			            	},
+			            	{
+			            		path: '/slaveAdmin',
+			            		name: '设置子管理员',
+			            	},
+			        	]
+			      	},
+			      	{
 			      		path: '2',
 			      		name: '系统管理',
 			            icon: 'el-icon-menu',
@@ -112,10 +131,6 @@
 			            	{
 			            		path: '/title',
 			            		name: '职务管理',
-			            	},
-			            	{
-			            		path: '/setting',
-			            		name: '设置管理',
 			            	},
 			        	]
 			      	},
@@ -206,16 +221,16 @@
 			            		name: '排查结果统计管理',
 			            	},
 			            	{
-			            		path: '/dangerExpress',
-			            		name: '隐患快报管理',
+			            		path: '/danger',
+			            		name: '隐患快报',
 			            	},
 			            	{
 			            		path: '/dangerCheck',
-			            		name: '隐患抽查管理',
+			            		name: '隐患抽查',
 			            	},
 			            	{
 			            		path: '/dangerBook',
-			            		name: '隐患台账管理',
+			            		name: '隐患台账',
 			            	},
 			        	]
 			      	},
