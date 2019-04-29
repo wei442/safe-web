@@ -434,13 +434,14 @@
 		methods: {
 	    	//搜索
 	        search: function(){
-	            this.loadData();
+	            this.loadData(null);
 	        },
-			loadData: function() {
+			loadData: function(node) {
 				let params = {
 				};
 				this.listPersonLoading = true;
 				let _this = this;
+				let _node = node;
 				axios.post('/org/getTreeList', params).then(function(response) {
 					_this.listPersonLoading = false;
 					var retCode = response.data.retCode;
@@ -448,17 +449,20 @@
 					if(retCode == '0000000') {
 						_this.treeData = response.data.result.dataList;
 						_this.tableOrgData = response.data.result.dataList;
-						var orgId = response.data.result.dataList[0].orgId;
-						var orgName = response.data.result.dataList[0].orgName;
-						_this.loadUserOrgData(orgId);
-						var node = {orgId : orgId, orgName : orgName};
-//						_this.handleNodeClick(node);
+						if(_node == null) {
+							let orgId = response.data.result.dataList[0].orgId;
+							let orgName = response.data.result.dataList[0].orgName;
+							_node = {orgId : orgId, orgName : orgName};
+						}
+						_this.handleNodeClick(_node);
 					} else {
 						_this.$message.error(retMsg);
 					}
 	        		}).catch(function (error) {
 	        			console.log(error);
 	        		}
+	        		
+	        		
 	        	);
 			}, 
 			//加载机构数据
@@ -593,8 +597,9 @@
 										message: '保存成功',
 										type: 'success'
 									});
-						         	_this.loadOrgData(orgId);
-						         	_this.handleNodeClick(orgId);
+									var node = {orgId : _this.orgForm.orgId, orgName : _this.orgForm.orgName};
+									_this.loadData(node);
+									_this.handleNodeClick(node);
 									_this.addOrgDialogVisible = false;
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
@@ -627,8 +632,9 @@
 										message: '保存成功',
 										type: 'success'
 									});
-									_this.loadData();
-									_this.loadOrgData(orgId);
+									var node = {orgId : _this.editOrgForm.orgId, orgName : _this.editOrgForm.orgName};
+									_this.loadData(node);
+									_this.handleNodeClick(node);
 									_this.editOrgDialogVisible = false;
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
@@ -657,7 +663,8 @@
 								message: '删除成功',
 								type: 'success'
 							});
-							_this.loadData();
+							_this.loadData(null);
+							_this.editOrgDialogVisible = false;
 						} else if(retCode == '00000002') {
 							_this.$message.error('保存失败');
 						} else {

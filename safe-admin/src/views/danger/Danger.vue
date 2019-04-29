@@ -4,7 +4,7 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="orgQualityForm" size="small" style="float: left;">
 				<el-form-item label="资质名称">
-					<el-input v-model.trim="orgQualityForm.qualityName" placeholder="请输入资质名称" clearable></el-input>
+					<el-input v-model.trim="orgQualityForm.dangerName" placeholder="请输入资质名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -18,8 +18,12 @@
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="qualityName" label="资质名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="orgName" label="所属机构" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="dangerSite" label="隐患地点" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="dangerLevel" label="隐患级别" :formatter="formatDangerLevel" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="dangerCategory" label="隐患大类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="dangerSubCategory" label="隐患小类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="dangerTime" label="隐患时间" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="dangerDesc" label="隐患描述" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -48,11 +52,23 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="资质名称" prop="qualityName">
-					<el-input v-model.trim="addForm.qualityName" auto-complete="off"></el-input>
+				<el-form-item label="隐患地点" prop="dangerSite">
+					<el-input v-model.trim="addForm.dangerSite" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="所属机构" prop="orgName">
-					<el-input v-model.trim="addForm.orgName" @focus="handleOrgAddOrgName" readonly="true" auto-complete="off"></el-input>
+				<el-form-item label="隐患级别" prop="dangerLevel">
+					<el-input v-model.trim="addForm.dangerLevel" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="隐患大类" prop="dangerMainCategory">
+					<el-input v-model.trim="addForm.dangerMainCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="隐患小类" prop="dangerSubCategory">
+					<el-input v-model.trim="addForm.dangerSubCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="隐患时间" prop="dangerTime">
+					<el-date-picker type="datetime" v-model.trim="addForm.dangerTime" auto-complete="off"></el-date-picker>
+				</el-form-item>
+				<el-form-item label="隐患描述" prop="dangerDesc">
+					<el-input v-model.trim="addForm.dangerDesc" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" :file-list="fileAddList">
@@ -67,55 +83,26 @@
 			</div>
 		</el-dialog>
 		
-		<!--新增界面-选择所属机构-->
-		<div class="tree-transfer" :style="{width,height}">
-			<el-dialog title="选择部门" :visible.sync="addOrgDialogVisible" class="tree-transfer__dialog">
-				<section class="tree-transfer__content">
-		 			<div class="tree-transfer__left">
-		 				<h3 class="tree-transfer__title">选择</h3>
-		 				<div class="tree-transfer__list">
-		 					<el-tree
-			                    :data="treeTransferData"
-			                    :node-key="orgId"
-			                    :props="defaultProps"
-			                    :highlight-current="true"
-			                    :expand-on-click-node="false"
-		 						@node-click="handleAddOrgNodeClick">
-			 				</el-tree>
-		 				</div>
-	 				</div>
-	 				<div class="tree-transfer__middle">
-	                </div>
-	                <div class="tree-transfer__right">
-	                	<h3 class="tree-transfer__title">
-	                  		<span>已选</span>
-	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
-		              	</h3>
-		              	<div class="tree-transfer__list" v-if="targetNodes.orgName">
-			          		<ul class="tree-transfer__list-ul">
-			           			<li class="tree-transfer__list-li">
-				           			<label>{{targetNodes[defaultProps.label]}}</label>
-				           			<span class="tree-transfer__list-delete" @click="handleAddOrgDeleteItem(targetNodes[nodeKey])">删除</span>
-			           			</li>
-		           			</ul>
-	           			</div>
-           			</div>
-       			</section>
-				<span slot="footer" class="dialog-footer">
-		    		<el-button size="medium" type="primary" @click="addOrgSubmit">确定</el-button>
-		    		<el-button size="medium" @click="addOrgDialogVisible = false">取消</el-button>
-	    		</span>
-    		</el-dialog>
-		</div>
-
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
 			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
-				<el-form-item label="资质名称" prop="qualityName">
-					<el-input v-model.trim="editForm.qualityName" auto-complete="off"></el-input>
+				<el-form-item label="隐患地点" prop="dangerSite">
+					<el-input v-model.trim="editForm.dangerSite" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="所属机构" prop="orgName">
-					<el-input v-model.trim="editForm.orgName" @focus="handleOrgEditOrgName" readonly="true" auto-complete="off"></el-input>
+				<el-form-item label="隐患级别" prop="dangerLevel">
+					<el-input v-model.trim="editForm.dangerLevel" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="隐患大类" prop="dangerMainCategory">
+					<el-input v-model.trim="editForm.dangerMainCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="隐患小类" prop="dangerSubCategory">
+					<el-input v-model.trim="editForm.dangerSubCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="隐患时间" prop="dangerTime">
+					<el-date-picker type="editForm" v-model.trim="addForm.dangerTime" auto-complete="off"></el-date-picker>
+				</el-form-item>
+				<el-form-item label="隐患描述" prop="dangerDesc">
+					<el-input v-model.trim="editForm.dangerDesc" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" :file-list="fileEditList">
@@ -130,51 +117,10 @@
 			</div>
 		</el-dialog>
 		
-		<!--新增界面-选择所属机构-->
-		<div class="tree-transfer" :style="{width,height}">
-			<el-dialog title="选择部门" :visible.sync="editOrgDialogVisible" class="tree-transfer__dialog">
-				<section class="tree-transfer__content">
-		 			<div class="tree-transfer__left">
-		 				<h3 class="tree-transfer__title">选择</h3>
-		 				<div class="tree-transfer__list">
-		 					<el-tree
-			                    :data="treeTransferData"
-			                    :node-key="orgId"
-			                    :props="defaultProps"
-			                    :highlight-current="true"
-			                    :expand-on-click-node="false"
-		 						@node-click="handleEditOrgNodeClick">
-			 				</el-tree>
-		 				</div>
-	 				</div>
-	 				<div class="tree-transfer__middle">
-	                </div>
-	                <div class="tree-transfer__right">
-	                	<h3 class="tree-transfer__title">
-	                  		<span>已选</span>
-	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
-		              	</h3>
-		              	<div class="tree-transfer__list">
-			          		<ul class="tree-transfer__list-ul">
-			           			<li class="tree-transfer__list-li" v-if="targetNodes.orgName">
-				           			<label>{{targetNodes[defaultProps.label]}}</label>
-				           			<span class="tree-transfer__list-delete"  @click="handleEditOrgDeleteItem(targetNodes[nodeKey])">删除</span>
-			           			</li>
-		           			</ul>
-	           			</div>
-	       			</div>
-	   			</section>
-				<span slot="footer" class="dialog-footer">
-		    		<el-button size="medium" type="primary" @click="editOrgSubmit">确定</el-button>
-		    		<el-button size="medium" @click="editOrgDialogVisible = false">取消</el-button>
-	    		</span>
-			</el-dialog>
-		</div>
-		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="资质名称">{{ showForm.qualityName }}</el-form-item>
+				<el-form-item label="资质名称">{{ showForm.dangerName }}</el-form-item>
 				<el-form-item label="所属机构">{{ showForm.orgName }}</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadShowfile" :on-preview="handlePreview" :file-list="fileShowList"></el-upload>
@@ -193,18 +139,6 @@
 	import FileSaver from 'file-saver'
 
 	export default {
-		props: {
-		    // 宽度
-		    width: {
-		      type: String,
-		      default: '500px',
-		    },
-		    // 高度
-		    height: {
-		      type: String,
-		      default: '1000px',
-		    },
-		},
 		data() {
 			return {
 				orgQualityForm: {},
@@ -217,7 +151,7 @@
 				}, 
 				addLoading: false,
 				addFormRules: {
-					qualityName: [
+					dangerName: [
 						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
 					orgName: [
@@ -231,7 +165,7 @@
 				},
 				editLoading: false,
 				editFormRules: {
-					qualityName: [
+					dangerName: [
 						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
 					orgName: [
@@ -243,15 +177,6 @@
 				showForm: {
 				},
 				fileShowList: [],
-				//新增界面-选择部门
-				treeTransferData: [],
-				defaultProps: {
-					label: 'orgName',
-					children: 'orgList'
-				},
-		        addOrgDialogVisible: false,
-		        targetNodes: {},
-		        editOrgDialogVisible: false,
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -313,6 +238,10 @@
 	      	    	this.$message.error('上传图片大小不能超过 10MB!');
 	      	    };
 	      	},
+	      	//隐患级别显示转换
+	      	formatDangerLevel: function (row, column) {
+				return row.dangerLevel == 1 ? '一般隐患' : row.enterpriseStatus == 2 ? '重大隐患': '';
+			},
 			//搜索
 	        search: function(){
 	            this.loadData();
@@ -321,11 +250,11 @@
 				let params = {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
-					qualityName: this.orgQualityForm.qualityName
+					dangerName: this.orgQualityForm.dangerName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/org/quality/getListByPage', params).then(function(response) {
+				axios.post('/danger/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -346,7 +275,7 @@
 					orgQualityId : orgQualityId
 				};
         		let _this = this;
-				axios.post('/org/quality/attachment/getList', params, params).then(function (response) {
+				axios.post('/danger/attachment/getList', params, params).then(function (response) {
 					var retCode = response.data.retCode;
 					var retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
@@ -389,7 +318,7 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let formData = new FormData();
-							formData.set('qualityName', this.addForm.qualityName);
+							formData.set('dangerName', this.addForm.dangerName);
 							formData.set('orgName', this.addForm.orgName);
 							this.fileAddList.forEach(function(item, index){
 								formData.append('fileList', item.raw);
@@ -398,7 +327,7 @@
                                 headers: {'Content-Type': 'multipart/form-data'}
                             }
 							let _this = this;
-							axios.post('/org/quality/add', formData, headers).then(function(response) {
+							axios.post('/danger/add', formData, headers).then(function(response) {
 								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -429,7 +358,7 @@
 							this.editLoading = true;
 							let formData = new FormData();
 							formData.set('orgQualityId', this.editForm.orgQualityId);
-							formData.set('qualityName', this.editForm.qualityName);
+							formData.set('dangerName', this.editForm.dangerName);
 							formData.set('orgName', this.editForm.orgName);
 							this.fileEditList.forEach(function(item, index){
 								if(item.raw != null) {
@@ -442,7 +371,7 @@
                                 headers: {'Content-Type': 'multipart/form-data'}
                             }
 							let _this = this;
-							axios.post('/org/quality/update', formData, headers).then(function(response) {
+							axios.post('/danger/update', formData, headers).then(function(response) {
 								_this.editLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -473,7 +402,7 @@
 						orgQualityId: row.orgQualityId
 					};
 					let _this = this;
-					axios.post('/org/quality/delete', params).then(function(response) {
+					axios.post('/danger/delete', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
@@ -495,73 +424,6 @@
 		        });
 			},
 			
-			//新增界面-选择所属机构
-			handleOrgAddOrgName() {
-				this.addOrgDialogVisible = true;
-			    let params = {};
-				let _this = this;
-				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.treeTransferData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
-					}).catch(function (error) {
-						console.log(error);
-					}
-				);
-				this.targetNodes = {};
-				var node = {orgId : this.addForm.orgId, orgName : this.addForm.orgName};
-				this.targetNodes = node;
-		   	},
-		   	handleAddOrgNodeClick(node) {
-		   		this.targetNodes = node;
-		   	},
-		   	handleAddOrgDeleteItem(id) {
-				this.targetNodes = {};
-			},
-			addOrgSubmit() {
-				this.$emit('close');
-				this.addOrgDialogVisible = false;
-				this.addForm.orgId = this.targetNodes.orgId;
-				this.addForm.orgName = this.targetNodes.orgName;
-			},
-			
-			//编辑界面-选择所属机构
-			handleOrgEditOrgName() {
-				this.editOrgDialogVisible = true;
-			    let params = {};
-				let _this = this;
-				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.treeTransferData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
-					}).catch(function (error) {
-						console.log(error);
-					}
-				);
-				this.targetNodes = {};
-				var node = {orgId : this.editForm.orgId, orgName : this.editForm.orgName};
-				this.targetNodes = node;
-		   	},
-		   	handleEditOrgNodeClick(node) {
-		   		this.targetNodes = node;
-		   	},
-		   	handleEditOrgDeleteItem(id) {
-				this.targetNodes = {};
-			},
-			editOrgSubmit() {
-				this.$emit('close');
-				this.editOrgDialogVisible = false;
-				this.editForm.orgId = this.targetNodes.orgId;
-				this.editForm.orgName = this.targetNodes.orgName;
-			},
 		},
 	}
 </script>

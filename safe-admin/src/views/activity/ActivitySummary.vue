@@ -61,7 +61,6 @@
 				</el-form-item>
 				<el-form-item label="活动结束时间" prop="activityEndTime">
 					<el-date-picker type="datetime" v-model.trim="addForm.activityEndTime" auto-complete="off"></el-date-picker>
-					
 				</el-form-item>
 				<el-form-item label="开展地点" prop="activitySite">
 					<el-input v-model.trim="addForm.activitySite" auto-complete="off"></el-input>
