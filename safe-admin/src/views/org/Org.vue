@@ -1,8 +1,8 @@
 <template>
 	<section>
 	
-		<el-container style="height: 560px; border: 1px solid #eee">
-			<el-aside width="220px" style="background-color: rgb(238, 241, 246)">
+		<el-container style="height: 560px; border: 0px solid #eee">
+			<el-aside width="240px">
 				<h3>组织机构</h3>
 				<el-tree
 	                ref="tree"

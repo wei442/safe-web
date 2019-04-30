@@ -16,7 +16,11 @@
 			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseFax" label="企业传真" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="province" label="省份" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="city" label="城市" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseMainCategory" label="行业大类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseSubCategory" label="行业小类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseScale" label="行业规模" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
@@ -44,7 +48,7 @@
 	    
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
-			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
+			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="120px">
 				<el-form-item label="企业名称" prop="enterpriseName">
 					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
@@ -61,11 +65,20 @@
 				<el-form-item label="企业电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="addForm.enterpriseFax" auto-complete="off"></el-input>
+				<el-form-item label="所在省份" prop="province">
+					<el-input v-model.trim="addForm.province" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="所在城市" prop="city">
+					<el-input v-model.trim="addForm.city" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业大类" prop="enterpriseMainCategory">
+					<el-input v-model.trim="addForm.enterpriseMainCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业小类" prop="enterpriseSubCategory">
+					<el-input v-model.trim="addForm.enterpriseSubCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业规模" prop="enterpriseScale">
+					<el-input v-model.trim="addForm.enterpriseScale" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="企业地址" prop="enterpriseAddr">
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.enterpriseAddr" auto-complete="off"></el-input>
@@ -79,7 +92,7 @@
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
-			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
+			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="120px">
 				<el-form-item label="企业名称" prop="enterpriseName">
 					<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
@@ -96,11 +109,20 @@
 				<el-form-item label="企业电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
+				<el-form-item label="所在省份" prop="province">
+					<el-input v-model.trim="editForm.province" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="所在城市" prop="city">
+					<el-input v-model.trim="editForm.city" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业大类" prop="enterpriseMainCategory">
+					<el-input v-model.trim="editForm.enterpriseMainCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业小类" prop="enterpriseSubCategory">
+					<el-input v-model.trim="editForm.enterpriseSubCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业规模" prop="enterpriseScale">
+					<el-input v-model.trim="editForm.enterpriseScale" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="企业地址" prop="enterpriseAddr">
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
@@ -114,13 +136,25 @@
 		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
-			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="企业编码">{{ showForm.enterpriseCode }}</el-form-item>
+			<el-form :model="showForm" label-width="120px">
 				<el-form-item label="企业名称">{{ showForm.enterpriseName }}</el-form-item>
-				<el-form-item label="企业内容">{{ showForm.content }}</el-form-item>
-				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="企业类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
-			</el-form>
+				<el-form-item label="企业类型">
+					{{ showForm.enterpriseType == 1 ? '政府部门' : showForm.enterpriseType == 2 ? '院校' : showForm.enterpriseType == 3 ? '科研所' : showForm.enterpriseType == 4 ? '国有企业' : showForm.enterpriseType == 5 ? '集体企业'  
+					: showForm.enterpriseType == 6 ? '股份合作企业' : showForm.enterpriseType == 7 ? '联营企业'  : showForm.enterpriseType == 8 ? '有限责任公司' : showForm.enterpriseType == 9 ? '股份有限公司'  
+					 : showForm.enterpriseType == 10 ? '私营企业' : showForm.enterpriseType == 11 ? '港、澳、台商投资企业' : showForm.enterpriseType == 12 ? '外商投资企业' : showForm.enterpriseType == 13 ? '其他' : '' }}
+				</el-form-item>
+				<el-form-item label="企业性质">
+					{{ showForm.enterpriseNature == 1 ? '国有' : showForm.enterpriseNature == 2 ? '合作' : showForm.enterpriseNature == 3 ? '合资' : showForm.enterpriseNature == 4 ? '独资' : showForm.enterpriseNature == 5 ? '集体'  
+					: showForm.enterpriseNature == 6 ? '私营' : showForm.enterpriseNature == 7 ? '个体工商户' : showForm.enterpriseNature == 8 ? '报关' : showForm.enterpriseNature == 9 ? '其他' : '' }}
+				</el-form-item>
+				<el-form-item label="企业电话">{{ showForm.enterpriseTelphone }}</el-form-item>
+				<el-form-item label="省份">{{ showForm.province }}</el-form-item>
+				<el-form-item label="城市">{{ showForm.city }}</el-form-item>
+				<el-form-item label="行业小类">{{ showForm.enterpriseMainCategory }}</el-form-item>
+				<el-form-item label="行业大类">{{ showForm.enterpriseSubCategory }}</el-form-item>
+				<el-form-item label="行业规模">{{ showForm.enterpriseScale }}</el-form-item>
+				<el-form-item label="企业地址">{{ showForm.enterpriseAddr }}</el-form-item>
+		</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
 			</div>

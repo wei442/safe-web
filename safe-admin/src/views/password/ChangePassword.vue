@@ -73,7 +73,7 @@
 								userPassword: this.passwordForm.confirmPassword
 	    					};
 							let _this = this;
-							axios.post('/user/firstlogin/updatePassword', params).then(function(response) {
+							axios.post('/user/firstLogin/updatePassword', params).then(function(response) {
 								_this.passwordLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;

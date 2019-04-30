@@ -34,7 +34,6 @@ import PostCheck from '@/views/danger/PostCheck'
 import PostCheckSend from '@/views/danger/PostCheckSend'
 import PostCheckStatistics from '@/views/danger/PostCheckStatistics'
 import DangerExpress from '@/views/danger/DangerExpress'
-import Danger from '@/views/danger/Danger'
 import DangerCheck from '@/views/danger/DangerCheck'
 import DangerBook from '@/views/danger/DangerBook'
 
@@ -307,13 +306,13 @@ export default new Router({
 	    			component: PostCheckStatistics,
 	    		},
 	    		{
-	    			path: '/danger',
-	    			name: 'danger',
+	    			path: '/dangerExpress',
+	    			name: 'dangerExpress',
 	    			meta: { 
 	    				title: '隐患快报', 
 	    				requireAuth: true 
 	    			},
-	    			component: Danger,
+	    			component: DangerExpress,
 	    		},
 	    		{
 	    			path: '/dangerCheck',

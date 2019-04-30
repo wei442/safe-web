@@ -221,7 +221,7 @@
 			            		name: '排查结果统计管理',
 			            	},
 			            	{
-			            		path: '/danger',
+			            		path: '/dangerExpress',
 			            		name: '隐患快报',
 			            	},
 			            	{

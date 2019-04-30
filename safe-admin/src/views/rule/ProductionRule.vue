@@ -458,8 +458,8 @@
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
 							this.editLoading = true;
 							let formData = new FormData();
-							formData.set('ruleType', 2);
 							formData.set('ruleId', this.editForm.ruleId);
+							formData.set('ruleType', 2);
 							formData.set('ruleName', this.editForm.ruleName);
 							formData.set('ruleNo', this.editForm.ruleNo);
 							formData.set('orgName', this.editForm.orgName);

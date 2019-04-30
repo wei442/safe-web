@@ -1,7 +1,7 @@
 <template>
 	<section>
-		<el-container style="height: 560px; border: 1px solid #eee">
-			<el-aside width="220px" style="background-color: rgb(238, 241, 246)">
+		<el-container style="height: 560px; border: 0px solid #eee">
+			<el-aside width="240px">
 				<h5>岗位</h5>
 				&#12288;<el-button type="primary" icon="el-icon-plus" size="mini" @click="handlePostAdd">新增岗位</el-button>
 				<br>
@@ -25,7 +25,7 @@
 						<el-form :inline="true" :model="postForm" size="small" style="float: left;">
 							<h3 class="title">{{ postName }}  <el-button type="primary" size="small" @click="handlePostEdit">编辑</el-button></h3>
 							<el-form-item>
-								<el-button type="primary" icon="el-icon-plus" size="small" @click="handleUserAddUserName">新增人员</el-button>
+								<el-button type="primary" icon="el-icon-plus" size="small" @click="handlePersonAdd">新增人员</el-button>
 							</el-form-item>
 							<el-form-item>
 								<el-button type="danger" icon="el-icon-delete" size="small" @click="handlePersonBatchDelete(tableChecked)"">批量删除</el-button>
@@ -283,11 +283,6 @@
 				this.editPostDialogVisible = true;
 				this.editPostForm = Object.assign({}, this.postForm);
 			},
-			//显示新增人员界面
-			handlePersonAdd: function () {
-				this.addPersonDialogVisible = true;
-				this.$refs.addPostForm.resetFields();
-			},
 			//搜索
 	        search: function(){
 	            this.loadData();
@@ -391,25 +386,30 @@
 				this.loadUserPostData(postId);
 			},
 			
-			//新增人员
-			handleUserAddUserName() {
-				this.addUserDialogVisible = true;
-			    let params = {};
-				let _this = this;
-				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
-					if(retCode == '0000000') {
-						_this.treeTransferData = response.data.result.dataList;
-					} else {
-						_this.$message.error(retMsg);
-					}
+			//显示新增人员界面
+			handlePersonAdd() {
+				if(this.postForm.postId == null) {
+					this.$message.error('请选择一个岗位，继续新增人员');
+				} else {
+					this.addUserDialogVisible = true;
+					let params = {};
+					let _this = this;
+					axios.post('/org/getTreeList', params).then(function(response) {
+						var retCode = response.data.retCode;
+						var retMsg = response.data.retMsg;
+						if(retCode == '0000000') {
+							_this.treeTransferData = response.data.result.dataList;
+						} else {
+							_this.$message.error(retMsg);
+						}
 					}).catch(function (error) {
 						console.log(error);
 					}
-				);
-				this.targetNodes = [];
-				this.userData = [];
+					);
+					this.targetNodes = [];
+					this.userData = [];
+				}
+				
 		   	},
 		   	handleAddOrgNodeClick(node) {
 		   		let params = {
