@@ -5,7 +5,7 @@
 	  		<el-input type="text" v-model="registerForm.userAccount" auto-complete="off" placeholder="手机号码"></el-input>
 	    </el-form-item>
 	    <el-form-item prop="userName">
-  			<el-input type="text" v-model="registerForm.userName" auto-complete="off" placeholder="用户名字"></el-input>
+  			<el-input type="text" v-model="registerForm.userName" auto-complete="off" placeholder="用户姓名"></el-input>
 		</el-form-item>
 	    <el-form-item prop="enterpriseName">
 	   		<el-input type="text" v-model="registerForm.enterpriseName" auto-complete="off" placeholder="企业名称"></el-input>
@@ -31,7 +31,7 @@
 		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
 	        		],
 	        		userName: [
-	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
+	        			{ required: true, message: '请输入用户姓名', trigger: 'blur' },
         			],
 	        		enterpriseName: [
 	        			{ required: true, message: '请输入企业名称', trigger: 'blur' },

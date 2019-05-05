@@ -14,7 +14,6 @@
 			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseType" label="企业类型" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="province" label="省份" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="city" label="城市" header-align="center" align="center"></el-table-column>

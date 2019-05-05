@@ -28,8 +28,14 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="人员" prop="userName">
-					<el-input v-model.trim="addForm.userName" @focus="handleUserAddUserName" readonly="true" auto-complete="off"></el-input>
+				<el-form-item label="用户名字" prop="userName">
+					<el-input v-model.trim="addForm.userName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="手机号码" prop="userAccount">
+					<el-input v-model.trim="addForm.userAccount" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业名称" prop="userName">
+					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">

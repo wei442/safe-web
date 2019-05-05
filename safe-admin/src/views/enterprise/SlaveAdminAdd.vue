@@ -55,12 +55,12 @@
 	                  		<span>已选</span>
 	                  		<span class="tree-transfer__right-close" @click="clearTargetNodes" v-if="isTargetNodesEmpty">清空</span>
 		              	</h3>
-		              	<div class="tree-transfer__list" v-if="targetNodes">
+		              	<div class="tree-transfer__list" v-if="targetNodes.userName">
 			          		<ul class="tree-transfer__list-ul">
-			           			<li class="tree-transfer__list-li"  v-for="(item, index) of targetNodes" :key="item.userId">
-			           				<label>{{index + 1 + '.' + item[defaultUserProps.label]}}</label>
-			           				<span class="tree-transfer__list-delete" @click="handleAddUserDeleteItem(item.userId)">删除</span>
-			                    </li>
+			           			<li class="tree-transfer__list-li">
+				           			<label>{{targetNodes[defaultUserProps.label]}}</label>
+				           			<span class="tree-transfer__list-delete" @click="handleAddUserDeleteItem(targetNodes.userId)">删除</span>
+			           			</li>
 		           			</ul>
 	           			</div>
 	       			</div>
@@ -115,7 +115,7 @@
 					children: 'orgList'
 				},
 		        addUserDialogVisible: false,
-		        targetNodes: [],
+		        targetNodes: {},
 				userData: [],
 				defaultUserProps: {
 					label: 'userName',
@@ -211,8 +211,8 @@
 						console.log(error);
 					}
 				);
-				this.targetNodes = [];
-				this.userData = [];
+				this.targetNodes = {};
+				this.userData = {};
 		   	},
 		   	handleAddOrgNodeClick(node) {
 		   		let params = {
@@ -235,36 +235,23 @@
 				);
 		   	},
 		   	handleAddUserDeleteItem(id) {
-				this.targetNodes = this.targetNodes.filter(item => item.userId !== id);
-			},
+				this.targetNodes = {};
+		   	},
 			addUserSubmit() {
 				this.$emit('close');
 				this.addUserDialogVisible = false;
-				
-				this.addForm.userName = [];
-				let _this = this;
-				this.targetNodes.forEach(function(item){
-					_this.addForm.userName.push(item.userName);
-					_this.addForm.userIds.push(item.userId);
-				});
+				this.addForm.userId = this.targetNodes.userId;
+				this.addForm.userName = this.targetNodes.userName;
 			},
 			
 			handleAddUserNodeClick(node) {
-		   		const existed = this.isExistedTargetNode(node);
-		        if (!existed) {
-		        	this.targetNodes.push(node);
-		        }
+		        this.targetNodes = node;
 		   	},
 		   	isExistedTargetNode(node) {
 				return this.targetNodes.some(item => item.userId === node.userId);
 			},
 			clearTargetNodes() {
 				this.targetNodes = [];
-		    },
-		},
-		computed: {
-			isTargetNodesEmpty() {
-		    	return this.targetNodes.length !== 0;
 		    },
 		},
 	}

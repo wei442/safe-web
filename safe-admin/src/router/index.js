@@ -8,6 +8,8 @@ import ChangePassword from '@/views/password/ChangePassword'
 import Enterprise from '@/views/enterprise/Enterprise'
 import EnterpriseSetting from '@/views/enterprise/EnterpriseSetting'
 import MasterAdmin from '@/views/enterprise/MasterAdmin'
+import MasterAdminFirst from '@/views/enterprise/MasterAdminFirst'
+import MasterAdminSecond from '@/views/enterprise/MasterAdminSecond'
 import SlaveAdmin from '@/views/enterprise/SlaveAdmin'
 import SlaveAdminAdd from '@/views/enterprise/SlaveAdminAdd'
 import OrgTree from '@/views/org/OrgTree'
@@ -103,6 +105,24 @@ export default new Router({
 	    				requireAuth: true 
 	    			},
 	    			component: EnterpriseSetting,
+	    		},
+	    		{
+	    			path: '/masterAdminFirst',
+	    			name: 'masterAdminFirst',
+	    			meta: { 
+	    				title: '更换主管理员', 
+	    				requireAuth: true 
+	    			},
+	    			component: MasterAdminFirst,
+	    		},
+	    		{
+	    			path: '/masterAdminSecond',
+	    			name: 'masterAdminSecond',
+	    			meta: { 
+	    				title: '更换主管理员', 
+	    				requireAuth: true 
+	    			},
+	    			component: MasterAdminSecond,
 	    		},
 	    		{
 	    			path: '/masterAdmin',

@@ -89,8 +89,16 @@
 			            icon: 'el-icon-menu',
 			            child: [
 			            	{
+			            		path: '/userInfo',
+			            		name: '用户信息管理',
+			            	},
+			            	{
 			            		path: '/enterprise',
 			            		name: '企业管理',
+			            	},
+			            	{
+			            		path: '/userAdmin',
+			            		name: '用户管理员',
 			            	},
 			            	{
 			            		path: '/org',

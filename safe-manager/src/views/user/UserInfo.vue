@@ -2,18 +2,12 @@
 	<section>
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-			<el-form :inline="true" :model="dictItemForm" size="small" style="float: left;">
-				<el-form-item label="字典子项名称">
-					<el-input v-model.trim="dictItemForm.itemName" placeholder="请输入字典子项名称" clearable></el-input>
+			<el-form :inline="true" :model="userForm" size="small" style="float: left;">
+				<el-form-item label="用户名称">
+					<el-input v-model.trim="userForm.userName" placeholder="请输入企业名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" icon="el-icon-back" size="small" @click="handleReturn">返回字典</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -21,7 +15,10 @@
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="itemName" label="字典子项名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="userAccount" label="手机号码" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="userName" label="用户名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="userStatus" label="用户状态" :formatter="formatUserStatus" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="userEmail" label="用户邮箱" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -32,25 +29,32 @@
 		</el-table>
 
 		<br>
+		<!--分页开始-->
+		<div class="block">
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="currentPage"
+				:page-sizes="[10, 20, 30, 40]"
+				:page-size="pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total">
+			</el-pagination>
+			<br>
+		</div>
+	    <!--分页结束-->
 	    
-		<!--新增界面-->
-		<el-dialog title="新增" :visible.sync="addDialogVisible">
-			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="120px">
-				<el-form-item label="字典子项名称" prop="itemName">
-					<el-input v-model.trim="addForm.itemName" auto-complete="off"></el-input>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="addDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="addSubmit" :loading="addLoading">保 存</el-button>
-			</div>
-		</el-dialog>
-
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
-			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="120px">
-				<el-form-item label="字典子项名称" prop="itemName">
-					<el-input v-model.trim="editForm.itemName" auto-complete="off"></el-input>
+			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
+				<el-form-item label="手机号码" prop="userAccount">
+					<el-input v-model.trim="editForm.userAccount" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="用户名称" prop="userName">
+					<el-input v-model.trim="editForm.userName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="用户邮箱" prop="userEmail">
+					<el-input v-model.trim="editForm.userEmail" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -61,8 +65,10 @@
 		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
-			<el-form :model="showForm" label-width="120px">
-				<el-form-item label="字典子项名称">{{ showForm.itemName }}</el-form-item>
+			<el-form :model="showForm" label-width="80px">
+				<el-form-item label="手机号码">{{ showForm.userAccount }}</el-form-item>
+				<el-form-item label="用户名称">{{ showForm.userName }}</el-form-item>
+				<el-form-item label="用户邮箱">{{ showForm.userEmail }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -78,51 +84,50 @@
 	export default {
 		data() {
 			return {
-				dictItemForm: {},
+				userForm: {},
 				tableData: [],
 				listLoading: false,
 				labelPosition: 'right',
 				addDialogVisible: false,//新增界面是否显示
 				//新增界面数据
 				addForm: {
-					dictId: ''
 				}, 
 				addLoading: false,
 				addFormRules: {
-					itemName: [
-						{ required: true, message: '请输入字典子项名称', trigger: 'blur' }
-					],
+					userAccount: [
+		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
+	        		],
+	        		userName: [
+	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
+        			],
+        			userEmail: [
+        				{ required: true, message: '请输入用户邮箱', trigger: 'blur' },
+    				],
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
 				editForm: {
-					dictId: ''
 				},
 				editLoading: false,
 				editFormRules: {
-					itemName: [
-						{ required: true, message: '请输入字典子项名称', trigger: 'blur' }
-					],
+					userAccount: [
+		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
+	        		],
+	        		userName: [
+	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
+        			],
+        			userEmail: [
+        				{ required: true, message: '请输入用户邮箱', trigger: 'blur' },
+    				],
 				}, 
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				dictItemTypeOptions: [
-					{
-						value: 1,
-						label: '政府部门'
-					},
-					{
-						value: '2',
-						label: '院校'
-					},
-				],
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
 	    created: function () {
 	    	this.search();
-	    	this.addForm.dictId=this.$route.params.dictId;
 	    },
 		methods: {
 	      	//当前页
@@ -135,19 +140,29 @@
         		this.pageSize = val;
         		this.search();
 	      	},
+	      	//用户状态显示转换
+	      	formatUserStatus: function (row, column) {
+				return row.userStatus == 1 ? '正常' : row.userStatus == 2 ? '冻结' : row.userStatus == 3 ? '注销': '';
+			},
+			//搜索
+	        search: function(){
+	            this.loadData();
+	        },
 			loadData: function() {
 				let params = {
-					dictId: this.$route.params.dictId,
-					itemName: this.dictItemForm.itemName
+					pageNum: this.pageNum,
+					pageSize: this.pageSize,
+					userName: this.userForm.userName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/dict/item/getList', params).then(function(response) {
+				axios.post('/user/info/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
+							_this.total = response.data.result.page.total;
 						} else {
 							_this.$message.error(retMsg);
 						}
@@ -171,14 +186,6 @@
 				this.showDialogVisible = true;
         		this.showForm = Object.assign({}, row);
 			},
-			//返回字典子项
-			handleReturn: function () {
-				this.$router.push('/dict');
-			},
-			//搜索
-	        search: function(){
-	            this.loadData();
-	        },
 			//新增
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
@@ -187,7 +194,7 @@
 							this.addLoading = true;
 							let params = this.addForm;
 							let _this = this;
-							axios.post('/dict/item/add', params).then(function(response) {
+							axios.post('/user/info/add', params).then(function(response) {
 								_this.addLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -218,7 +225,7 @@
 							this.editLoading = true;
 							let params = this.editForm;
 							let _this = this;
-							axios.post('/dict/item/update', params).then(function(response) {
+							axios.post('/user/info/update', params).then(function(response) {
 								_this.editLoading = false;
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
@@ -246,10 +253,10 @@
 				this.$confirm('确认删除该记录吗？', '提示', { type: 'warning' }).then(() => {
 					this.listLoading = true;
 					let params = {
-						dictItemId: row.dictItemId
+						userId: row.userId
 					};
 					let _this = this;
-					axios.post('/dict/item/delete', params).then(function(response) {
+					axios.post('/user/info/delete', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;

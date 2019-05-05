@@ -93,7 +93,7 @@
 			            		name: '企业设置',
 			            	},
 			            	{
-			            		path: '/masterAdmin',
+			            		path: '/masterAdminFirst',
 			            		name: '更换主管理员',
 			            	},
 			            	{

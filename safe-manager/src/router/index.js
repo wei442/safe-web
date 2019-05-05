@@ -5,7 +5,9 @@ import Login from '@/views/Login'
 import Home from '@/views/Home'
 import Register from '@/views/register/Register'
 import ChangePassword from '@/views/password/ChangePassword'
+import UserInfo from '@/views/user/UserInfo'
 import Enterprise from '@/views/enterprise/Enterprise'
+import UserAdmin from '@/views/enterprise/UserAdmin'
 import OrgTree from '@/views/org/OrgTree'
 import Org from '@/views/org/Org'
 import OrgIndex from '@/views/org/OrgIndex'
@@ -83,6 +85,15 @@ export default new Router({
             	  component: Index,
 	    		},
 	    		{
+	    			path: '/userInfo',
+	    			name: 'userInfo',
+	    			meta: { 
+	    				title: '用户信息管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: UserInfo,
+	    		},
+	    		{
 	    			path: '/enterprise',
 	    			name: 'enterprise',
 	    			meta: { 
@@ -90,6 +101,15 @@ export default new Router({
 	    				requireAuth: true 
 	    			},
 	    			component: Enterprise,
+	    		},
+	    		{
+	    			path: '/userAdmin',
+	    			name: 'userAdmin',
+	    			meta: { 
+	    				title: '用户管理', 
+	    				requireAuth: true 
+	    			},
+	    			component: UserAdmin,
 	    		},
 	    		{
 	    			path: '/org',
