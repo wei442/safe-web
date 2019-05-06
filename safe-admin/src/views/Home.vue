@@ -4,7 +4,7 @@
 			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
 				{{collapsed?'':sysName}}
 			</el-col>
-			<el-col :span="4" class="userinfo">
+			<el-col :span="1" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
@@ -38,11 +38,9 @@
 			<section class="content-container">
 				<div class="grid-content bg-purple-light">
 					<el-col :span="24" class="breadcrumb-container">
-						<strong class="title">{{ $route.meta.title }}</strong>
-						<el-breadcrumb separator="/" class="breadcrumb-inner">
-							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-								{{ item.meta.title }}
-							</el-breadcrumb-item>
+						<el-breadcrumb separator="/">
+							<el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+							<el-breadcrumb-item v-for="(item, index) in $route.meta.title" :key="index">{{ item }}</el-breadcrumb-item>
 						</el-breadcrumb>
 					</el-col>
 					<el-col :span="24" class="content-wrapper">
@@ -282,7 +280,10 @@
 			onRoutes() {
 				return this.$route.path.replace('/', '');
 			}
-    	}
+    	}, 
+		mounted() {
+			this.sysUserAvatar = '../assets/user.png';
+		}
 	}
 
 </script>

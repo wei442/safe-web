@@ -9,9 +9,11 @@
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
 				</el-form-item>
+				<!--
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
 				</el-form-item>
+				-->
 			</el-form>
 		</el-col>
 

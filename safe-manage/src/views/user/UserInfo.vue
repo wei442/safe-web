@@ -4,11 +4,16 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="userForm" size="small" style="float: left;">
 				<el-form-item label="用户名称">
-					<el-input v-model.trim="userForm.userName" placeholder="请输入企业名称" clearable></el-input>
+					<el-input v-model.trim="userForm.userName" placeholder="请输入用户名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
 				</el-form-item>
+				<!--
+				<el-form-item>
+					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
+				</el-form-item>
+				-->
 			</el-form>
 		</el-col>
 

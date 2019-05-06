@@ -12,7 +12,7 @@
 							<span slot="title">岗位</span>
 						</template>
 					 	<template v-for="(item,i) in treeData">
-					 		<el-menu-item @click="handlePostPerson(item.postId, item.postName)">{{ item.postName }}</el-menu-item>
+					 		<el-menu-item @click="handlePostPerson(item.postId, item.postName, item.isSpecial)">{{ item.postName }}</el-menu-item>
 						</template>
 					</el-submenu>
 				</el-menu>
@@ -55,11 +55,16 @@
     
 	    <!--新增岗位界面-->
 		<el-dialog title="新增岗位" :visible.sync="addPostDialogVisible">
-			<el-form ref="addPostForm" :model="addPostForm" :rules="addPostFormRules" label-width="80px">
+			<el-form ref="addPostForm" :model="addPostForm" :rules="addPostFormRules" label-width="120px">
 				<el-form-item label="岗位名称" prop="postName">
 					<el-input v-model.trim="addPostForm.postName" auto-complete="off"></el-input>
 				</el-form-item>
-			</el-form>
+				<el-form-item label="是否特殊岗位" prop="isSpecial">
+					<el-select v-model.trim="addPostForm.isSpecial" placeholder="请选择">
+		    			<el-option v-for="item in isSpecialOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+		    		</el-select>
+	    		</el-form-item>
+    		</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="addPostDialogVisible = false">取 消</el-button>
 				<el-button type="primary" @click="addPostSubmit" :loading="addPostLoading">保 存</el-button>
@@ -68,10 +73,15 @@
 		
 		<!-- 编辑岗位界面-->
 		<el-dialog title="编辑岗位" :visible.sync="editPostDialogVisible">
-			<el-form ref="editPostForm" :model="editPostForm" :rules="editPostFormRules" label-width="80px">
+			<el-form ref="editPostForm" :model="editPostForm" :rules="editPostFormRules" label-width="120px">
 				<el-form-item label="岗位名称" prop="postName">
 					<el-input v-model.trim="editPostForm.postName" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="是否特殊岗位" prop="isSpecial">
+					<el-select v-model.trim="editPostForm.isSpecial" placeholder="请选择">
+		    			<el-option v-for="item in isSpecialOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+		    		</el-select>
+	    		</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="editPostDialogVisible = false">取 消</el-button>
@@ -200,6 +210,16 @@
 						{ required: true, message: '请输入岗位名称', trigger: 'blur' }
 					],
 				}, 
+				isSpecialOptions: [
+					{
+						value: 0,
+						label: '否'
+					},
+					{
+						value: 1,
+						label: '是'
+					},
+				],
 				
 				//新增界面-选择部门
 				treeTransferData: [],
@@ -244,7 +264,8 @@
 						_this.treeData = response.data.result.dataList;
 						var postId = response.data.result.dataList[0].postId;
 						var postName = response.data.result.dataList[0].postName;
-						_this.handlePostPerson(postId, postName);
+						var isSpecial = response.data.result.dataList[0].isSpecial;
+						_this.handlePostPerson(postId, postName, isSpecial);
 					} else {
 						_this.$message.error(retMsg);
 					}
@@ -379,9 +400,10 @@
 			},
 			
 			//
-			handlePostPerson: function (postId, postName) {
+			handlePostPerson: function (postId, postName, isSpecial) {
 				this.postForm.postId = postId;
 				this.postForm.postName = postName;
+				this.postForm.isSpecial = isSpecial;
 				this.postName = postName;
 				this.loadUserPostData(postId);
 			},
@@ -439,13 +461,14 @@
 				this.addUserDialogVisible = false;
 				var postId = this.postForm.postId;
 				var postName = this.postForm.postName;
+				var isSpecial = this.postForm.isSpecial;
 				let params = {postId:postId, userList:this.targetNodes};
 				let _this = this;
 				axios.post('/user/post/addList', params).then(function(response) {
 					var retCode = response.data.retCode;
 					var retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
-						_this.handlePostPerson(postId, postName);
+						_this.handlePostPerson(postId, postName, isSpecial);
 					} else {
 						_this.$message.error(retMsg);
 					}

@@ -3,33 +3,22 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="userAdminForm" size="small" style="float: left;">
-				<el-form-item>
-				</el-form-item>
+				<el-form-item label="修改完成后，绑定的主管理员手机号会修改"></el-form-item>
 			</el-form>
 		</el-col>
-
+		
 		<el-col style="padding-bottom: 0px;">
-			<!--新增界面-->
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="120px">
-				<el-form-item label="人员" prop="userName">
-					<el-input v-model.trim="addForm.userName" @focus="handleUserAddUserName" readonly="true" auto-complete="off"></el-input>
+				<el-form-item label="新的主管理员" prop="newUserName">
+					<el-input v-model.trim="addForm.newUserName" @focus="handleUserAddUserName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
-				<br>
-				<el-form-item label="分配权限">
-					<el-table :data="tableData" fit highlight-current-row stripe style="width: 100%" @selection-change="handleSelectionChange">
-						<el-table-column prop="name" label="基础权限" width="200"></el-table-column>
-						<el-table-column type="selection" width="55"></el-table-column>
-					</el-table>
-				</el-form-item>
-		   		<br>
 				<el-form-item>
-				    <el-button type="primary" @click="addSubmit">保 存</el-button>
-				    <el-button type="primary" @click="handleReturn">返 回</el-button>
-			  </el-form-item>
+					<el-button type="primary" @click="addSubmit" :loading="addLoading">保 存</el-button>
+					<el-button type="primary" @click="handleReturn">返 回</el-button>
+				</el-form-item>
 			</el-form>
 		</el-col>
-		
-		
+	
 		<!--新增界面-选择人员-->
 		<div class="tree-transfer" :style="{width,height}">
 			<el-dialog title="选择部门" :visible.sync="addUserDialogVisible" class="tree-transfer__dialog">
@@ -71,8 +60,8 @@
 			           			</li>
 		           			</ul>
 	           			</div>
-	       			</div>
-	   			</section>
+           			</div>
+       			</section>
 				<span slot="footer" class="dialog-footer">
 		    		<el-button size="medium" type="primary" @click="addUserSubmit">确定</el-button>
 		    		<el-button size="medium" @click="addUserDialogVisible = false">取消</el-button>
@@ -91,7 +80,7 @@
 			// 宽度
 			width: {
 				type: String,
-				default: '500px',
+			default: '500px',
 			},
 			// 高度
 			height: {
@@ -101,33 +90,18 @@
 		},
 		data() {
 			return {
-				tableData: [{
-		            name: '企业管理',
-		            address: '上海市普陀区金沙江路 1518 弄'
-		          }, {
-		            name: '系统管理',
-		            address: '上海市普陀区金沙江路 1517 弄'
-		          }, {
-		            name: '资质管理',
-		            address: '上海市普陀区金沙江路 1519 弄'
-		          }, {
-		            name: '系统性文件',
-		            address: '上海市普陀区金沙江路 1516 弄'
-		          }],
 				userAdminForm: {},
 				labelPosition: 'right',
 				//新增界面数据
 				addForm: {
-					userIds: [],
-					userName: [],
 				}, 
 				addLoading: false,
 				addFormRules: {
-					userName: [
+					newUserName: [
 						{ required: true, message: '请选择人员', trigger: 'blur' }
 					],
 				}, 
-				
+
 				//新增界面-选择部门
 				treeTransferData: [],
 				defaultProps: {
@@ -147,28 +121,21 @@
 	    	this.search();
 	    },
 		methods: {
-	      	//企业内容显示转换
-	      	formatEnterpriseStatus: function (row, column) {
-				return row.userAdminStatus == 1 ? '正常' : row.userAdminStatus == 2 ? '冻结' : row.userAdminStatus == 3 ? '注销': '';
-			},
 			//搜索
 	        search: function(){
+	            this.loadData();
 	        },
 			loadData: function() {
 				let params = {
-					pageNum: this.pageNum,
-					pageSize: this.pageSize,
-					userAdminName: this.userAdminForm.userAdminName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/user/admin/getList', params).then(function(response) {
+				axios.post('/user/admin/getMaster', params).then(function(response) {
 						_this.listLoading = false;
 						var retCode = response.data.retCode;
 						var retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
-							_this.tableData = response.data.result.dataList;
-							_this.total = response.data.result.page.total;
+							_this.addForm = response.data.result;
 						} else {
 							_this.$message.error(retMsg);
 						}
@@ -179,18 +146,19 @@
 			}, 
 			//返回
 			handleReturn: function () {
-				this.$router.push('/slaveAdmin');
+				this.$router.push('/masterAdminFirst');
 			},
 			//新增
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
-							this.addLoading = true;
-							let params = this.addForm;
+							let params = { 
+								userAdminId : this.addForm.userAdminId, 
+								userId : this.addForm.userId 
+							};
 							let _this = this;
-							axios.post('/user/admin/add', params).then(function(response) {
-								_this.addLoading = false;
+							axios.post('/user/admin/changeMaster', params).then(function(response) {
 								var retCode = response.data.retCode;
 								var retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
@@ -198,7 +166,8 @@
 										message: '保存成功',
 										type: 'success'
 									});
-						         	_this.$router.push('/slaveAdmin');
+						         	_this.loadData();
+									_this.addDialogVisible = false;
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
 								} else {
@@ -212,7 +181,7 @@
 				});
 			},
 			
-			//新增界面-选择所属人
+			//新增界面-选择新主管理员
 			handleUserAddUserName() {
 				this.addUserDialogVisible = true;
 			    let params = {};
@@ -230,7 +199,6 @@
 					}
 				);
 				this.targetNodes = {};
-				this.userData = {};
 		   	},
 		   	handleAddOrgNodeClick(node) {
 		   		let params = {
@@ -254,23 +222,17 @@
 		   	},
 		   	handleAddUserDeleteItem(id) {
 				this.targetNodes = {};
-		   	},
+			},
 			addUserSubmit() {
 				this.$emit('close');
 				this.addUserDialogVisible = false;
 				this.addForm.userId = this.targetNodes.userId;
-				this.addForm.userName = this.targetNodes.userName;
+				this.addForm.newUserName = this.targetNodes.userName;
 			},
 			
 			handleAddUserNodeClick(node) {
-		        this.targetNodes = node;
+		   		this.targetNodes = node;
 		   	},
-		   	isExistedTargetNode(node) {
-				return this.targetNodes.some(item => item.userId === node.userId);
-			},
-			clearTargetNodes() {
-				this.targetNodes = [];
-		    },
 		},
 	}
 </script>

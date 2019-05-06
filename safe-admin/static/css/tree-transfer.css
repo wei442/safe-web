@@ -1,0 +1,89 @@
+.tree-transfer {
+	h3, ul, li {
+		margin: 0;
+		padding: 0;
+	}
+	.tree-transfer__content {
+		position: relative;
+		overflow: hidden;
+		height: 400px;
+		.tree-transfer__title {
+			border-bottom: 1px solid #ebeef5;
+			padding: 0 15px;
+			height: 40px;
+			line-height: 40px;
+	      	color: #333;
+	      	font-size: 16px;
+	      	background-color: #f5f7fa;
+		}
+		.tree-transfer__list {
+			padding: 10px;
+			height: calc(100% - 41px);
+			box-sizing: border-box;
+			overflow: auto;
+		}
+		.tree-transfer__left {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		.tree-transfer__middle {
+			position: absolute;
+			top: 50%;
+			left: 40%;
+			width: 20%;
+			transform: translateY(-50%);
+			text-align: center;
+		}
+		.tree-transfer__right {
+			position: absolute;
+			top: 0;
+			right: 0;
+		.tree-transfer__right-close {
+			float: right;
+			color: #67c23a;
+			font-size: 14px;
+			cursor: pointer;
+		}
+		.tree-transfer__list-ul {
+			padding-bottom: 20px;
+		}
+		.tree-transfer__list-li {
+			position: relative;
+			padding: 4px 24px 4px 10px;
+			border-radius: 3px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+		.tree-transfer__list-li:hover {
+			background-color: #f5f7fa;
+		}
+		.tree-transfer__list-li:hover .tree-transfer__list-delete {
+			display: block;
+		}
+		.tree-transfer__list-delete {
+	        display: block;
+	        position: absolute;
+	        top: 50%;
+	        right: 10px;
+	        margin-top: -10px;
+	        color: #f56c6c;
+	        cursor: pointer;
+	        text-align: center;
+		}
+	}
+	.tree-transfer__left,
+		.tree-transfer__right {
+	      	border: 1px solid #ebeef5;
+	      	width: 40%;
+	      	height: 100%;
+	      	box-sizing: border-box;
+	      	border-radius: 5px;
+	      	vertical-align: middle;
+		}
+	}
+	.el-dialog__footer {
+		text-align: center;
+	}
+}

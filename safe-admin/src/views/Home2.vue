@@ -84,21 +84,32 @@
 		            	icon: 'el-icon-menu'
 			      	},
 			      	{
-			      		path: '2',
+			      		path: '1',
 			      		name: '企业管理',
 			            icon: 'el-icon-menu',
 			            child: [
 			            	{
-			            		path: '/userAdmin',
-			            		name: '用户管理员',
+			            		path: '/enterpriseSetting',
+			            		name: '企业设置',
 			            	},
+			            	{
+			            		path: '/masterAdminFirst',
+			            		name: '更换主管理员',
+			            	},
+			            	{
+			            		path: '/slaveAdmin',
+			            		name: '设置子管理员',
+			            	},
+			        	]
+			      	},
+			      	{
+			      		path: '2',
+			      		name: '系统管理',
+			            icon: 'el-icon-menu',
+			            child: [
 			            	{
 			            		path: '/enterprise',
 			            		name: '企业管理',
-			            	},
-			            	{
-			            		path: '/userInfo',
-			            		name: '用户信息管理',
 			            	},
 			            	{
 			            		path: '/org',
@@ -145,15 +156,15 @@
 			            child: [
 			            	{
 			            		path: '/lawRule',
-			            		name: '法律法规与制度',
+			            		name: '法律法规与制度管理',
 			            	},
 			            	{
 			            		path: '/productionRule',
-			            		name: '安全生产管理制度',
+			            		name: '安全生产管理制度管理',
 			            	},
 			            	{
 			            		path: '/operationRule',
-			            		name: '安全操作规程',
+			            		name: '安全操作规程管理',
 			            	}
 			        	]
 			      	},
@@ -180,15 +191,15 @@
 			            child: [
 			            	{
 			            		path: '/risk',
-			            		name: '风险因素',
+			            		name: '风险因素管理',
 			            	},
 			            	{
 			            		path: '/riskAccept',
-			            		name: '控制措施验收',
+			            		name: '控制措施验收管理',
 			            	},
 			            	{
 			            		path: '/riskFile',
-			            		name: '风险档案',
+			            		name: '风险档案管理',
 			            	}
 			        	]
 			      	},
@@ -199,15 +210,15 @@
 			            child: [
 			            	{
 			            		path: '/postCheck',
-			            		name: '岗位排查清单',
+			            		name: '岗位排查清单管理',
 			            	},
 			            	{
 			            		path: '/postCheckSend',
-			            		name: '排查任务指派',
+			            		name: '排查任务指派管理',
 			            	},
 			            	{
 			            		path: '/postCheckStatistics',
-			            		name: '排查结果统计',
+			            		name: '排查结果统计管理',
 			            	},
 			            	{
 			            		path: '/dangerExpress',
