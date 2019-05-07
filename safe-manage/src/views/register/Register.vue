@@ -67,8 +67,8 @@
     					let _this = this;
     					axios.post('/user/register', params).then(function(response) {
     						_this.registerLoading = false;
-    						var retCode = response.data.retCode;
-    						var retMsg = response.data.retMsg;
+    						let retCode = response.data.retCode;
+    						let retMsg = response.data.retMsg;
     						if(retCode == '0000000') {
     							_this.$message({
     								message: '您好，注册成功，请重新登录管理后台！',

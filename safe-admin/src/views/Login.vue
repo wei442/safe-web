@@ -86,10 +86,10 @@
     					let _this = this;
     					axios.post('/user/login', params).then(function(response) {
     						_this.loginLoading = false;
-    						var retCode = response.data.retCode;
-    						var retMsg = response.data.retMsg;
+    						let retCode = response.data.retCode;
+    						let retMsg = response.data.retMsg;
     						if(retCode == '0000000') {
-    							var result = response.data.result;
+    							let result = response.data.result;
     							//清除所有的key/value
     							sessionStorage.clear();
     							sessionStorage.setItem('token', response.data.result.token);
@@ -97,8 +97,8 @@
     							sessionStorage.setItem('userName', response.data.result.userName);
     							_this.$router.push('/index');
     						} else if(retCode == '0000008') {
-    							var enterpriseId = response.data.result.enterpriseId;
-    							var userId = response.data.result.userId;
+    							let enterpriseId = response.data.result.enterpriseId;
+    							let userId = response.data.result.userId;
     							_this.$router.push({name: 'changePassword', params: {enterpriseId: enterpriseId, userId: userId}});
     						} else {
     							_this.$message.error(retMsg);
@@ -124,8 +124,8 @@
 							let _this = this;
 							axios.post('/user/firstlogin/updatePassword', params).then(function(response) {
 								_this.passwordLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '修改成功，请重新登录！',

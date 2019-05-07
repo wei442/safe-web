@@ -9,9 +9,11 @@
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
 				</el-form-item>
+				<!--
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增</el-button>
 				</el-form-item>
+				-->
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleReturn">返回字典</el-button>
 				</el-form-item>
@@ -144,8 +146,8 @@
 				let _this = this;
 				axios.post('/dict/item/getList', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 						} else {
@@ -189,8 +191,8 @@
 							let _this = this;
 							axios.post('/dict/item/add', params).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -220,8 +222,8 @@
 							let _this = this;
 							axios.post('/dict/item/update', params).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -251,8 +253,8 @@
 					let _this = this;
 					axios.post('/dict/item/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',

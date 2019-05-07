@@ -202,8 +202,8 @@
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.treeData = response.data.result.dataList;
 							_this.tableData = response.data.result.dataList;
@@ -255,8 +255,8 @@
 							let _this = this;
 							axios.post('/org/add', params).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -286,8 +286,8 @@
 							let _this = this;
 							axios.post('/org/update', params).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -317,8 +317,8 @@
 					let _this = this;
 					axios.post('/org/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -351,8 +351,8 @@
 							let _this = this;
 							axios.post('/org/add', params).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',

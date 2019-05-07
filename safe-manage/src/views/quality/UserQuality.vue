@@ -350,8 +350,8 @@
 				let _this = this;
 				axios.post('/user/quality/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 							_this.total = response.data.result.page.total;
@@ -370,8 +370,8 @@
 				};
         		let _this = this;
 				axios.post('/user/quality/attachment/getList', params, params).then(function (response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						if(type == 'edit') {
 							_this.fileEditList = response.data.result.dataList;
@@ -423,8 +423,8 @@
 							let _this = this;
 							axios.post('/user/quality/add', formData, headers).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -467,8 +467,8 @@
 							let _this = this;
 							axios.post('/user/quality/update', formData, headers).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -498,8 +498,8 @@
 					let _this = this;
 					axios.post('/user/quality/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -524,8 +524,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -545,8 +545,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userData = response.data.result.dataList;
 					} else {
@@ -573,8 +573,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -594,8 +594,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userOrgData = response.data.result.dataList;
 					} else {

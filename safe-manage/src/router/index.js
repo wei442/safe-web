@@ -44,27 +44,24 @@ export default new Router({
 	    {
 	        path: '/login',
 	        name: 'login',
-	        title: '登录',
 	        meta: { 
-				title: '登录', 
+				title: ['登录'], 
 			},
 	        component: Login
 	    },
 	    {
 	    	path: '/register',
 	    	name: 'register',
-	    	title: '注册',
 	    	meta: { 
-				title: '注册', 
+				title: ['注册'], 
 			},
 	    	component: Register
 	    },
 	    {
 	    	path: '/changePassword',
 	    	name: 'changePassword',
-	    	title: '修改密码',
 	    	meta: { 
-				title: '修改密码', 
+				title: ['修改密码'], 
 			},
 	    	component: ChangePassword
 	    },
@@ -77,16 +74,15 @@ export default new Router({
             	  path: '/index',
             	  name: 'index',
             	  meta: { 
-	    				title: '首页', 
-	    				requireAuth: true 
-	    			},
+            		  requireAuth: true 
+            	  },
             	  component: Index,
 	    		},
 	    		{
 	    			path: '/userInfo',
 	    			name: 'userInfo',
 	    			meta: { 
-	    				title: '用户信息管理', 
+	    				title: ['用户信息管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: UserInfo,
@@ -95,7 +91,7 @@ export default new Router({
 	    			path: '/enterprise',
 	    			name: 'enterprise',
 	    			meta: { 
-	    				title: '企业管理', 
+	    				title: ['企业管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Enterprise,
@@ -104,7 +100,7 @@ export default new Router({
 	    			path: '/userAdmin',
 	    			name: 'userAdmin',
 	    			meta: { 
-	    				title: '用户管理', 
+	    				title: ['用户管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: UserAdmin,
@@ -113,7 +109,7 @@ export default new Router({
 	    			path: '/org',
 	    			name: 'org',
 	    			meta: { 
-	    				title: '组织机构管理', 
+	    				title: ['组织机构管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Org,
@@ -122,7 +118,7 @@ export default new Router({
 	    			path: '/post',
 	    			name: 'post',
 	    			meta: { 
-	    				title: '岗位管理', 
+	    				title: ['岗位管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Post,
@@ -131,7 +127,7 @@ export default new Router({
 	    			path: '/title',
 	    			name: 'title',
 	    			meta: { 
-	    				title: '职务管理', 
+	    				title: ['职务管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Title,
@@ -140,7 +136,7 @@ export default new Router({
 	    			path: '/dict',
 	    			name: 'dict',
 	    			meta: { 
-	    				title: '字典管理', 
+	    				title: ['字典管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Dict,
@@ -149,7 +145,7 @@ export default new Router({
 	    			path: '/dictItem',
 	    			name: 'dictItem',
 	    			meta: { 
-	    				title: '字典子项管理', 
+	    				title: ['字典子项管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: DictItem,
@@ -159,7 +155,7 @@ export default new Router({
 	    			path: '/orgQuality',
 	    			name: 'orgQuality',
 	    			meta: { 
-	    				title: '机构资质管理', 
+	    				title: ['机构资质管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: OrgQuality,
@@ -168,7 +164,7 @@ export default new Router({
 	    			path: '/userQuality',
 	    			name: 'userQuality',
 	    			meta: { 
-	    				title: '用户资质管理', 
+	    				title: ['用户资质管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: UserQuality,
@@ -178,7 +174,7 @@ export default new Router({
 	    			path: '/lawRule',
 	    			name: 'lawRule',
 	    			meta: { 
-	    				title: '法律法规与制度管理', 
+	    				title: ['法律法规与制度管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: LawRule,
@@ -187,7 +183,7 @@ export default new Router({
 	    			path: '/productionRule',
 	    			name: 'productionRule',
 	    			meta: { 
-	    				title: '安全生产管理制度管理', 
+	    				title: ['安全生产管理制度管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: ProductionRule,
@@ -196,7 +192,7 @@ export default new Router({
 	    			path: '/operationRule',
 	    			name: 'operationRule',
 	    			meta: { 
-	    				title: '安全操作规程管理', 
+	    				title: ['安全操作规程管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: OperationRule,
@@ -205,7 +201,7 @@ export default new Router({
 	    			path: '/activitySummary',
 	    			name: 'activitySummary',
 	    			meta: { 
-	    				title: '活动总结管理', 
+	    				title: ['活动总结管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: ActivitySummary,
@@ -214,7 +210,7 @@ export default new Router({
 	    			path: '/activityPublic',
 	    			name: 'activityPublic',
 	    			meta: { 
-	    				title: '文化宣传管理', 
+	    				title: ['文化宣传管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: ActivityPublic,
@@ -223,7 +219,7 @@ export default new Router({
 	    			path: '/setting',
 	    			name: 'setting',
 	    			meta: { 
-	    				title: '设置管理', 
+	    				title: ['设置管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Setting,
@@ -232,7 +228,7 @@ export default new Router({
 	    			path: '/risk',
 	    			name: 'risk',
 	    			meta: { 
-	    				title: '风险因素管理', 
+	    				title: ['风险因素管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Risk,
@@ -241,7 +237,7 @@ export default new Router({
 	    			path: '/riskAccept',
 	    			name: 'riskAccept',
 	    			meta: { 
-	    				title: '控制措施验收管理', 
+	    				title: ['控制措施验收管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: RiskAccept,
@@ -250,7 +246,7 @@ export default new Router({
 	    			path: '/riskFile',
 	    			name: 'riskFile',
 	    			meta: { 
-	    				title: '风险档案管理', 
+	    				title: ['风险档案管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: RiskFile,
@@ -260,7 +256,7 @@ export default new Router({
 	    			path: '/postCheck',
 	    			name: 'postCheck',
 	    			meta: { 
-	    				title: '岗位排查清单管理', 
+	    				title: ['岗位排查清单管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: PostCheck,
@@ -269,7 +265,7 @@ export default new Router({
 	    			path: '/postCheckSend',
 	    			name: 'postCheckSend',
 	    			meta: { 
-	    				title: '排查任务指派管理', 
+	    				title: ['排查任务指派管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: PostCheckSend,
@@ -278,7 +274,7 @@ export default new Router({
 	    			path: '/postCheckStatistics',
 	    			name: 'postCheckStatistics',
 	    			meta: { 
-	    				title: '排查结果统计管理', 
+	    				title: ['排查结果统计管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: PostCheckStatistics,
@@ -287,7 +283,7 @@ export default new Router({
 	    			path: '/dangerExpress',
 	    			name: 'dangerExpress',
 	    			meta: { 
-	    				title: '隐患快报管理', 
+	    				title: ['隐患快报管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: DangerExpress,
@@ -296,7 +292,7 @@ export default new Router({
 	    			path: '/dangerCheck',
 	    			name: 'dangerCheck',
 	    			meta: { 
-	    				title: '隐患抽查管理', 
+	    				title: ['隐患抽查管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: DangerCheck,
@@ -305,7 +301,7 @@ export default new Router({
 	    			path: '/dangerBook',
 	    			name: 'dangerBook',
 	    			meta: { 
-	    				title: '隐患台账管理', 
+	    				title: ['隐患台账管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: DangerBook,

@@ -86,8 +86,8 @@
     					let _this = this;
     					axios.post('/base/user/login', params).then(function(response) {
     						_this.loginLoading = false;
-    						var retCode = response.data.retCode;
-    						var retMsg = response.data.retMsg;
+    						let retCode = response.data.retCode;
+    						let retMsg = response.data.retMsg;
     						if(retCode == '0000000') {
     							var result = response.data.result;
     							//清除所有的key/value
@@ -124,8 +124,8 @@
 							let _this = this;
 							axios.post('/user/firstlogin/updatePassword', params).then(function(response) {
 								_this.passwordLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '修改成功，请重新登录！',

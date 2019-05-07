@@ -144,8 +144,8 @@
 				let _this = this;
 				axios.post('/dict/item/getList', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 						} else {
@@ -189,8 +189,8 @@
 							let _this = this;
 							axios.post('/dict/item/add', params).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -220,8 +220,8 @@
 							let _this = this;
 							axios.post('/dict/item/update', params).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -251,8 +251,8 @@
 					let _this = this;
 					axios.post('/dict/item/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',

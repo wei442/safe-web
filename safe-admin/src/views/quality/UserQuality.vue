@@ -55,7 +55,7 @@
 					<el-input v-model.trim="addForm.userName" @focus="handleUserAddUserName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" :file-list="fileAddList">
+					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" accept=".png,.jpg,.jpeg,.gif,.PNG,.JPG,.JPEG,.GIF" :file-list="fileAddList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -127,7 +127,7 @@
 					<el-input v-model.trim="editForm.userName" @focus="handleUserEditUserName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" :file-list="fileEditList">
+					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" accept=".png,.jpg,.jpeg,.gif,.PNG,.JPG,.JPEG,.GIF" :on-success="handleEditSuccess" :file-list="fileEditList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -325,16 +325,15 @@
 	        	return this.$confirm(`确定移除 ${ file.name }？`);
 	      	},
 	      	beforeUpload(file) {
-	      		if(!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
-	      	        this.$message({
-	      	        	message: '请上传格式为image/png, image/gif, image/jpg, image/jpeg的图片',
-	      	        	type: 'warning'
-			        });
+	      		const isPic = file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg';
+	      		if (!isPic) {
+	      			this.$message.error('上传图片只能是 PNG,JPG,JPEG,GIF 格式!');
 	      		}
-	      		var isLt10M = file.size > 10*1024*1024 ? true:false;
-	      	    if (isLt10M) {
-	      	    	this.$message.error('上传图片大小不能超过 10MB!');
-	      	    };
+	      		const isLt10M = file.size < 10*1024*1024;
+	      		if (!isLt10M) {
+	      			this.$message.error('上传图片大小不能超过 10MB!');
+	      		};
+	      		return isPic && isLt10M;
 	      	},
 			//搜索
 	        search: function(){
@@ -350,8 +349,8 @@
 				let _this = this;
 				axios.post('/user/quality/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 							_this.total = response.data.result.page.total;
@@ -364,14 +363,14 @@
 	        	);
 			}, 
 			//获取用户资质附件列表
-			loadUserQualityAttachmentList: function (userQualityId) {
+			loadUserQualityAttachmentList: function (userQualityId, type) {
 				let params = {
 					userQualityId : userQualityId
 				};
         		let _this = this;
 				axios.post('/user/quality/attachment/getList', params, params).then(function (response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						if(type == 'edit') {
 							_this.fileEditList = response.data.result.dataList;
@@ -413,6 +412,7 @@
 							this.addLoading = true;
 							let formData = new FormData();
 							formData.set('qualityName', this.addForm.qualityName);
+							formData.set('userId', this.addForm.userId);
 							formData.set('userName', this.addForm.userName);
 							this.fileAddList.forEach(function(item, index){
 								formData.append('fileList', item.raw);
@@ -423,8 +423,8 @@
 							let _this = this;
 							axios.post('/user/quality/add', formData, headers).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -453,12 +453,13 @@
 							let formData = new FormData();
 							formData.set('userQualityId', this.editForm.userQualityId);
 							formData.set('qualityName', this.editForm.qualityName);
+							formData.set('userId', this.editForm.userId);
 							formData.set('userName', this.editForm.userName);
 							this.fileEditList.forEach(function(item, index){
 								if(item.raw != null) {
 									formData.append('fileList', item.raw);
-								} else if(item.ruleAttachmentId != null) {
-									formData.append('ruleAttachmentIds', item.ruleAttachmentId);
+								} else if(item.userQualityAttachmentId != null) {
+									formData.append('userQualityAttachmentIds', item.userQualityAttachmentId);
 								}
 							});
 							let headers = {
@@ -467,8 +468,8 @@
 							let _this = this;
 							axios.post('/user/quality/update', formData, headers).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -498,8 +499,8 @@
 					let _this = this;
 					axios.post('/user/quality/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -524,8 +525,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -545,8 +546,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userData = response.data.result.dataList;
 					} else {
@@ -573,8 +574,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -594,8 +595,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userOrgData = response.data.result.dataList;
 					} else {

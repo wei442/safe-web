@@ -38,11 +38,9 @@
 			<section class="content-container">
 				<div class="grid-content bg-purple-light">
 					<el-col :span="24" class="breadcrumb-container">
-						<strong class="title">{{ $route.meta.title }}</strong>
-						<el-breadcrumb separator="/" class="breadcrumb-inner">
-							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-								{{ item.meta.title }}
-							</el-breadcrumb-item>
+						<el-breadcrumb separator="/">
+							<el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+							<el-breadcrumb-item v-for="(item, index) in $route.meta.title" :key="index">{{ item }}</el-breadcrumb-item>
 						</el-breadcrumb>
 					</el-col>
 					<el-col :span="24" class="content-wrapper">
@@ -245,8 +243,8 @@
 					let params = {};
 					let _this = this;
 					axios.post('/user/logout', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							sessionStorage.removeItem('token');
 							sessionStorage.removeItem('userAccount');

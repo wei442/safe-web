@@ -75,8 +75,8 @@
 							let _this = this;
 							axios.post('/user/firstLogin/updatePassword', params).then(function(response) {
 								_this.passwordLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '密码修改成功，请重新登录！',

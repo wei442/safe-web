@@ -3,8 +3,8 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="enterpriseForm" size="small" style="float: left;">
-				<el-form-item label="企业名称">
-					<el-input v-model.trim="enterpriseForm.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
+				<el-form-item label="隐患名称">
+					<el-input v-model.trim="enterpriseForm.enterpriseName" placeholder="请输入隐患名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -18,13 +18,13 @@
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
-			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseType" label="企业类型" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseFax" label="企业传真" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseName" label="隐患名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseType" label="隐患类型" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseNature" label="隐患性质" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseStatus" label="隐患状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseTelphone" label="隐患电话" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseFax" label="隐患传真" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseAddr" label="隐患地址" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -53,29 +53,29 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="80px">
-				<el-form-item label="企业名称" prop="enterpriseName">
+				<el-form-item label="隐患名称" prop="enterpriseName">
 					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业类型" prop="enterpriseType">
+				<el-form-item label="隐患类型" prop="enterpriseType">
 					<el-select v-model.trim="addForm.enterpriseType" placeholder="请选择">
 		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 		    		</el-select>
 				</el-form-item>
-				<el-form-item label="企业性质" prop="enterpriseNature">
+				<el-form-item label="隐患性质" prop="enterpriseNature">
 					<el-select v-model.trim="addForm.enterpriseNature" placeholder="请选择">
 						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="企业电话" prop="enterpriseTelphone">
+				<el-form-item label="隐患电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
+				<el-form-item label="隐患传真" prop="enterpriseFax">
 					<el-input v-model.trim="addForm.enterpriseFax" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="版本号" prop="enterpriseTelphone">
 					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业地址" prop="enterpriseAddr">
+				<el-form-item label="隐患地址" prop="enterpriseAddr">
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.enterpriseAddr" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -88,29 +88,29 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
 			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
-				<el-form-item label="企业名称" prop="enterpriseName">
+				<el-form-item label="隐患名称" prop="enterpriseName">
 					<el-input v-model.trim="editForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业类型" prop="enterpriseType">
+				<el-form-item label="隐患类型" prop="enterpriseType">
 					<el-select v-model.trim="editForm.enterpriseType" placeholder="请选择">
 		    			<el-option v-for="item in enterpriseTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 		    		</el-select>
 				</el-form-item>
-				<el-form-item label="企业性质" prop="enterpriseNature">
+				<el-form-item label="隐患性质" prop="enterpriseNature">
 					<el-select v-model.trim="editForm.enterpriseNature" placeholder="请选择">
 						<el-option v-for="item in enterpriseNatureOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="企业电话" prop="enterpriseTelphone">
+				<el-form-item label="隐患电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
+				<el-form-item label="隐患传真" prop="enterpriseFax">
 					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="版本号" prop="enterpriseTelphone">
 					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业地址" prop="enterpriseAddr">
+				<el-form-item label="隐患地址" prop="enterpriseAddr">
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -123,11 +123,11 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="企业编码">{{ showForm.enterpriseCode }}</el-form-item>
-				<el-form-item label="企业名称">{{ showForm.enterpriseName }}</el-form-item>
-				<el-form-item label="企业内容">{{ showForm.content }}</el-form-item>
+				<el-form-item label="隐患编码">{{ showForm.enterpriseCode }}</el-form-item>
+				<el-form-item label="隐患名称">{{ showForm.enterpriseName }}</el-form-item>
+				<el-form-item label="隐患内容">{{ showForm.content }}</el-form-item>
 				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="企业类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="隐患类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -154,10 +154,10 @@
 				addLoading: false,
 				addFormRules: {
 					enterpriseName: [
-						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+						{ required: true, message: '请输入隐患名称', trigger: 'blur' }
 					],
 					type: [
-						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+						{ required: true, message: '请选择隐患类型', trigger: 'blur' }
 					],
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
@@ -167,10 +167,10 @@
 				editLoading: false,
 				editFormRules: {
 					enterpriseName: [
-						{ required: true, message: '请输入企业名称', trigger: 'blur' }
+						{ required: true, message: '请输入隐患名称', trigger: 'blur' }
 					],
 					type: [
-						{ required: true, message: '请选择企业类型', trigger: 'blur' }
+						{ required: true, message: '请选择隐患类型', trigger: 'blur' }
 					],
 				}, 
 				showDialogVisible: false,//查看界面是否显示
@@ -191,19 +191,19 @@
 					},
 					{
 						value: 4,
-						label: '国有企业'
+						label: '国有隐患'
 					},
 					{
 						value: 5,
-						label: '集体企业'
+						label: '集体隐患'
 					},
 					{
 						value: 6,
-						label: '股份合作企业'
+						label: '股份合作隐患'
 					},
 					{
 						value: 7,
-						label: '联营企业'
+						label: '联营隐患'
 					},
 					{
 						value: 8,
@@ -215,15 +215,15 @@
 					},
 					{
 						value: 10,
-						label: '私营企业'
+						label: '私营隐患'
 					},
 					{
 						value: 11,
-						label: '港、澳、台商投资企业'
+						label: '港、澳、台商投资隐患'
 					},
 					{
 						value: 12,
-						label: '外商投资企业'
+						label: '外商投资隐患'
 					},
 					{
 						value: 13,
@@ -285,7 +285,7 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	//企业内容显示转换
+	      	//隐患内容显示转换
 	      	formatEnterpriseStatus: function (row, column) {
 				return row.enterpriseStatus == 1 ? '正常' : row.enterpriseStatus == 2 ? '冻结' : row.enterpriseStatus == 3 ? '注销': '';
 			},
@@ -303,8 +303,8 @@
 				let _this = this;
 				axios.post('/enterprise/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 							_this.total = response.data.result.page.total;
@@ -341,8 +341,8 @@
 							let _this = this;
 							axios.post('/enterprise/add', params).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -372,8 +372,8 @@
 							let _this = this;
 							axios.post('/enterprise/update', params).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -403,8 +403,8 @@
 					let _this = this;
 					axios.post('/enterprise/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',

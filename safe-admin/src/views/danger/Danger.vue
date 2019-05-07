@@ -3,8 +3,8 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="orgQualityForm" size="small" style="float: left;">
-				<el-form-item label="资质名称">
-					<el-input v-model.trim="orgQualityForm.dangerName" placeholder="请输入资质名称" clearable></el-input>
+				<el-form-item label="隐患名称">
+					<el-input v-model.trim="orgQualityForm.dangerName" placeholder="请输入隐患名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
@@ -120,7 +120,7 @@
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
 			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="资质名称">{{ showForm.dangerName }}</el-form-item>
+				<el-form-item label="隐患名称">{{ showForm.dangerName }}</el-form-item>
 				<el-form-item label="所属机构">{{ showForm.orgName }}</el-form-item>
 				<el-form-item label="相关文件">
 					<el-upload class="upload-demo" ref="uploadShowfile" :on-preview="handlePreview" :file-list="fileShowList"></el-upload>
@@ -152,7 +152,7 @@
 				addLoading: false,
 				addFormRules: {
 					dangerName: [
-						{ required: true, message: '请输入资质名称', trigger: 'blur' }
+						{ required: true, message: '请输入隐患名称', trigger: 'blur' }
 					],
 					orgName: [
 						{ required: true, message: '请选择所属机构', trigger: 'blur' }
@@ -166,7 +166,7 @@
 				editLoading: false,
 				editFormRules: {
 					dangerName: [
-						{ required: true, message: '请输入资质名称', trigger: 'blur' }
+						{ required: true, message: '请输入隐患名称', trigger: 'blur' }
 					],
 					orgName: [
 						{ required: true, message: '请选择所属机构', trigger: 'blur' }
@@ -256,8 +256,8 @@
 				let _this = this;
 				axios.post('/danger/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 							_this.total = response.data.result.page.total;
@@ -269,15 +269,15 @@
 	        		}
 	        	);
 			}, 
-			//获取机构资质附件列表
+			//获取机构隐患附件列表
 			loadOrgQualityAttachmentList: function (orgQualityId) {
 				let params = {
 					orgQualityId : orgQualityId
 				};
         		let _this = this;
 				axios.post('/danger/attachment/getList', params, params).then(function (response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						if(type == 'edit') {
 							_this.fileEditList = response.data.result.dataList;
@@ -329,8 +329,8 @@
 							let _this = this;
 							axios.post('/danger/add', formData, headers).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -373,8 +373,8 @@
 							let _this = this;
 							axios.post('/danger/update', formData, headers).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -404,8 +404,8 @@
 					let _this = this;
 					axios.post('/danger/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',

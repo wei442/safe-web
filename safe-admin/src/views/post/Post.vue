@@ -258,13 +258,13 @@
 				let _this = this;
 				axios.post('/post/getList', params).then(function(response) {
 					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeData = response.data.result.dataList;
-						var postId = response.data.result.dataList[0].postId;
-						var postName = response.data.result.dataList[0].postName;
-						var isSpecial = response.data.result.dataList[0].isSpecial;
+						let postId = response.data.result.dataList[0].postId;
+						let postName = response.data.result.dataList[0].postName;
+						let isSpecial = response.data.result.dataList[0].isSpecial;
 						_this.handlePostPerson(postId, postName, isSpecial);
 					} else {
 						_this.$message.error(retMsg);
@@ -282,8 +282,8 @@
 				let _this = this;
 				axios.post('/user/post/getList', params).then(function(response) {
 					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.tableData = response.data.result.dataList;
 					} else {
@@ -318,8 +318,8 @@
 							let _this = this;
 							axios.post('/post/add', params).then(function(response) {
 								_this.addPostLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -349,8 +349,8 @@
 							let _this = this;
 							axios.post('/post/update', params).then(function(response) {
 								_this.editPostLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -378,8 +378,8 @@
 					};
 					let _this = this;
 					axios.post('/post/delete', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -417,8 +417,8 @@
 					let params = {};
 					let _this = this;
 					axios.post('/org/getTreeList', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.treeTransferData = response.data.result.dataList;
 						} else {
@@ -441,8 +441,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userData = response.data.result.dataList;
 					} else {
@@ -459,14 +459,14 @@
 			addUserSubmit() {
 				this.$emit('close');
 				this.addUserDialogVisible = false;
-				var postId = this.postForm.postId;
-				var postName = this.postForm.postName;
-				var isSpecial = this.postForm.isSpecial;
+				let postId = this.postForm.postId;
+				let postName = this.postForm.postName;
+				let isSpecial = this.postForm.isSpecial;
 				let params = {postId:postId, userList:this.targetNodes};
 				let _this = this;
 				axios.post('/user/post/addList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.handlePostPerson(postId, postName, isSpecial);
 					} else {
@@ -491,8 +491,8 @@
 						let _this = this;
 						axios.post('/user/post/batchDelete', params).then(function(response) {
 							_this.listPersonLoading = false;
-							var retCode = response.data.retCode;
-							var retMsg = response.data.retMsg;
+							let retCode = response.data.retCode;
+							let retMsg = response.data.retMsg;
 							if(retCode == '0000000') {
 								_this.$message({
 									message: '删除成功',

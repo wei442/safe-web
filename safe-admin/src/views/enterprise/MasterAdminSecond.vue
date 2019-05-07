@@ -132,8 +132,8 @@
 				let _this = this;
 				axios.post('/user/admin/getMaster', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.addForm = response.data.result;
 						} else {
@@ -159,8 +159,8 @@
 							};
 							let _this = this;
 							axios.post('/user/admin/changeMaster', params).then(function(response) {
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -187,8 +187,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -208,8 +208,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userData = response.data.result.dataList;
 					} else {

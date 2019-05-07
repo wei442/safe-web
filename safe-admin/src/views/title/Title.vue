@@ -238,12 +238,12 @@
 				let _this = this;
 				axios.post('/title/getList', params).then(function(response) {
 					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeData = response.data.result.dataList;
-						var titleId = response.data.result.dataList[0].titleId;
-						var titleName = response.data.result.dataList[0].titleName;
+						let titleId = response.data.result.dataList[0].titleId;
+						let titleName = response.data.result.dataList[0].titleName;
 						_this.handleTitlePerson(titleId, titleName);
 					} else {
 						_this.$message.error(retMsg);
@@ -261,8 +261,8 @@
 				let _this = this;
 				axios.post('/user/title/getList', params).then(function(response) {
 					_this.listLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.tableData = response.data.result.dataList;
 					} else {
@@ -297,8 +297,8 @@
 							let _this = this;
 							axios.post('/title/add', params).then(function(response) {
 								_this.addTitleLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -328,8 +328,8 @@
 							let _this = this;
 							axios.post('/title/update', params).then(function(response) {
 								_this.editTitleLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -357,8 +357,8 @@
 					};
 					let _this = this;
 					axios.post('/title/delete', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -388,15 +388,15 @@
 			
 			//新增人员
 			handlePersonAdd() {
-				if(this.titleForm.postId == null) {
+				if(this.titleForm.titleId == null) {
 					this.$message.error('请选择一个职务，继续新增人员');
 				} else {
 					this.addUserDialogVisible = true;
 					let params = {};
 					let _this = this;
 					axios.post('/org/getTreeList', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.treeTransferData = response.data.result.dataList;
 						} else {
@@ -418,8 +418,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.userData = response.data.result.dataList;
 					} else {
@@ -436,13 +436,13 @@
 			addUserSubmit() {
 				this.$emit('close');
 				this.addUserDialogVisible = false;
-				var titleId = this.titleForm.titleId;
-				var titleName = this.titleForm.titleName;
+				let titleId = this.titleForm.titleId;
+				let titleName = this.titleForm.titleName;
 				let params = {titleId:titleId, userList:this.targetNodes};
 				let _this = this;
 				axios.post('/user/title/addList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.handleTitlePerson(titleId, titleName);
 					} else {
@@ -467,8 +467,8 @@
 						let _this = this;
 						axios.post('/user/title/batchDelete', params).then(function(response) {
 							_this.listPersonLoading = false;
-							var retCode = response.data.retCode;
-							var retMsg = response.data.retMsg;
+							let retCode = response.data.retCode;
+							let retMsg = response.data.retMsg;
 							if(retCode == '0000000') {
 								_this.$message({
 									message: '删除成功',

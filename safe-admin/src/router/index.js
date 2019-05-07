@@ -85,19 +85,10 @@ export default new Router({
 	    			component: Index,
 	    		},
 	    		{
-	    			path: '/enterprise',
-	    			name: 'enterprise',
-	    			meta: { 
-	    				title: ['企业管理'], 
-	    				requireAuth: true 
-	    			},
-	    			component: Enterprise,
-	    		},
-	    		{
 	    			path: '/enterpriseSetting',
 	    			name: 'enterpriseSetting',
 	    			meta: { 
-	    				title: ['企业设置'], 
+	    				title: ['企业管理', '企业设置'], 
 	    				requireAuth: true 
 	    			},
 	    			component: EnterpriseSetting,
@@ -106,7 +97,7 @@ export default new Router({
 	    			path: '/masterAdminFirst',
 	    			name: 'masterAdminFirst',
 	    			meta: { 
-	    				title: ['更换主管理员'], 
+	    				title: ['企业管理', '更换主管理员'], 
 	    				requireAuth: true 
 	    			},
 	    			component: MasterAdminFirst,
@@ -115,7 +106,7 @@ export default new Router({
 	    			path: '/masterAdminSecond',
 	    			name: 'masterAdminSecond',
 	    			meta: { 
-	    				title: ['更换主管理员'], 
+	    				title: ['企业管理', '更换主管理员'], 
 	    				requireAuth: true 
 	    			},
 	    			component: MasterAdminSecond,
@@ -124,7 +115,7 @@ export default new Router({
 	    			path: '/masterAdmin',
 	    			name: 'masterAdmin',
 	    			meta: { 
-	    				title: ['更换主管理员'], 
+	    				title: ['企业管理', '更换主管理员'], 
 	    				requireAuth: true 
 	    			},
 	    			component: MasterAdmin,
@@ -133,7 +124,7 @@ export default new Router({
 	    			path: '/slaveAdmin',
 	    			name: 'slaveAdmin',
 	    			meta: { 
-	    				title: ['设置子管理员'] ,
+	    				title: ['企业管理', '设置子管理员'] ,
 	    				requireAuth: true 
 	    			},
 	    			component: SlaveAdmin,
@@ -142,10 +133,19 @@ export default new Router({
 	    			path: '/slaveAdminAdd' ,
 	    			name: 'slaveAdminAdd',
 	    			meta: { 
-	    				title: ['添加子管理员'], 
+	    				title: ['企业管理', '设置子管理员', '添加子管理员'], 
 	    				requireAuth: true 
 	    			},
 	    			component: SlaveAdminAdd,
+	    		},
+	    		{
+	    			path: '/enterprise',
+	    			name: 'enterprise',
+	    			meta: { 
+	    				title: ['企业管理'], 
+	    				requireAuth: true 
+	    			},
+	    			component: Enterprise,
 	    		},
 	    		{
 	    			path: '/org',

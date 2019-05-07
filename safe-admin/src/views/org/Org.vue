@@ -199,6 +199,9 @@
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="addPersonForm.userAccount" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="工号" prop="employeeNo">
+					<el-input v-model.trim="addPersonForm.employeeNo" auto-complete="off"></el-input>
+					</el-form-item>
 				<el-form-item label="部门" prop="orgName">
 					<el-input v-model.trim="addPersonForm.orgName" @focus="handlePersonAddParentPersonName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
@@ -261,6 +264,9 @@
 				</el-form-item>
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="editPersonForm.userAccount" auto-complete="off" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="工号" prop="employeeNo">
+					<el-input v-model.trim="editPersonForm.employeeNo" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="部门" prop="orgName">
 					<el-input v-model.trim="editPersonForm.orgName" @focus="handlePersonEditParentPersonName" readonly="true" auto-complete="off"></el-input>
@@ -444,8 +450,8 @@
 				let _node = node;
 				axios.post('/org/getTreeList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeData = response.data.result.dataList;
 						_this.tableOrgData = response.data.result.dataList;
@@ -474,8 +480,8 @@
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.tableOrgData = response.data.result.dataList;
 					} else {
@@ -495,8 +501,8 @@
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
 					_this.listPersonLoading = false;
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.tablePersonData = response.data.result.dataList;
 					} else {
@@ -541,8 +547,8 @@
 					};
 					let _this = this;
 					axios.post('/org/getDetail', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.editOrgForm = response.data.result;
 						} else {
@@ -590,14 +596,14 @@
 							let _this = this;
 							axios.post('/org/add', params).then(function(response) {
 								_this.addOrgLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
 										type: 'success'
 									});
-									var node = {orgId : _this.orgForm.orgId, orgName : _this.orgForm.orgName};
+									let node = {orgId : _this.orgForm.orgId, orgName : _this.orgForm.orgName};
 									_this.loadData(node);
 									_this.handleNodeClick(node);
 									_this.addOrgDialogVisible = false;
@@ -625,14 +631,14 @@
 							let _this = this;
 							axios.post('/org/update', params).then(function(response) {
 								_this.editOrgLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
 										type: 'success'
 									});
-									var node = {orgId : _this.editOrgForm.orgId, orgName : _this.editOrgForm.orgName};
+									let node = {orgId : _this.editOrgForm.orgId, orgName : _this.editOrgForm.orgName};
 									_this.loadData(node);
 									_this.handleNodeClick(node);
 									_this.editOrgDialogVisible = false;
@@ -656,8 +662,8 @@
 					};
 					let _this = this;
 					axios.post('/org/delete', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -683,8 +689,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -695,7 +701,7 @@
 					}
 				);
 				this.targetNodes = {};
-				var node = {orgId : this.addOrgForm.parentOrgId, orgName : this.addOrgForm.parentOrgName};
+				let node = {orgId : this.addOrgForm.parentOrgId, orgName : this.addOrgForm.parentOrgName};
 				this.targetNodes = node;
 		   	},
 		   	handleAddOrgSelectParentOrgNodeClick(node) {
@@ -717,8 +723,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -729,7 +735,7 @@
 					}
 				);
 				this.targetNodes = {};
-				var node = {orgId : this.editOrgForm.parentOrgId, orgName : this.editOrgForm.parentOrgName};
+				let node = {orgId : this.editOrgForm.parentOrgId, orgName : this.editOrgForm.parentOrgName};
 				this.targetNodes = node;
 		   	},
 		   	handleEditOrgSelectParentOrgNodeClick(node) {
@@ -756,8 +762,8 @@
 							let _this = this;
 							axios.post('/user/org/add', params).then(function(response) {
 								_this.addPersonLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -788,8 +794,8 @@
 							let _this = this;
 							axios.post('/user/org/update', params).then(function(response) {
 								_this.editPersonLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -819,8 +825,8 @@
 					let _this = this;
 					axios.post('/user/org/delete', params).then(function(response) {
 						_this.listPersonLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -852,8 +858,8 @@
 						let _this = this;
 						axios.post('/user/org/batchDelete', params).then(function(response) {
 							_this.listPersonLoading = false;
-							var retCode = response.data.retCode;
-							var retMsg = response.data.retMsg;
+							let retCode = response.data.retCode;
+							let retMsg = response.data.retMsg;
 							if(retCode == '0000000') {
 								_this.$message({
 									message: '删除成功',
@@ -886,8 +892,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -898,7 +904,7 @@
 					}
 				);
 				this.targetNodes = {};
-				var node = {orgId : this.addPersonForm.parentPersonId, orgName : this.addPersonForm.parentPersonName};
+				let node = {orgId : this.addPersonForm.parentPersonId, orgName : this.addPersonForm.parentPersonName};
 				this.targetNodes = node;
 		   	},
 		   	handleAddPersonSelectParentPersonNodeClick(node) {
@@ -920,8 +926,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -932,7 +938,7 @@
 					}
 				);
 				this.targetNodes = {};
-				var node = {orgId : this.editPersonForm.parentPersonId, orgName : this.editPersonForm.parentPersonName};
+				let node = {orgId : this.editPersonForm.parentPersonId, orgName : this.editPersonForm.parentPersonName};
 				this.targetNodes = node;
 		   	},
 		   	handleEditPersonSelectParentPersonNodeClick(node) {

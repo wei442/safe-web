@@ -256,8 +256,8 @@
 					let params = {};
 					let _this = this;
 					axios.post('/user/logout', params).then(function(response) {
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							sessionStorage.removeItem('token');
 							sessionStorage.removeItem('userAccount');

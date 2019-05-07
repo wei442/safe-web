@@ -53,8 +53,8 @@
 				let _this = this;
 				axios.post('/user/admin/getMaster', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.addForm = response.data.result;
 						} else {

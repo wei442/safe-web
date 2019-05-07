@@ -55,7 +55,7 @@
 					<el-input v-model.trim="addForm.orgName" @focus="handleOrgAddOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" :file-list="fileAddList">
+					<el-upload class="upload-demo" ref="uploadAddfile" :before-upload="beforeUpload" :before-remove="beforeRemove" :on-remove="handleAddRemove" :on-success="handleAddSuccess" accept=".png,.jpg,.jpeg,.gif,.PNG,.JPG,.JPEG,.GIF" :file-list="fileAddList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -95,7 +95,7 @@
 			          		<ul class="tree-transfer__list-ul">
 			           			<li class="tree-transfer__list-li">
 				           			<label>{{targetNodes[defaultProps.label]}}</label>
-				           			<span class="tree-transfer__list-delete" @click="handleAddOrgDeleteItem(targetNodes[nodeKey])">删除</span>
+				           			<span class="tree-transfer__list-delete" @click="handleAddOrgDeleteItem(targetNodes.orgId)">删除</span>
 			           			</li>
 		           			</ul>
 	           			</div>
@@ -118,7 +118,7 @@
 					<el-input v-model.trim="editForm.orgName" @focus="handleOrgEditOrgName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="相关文件">
-					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" :file-list="fileEditList">
+					<el-upload class="upload-demo" ref="uploadEditfile" :before-upload="beforeUpload" :on-preview="handlePreview" :before-remove="beforeRemove" :on-remove="handleEditRemove" :on-success="handleEditSuccess" accept=".png,.jpg,.jpeg,.gif,.PNG,.JPG,.JPEG,.GIF" :file-list="fileEditList">
 						<el-button slot="trigger" size="small" type="primary">上传文件</el-button>
 						<div slot="tip" class="el-upload__tip">只能上传图片，且不超过10M</div>
 					</el-upload>
@@ -214,6 +214,7 @@
 				addDialogVisible: false,//新增界面是否显示
 				//新增界面数据
 				addForm: {
+					orgName: '',
 				}, 
 				addLoading: false,
 				addFormRules: {
@@ -221,13 +222,15 @@
 						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
 					orgName: [
-						{ required: true, message: '请选择所属机构', trigger: 'blur' }
+						{ required: true, message: '请选择所属机构', trigger: 'change' }
 					],
 				}, 
 				fileAddList: [],
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
 				editForm: {
+					qualityName: '',
+					orgName: '',
 				},
 				editLoading: false,
 				editFormRules: {
@@ -235,7 +238,7 @@
 						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
 					orgName: [
-						{ required: true, message: '请选择所属机构', trigger: 'blur' }
+						{ required: true, message: '请选择所属机构', trigger: 'change' }
 					],
 				}, 
 				fileEditList: [],
@@ -299,19 +302,18 @@
 	      	},
 	      	//删除文件之前
 	      	beforeRemove(file, fileList) {
-	        	return this.$confirm(`确定移除 ${ file.name }？`);
+	      		return this.$confirm(`确定移除 ${ file.name }？`);
 	      	},
 	      	beforeUpload(file) {
-	      		if(!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
-	      	        this.$message({
-	      	        	message: '请上传格式为image/png, image/gif, image/jpg, image/jpeg的图片',
-	      	        	type: 'warning'
-			        });
+	      		const isPic = file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg';
+	      		if (!isPic) {
+	      			this.$message.error('上传图片只能是 PNG,JPG,JPEG,GIF 格式!');
 	      		}
-	      		var isLt10M = file.size > 10*1024*1024 ? true:false;
-	      	    if (isLt10M) {
-	      	    	this.$message.error('上传图片大小不能超过 10MB!');
-	      	    };
+	      		const isLt10M = file.size < 10*1024*1024;
+	      		if (!isLt10M) {
+	      			this.$message.error('上传图片大小不能超过 10MB!');
+	      		};
+	      		return isPic && isLt10M;
 	      	},
 			//搜索
 	        search: function(){
@@ -327,8 +329,8 @@
 				let _this = this;
 				axios.post('/org/quality/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.tableData = response.data.result.dataList;
 							_this.total = response.data.result.page.total;
@@ -341,14 +343,14 @@
 	        	);
 			}, 
 			//获取机构资质附件列表
-			loadOrgQualityAttachmentList: function (orgQualityId) {
+			loadOrgQualityAttachmentList: function (orgQualityId, type) {
 				let params = {
 					orgQualityId : orgQualityId
 				};
         		let _this = this;
 				axios.post('/org/quality/attachment/getList', params, params).then(function (response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						if(type == 'edit') {
 							_this.fileEditList = response.data.result.dataList;
@@ -390,6 +392,7 @@
 							this.addLoading = true;
 							let formData = new FormData();
 							formData.set('qualityName', this.addForm.qualityName);
+							formData.set('orgId', this.addForm.orgId);
 							formData.set('orgName', this.addForm.orgName);
 							this.fileAddList.forEach(function(item, index){
 								formData.append('fileList', item.raw);
@@ -400,8 +403,8 @@
 							let _this = this;
 							axios.post('/org/quality/add', formData, headers).then(function(response) {
 								_this.addLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -430,12 +433,13 @@
 							let formData = new FormData();
 							formData.set('orgQualityId', this.editForm.orgQualityId);
 							formData.set('qualityName', this.editForm.qualityName);
+							formData.set('orgId', this.editForm.orgId);
 							formData.set('orgName', this.editForm.orgName);
 							this.fileEditList.forEach(function(item, index){
 								if(item.raw != null) {
 									formData.append('fileList', item.raw);
-								} else if(item.ruleAttachmentId != null) {
-									formData.append('ruleAttachmentIds', item.ruleAttachmentId);
+								} else if(item.userQualityAttachmentId != null) {
+									formData.append('orgQualityAttachmentIds', item.orgQualityAttachmentId);
 								}
 							});
 							let headers = {
@@ -444,8 +448,8 @@
 							let _this = this;
 							axios.post('/org/quality/update', formData, headers).then(function(response) {
 								_this.editLoading = false;
-								var retCode = response.data.retCode;
-								var retMsg = response.data.retMsg;
+								let retCode = response.data.retCode;
+								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
 										message: '保存成功',
@@ -475,8 +479,8 @@
 					let _this = this;
 					axios.post('/org/quality/delete', params).then(function(response) {
 						_this.listLoading = false;
-						var retCode = response.data.retCode;
-						var retMsg = response.data.retMsg;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
@@ -501,8 +505,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -513,7 +517,7 @@
 					}
 				);
 				this.targetNodes = {};
-				var node = {orgId : this.addForm.orgId, orgName : this.addForm.orgName};
+				let node = {orgId : this.addForm.orgId, orgName : this.addForm.orgName};
 				this.targetNodes = node;
 		   	},
 		   	handleAddOrgNodeClick(node) {
@@ -527,6 +531,7 @@
 				this.addOrgDialogVisible = false;
 				this.addForm.orgId = this.targetNodes.orgId;
 				this.addForm.orgName = this.targetNodes.orgName;
+				this.orgName = this.targetNodes.orgName;
 			},
 			
 			//编辑界面-选择所属机构
@@ -535,8 +540,8 @@
 			    let params = {};
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					var retCode = response.data.retCode;
-					var retMsg = response.data.retMsg;
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
 						_this.treeTransferData = response.data.result.dataList;
 					} else {
@@ -547,7 +552,7 @@
 					}
 				);
 				this.targetNodes = {};
-				var node = {orgId : this.editForm.orgId, orgName : this.editForm.orgName};
+				let node = {orgId : this.editForm.orgId, orgName : this.editForm.orgName};
 				this.targetNodes = node;
 		   	},
 		   	handleEditOrgNodeClick(node) {
