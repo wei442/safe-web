@@ -17,7 +17,7 @@
 
 		<!--列表-->
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
-			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
+			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="qualityName" label="资质名称" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="userName" label="所属人" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
@@ -240,7 +240,7 @@
 						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
 					userName: [
-						{ required: true, message: '请选择所属人', trigger: 'blur' }
+						{ required: true, message: '请选择所属人', trigger: 'change' }
 					],
 				}, 
 				fileAddList: [],
@@ -254,7 +254,7 @@
 						{ required: true, message: '请输入资质名称', trigger: 'blur' }
 					],
 					userName: [
-						{ required: true, message: '请选择所属人', trigger: 'blur' }
+						{ required: true, message: '请选择所属人', trigger: 'change' }
 					],
 				}, 
 				fileEditList: [],
@@ -282,6 +282,23 @@
 	    	this.search();
 	    },
 		methods: {
+			objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+				let count = row.count;
+				//选择合并哪一列
+				if (columnIndex === 0 || columnIndex === 1 || columnIndex === 3) {
+					if (rowIndex % row.count === 0) {//合并多少行
+						return {
+							rowspan: row.count,  //要合并的行数
+							colspan: 1
+						};
+					} else {
+						return {
+							rowspan: 0,
+							colspan: 0
+						};
+					}
+				}
+			},
 	      	//当前页
 	      	handleCurrentChange(val) {
         		this.pageNum = val;
