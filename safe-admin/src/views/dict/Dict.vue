@@ -20,7 +20,6 @@
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
 			<el-table-column prop="dictCode" label="字典编码" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="dictName" label="字典名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="dictType" label="字典类型" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="320" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -56,10 +55,6 @@
 				<el-form-item label="字典名称" prop="dictName">
 					<el-input v-model.trim="addForm.dictName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="字典类型" prop="dictType">
-					<el-select v-model.trim="addForm.dictType" placeholder="请选择">
-		    			<el-option v-for="item in dictTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-		    		</el-select>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -72,15 +67,11 @@
 		<el-dialog title="编辑" :visible.sync="editDialogVisible">
 			<el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
 				<el-form-item label="字典编码" prop="dictCode">
-					<el-input v-model.trim="editForm.dictCode" auto-complete="off"></el-input>
+					<el-input v-model.trim="editForm.dictCode" auto-complete="off" disabled></el-input>
 				</el-form-item>
 				<el-form-item label="字典名称" prop="dictName">
-					<el-input v-model.trim="editForm.dictName" auto-complete="off"></el-input>
+					<el-input v-model.trim="editForm.dictName" auto-complete="off" disabled></el-input>
 				</el-form-item>
-				<el-form-item label="字典类型" prop="dictType">
-					<el-select v-model.trim="editForm.dictType" placeholder="请选择">
-		    			<el-option v-for="item in dictTypeOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
-		    		</el-select>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -142,16 +133,6 @@
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
 				},
-				dictTypeOptions: [
-					{
-						value: 1,
-						label: '政府部门'
-					},
-					{
-						value: '2',
-						label: '院校'
-					},
-				],
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/

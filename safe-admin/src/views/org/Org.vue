@@ -340,6 +340,14 @@
 		    },
 		},
 		data() {
+			let validateUserAccount = (rule, value, callback) => {
+		        let reg = /^1[0-9]{10}$/;
+		        if(!reg.test(value)) {
+		        	callback(new Error('请输入正确的手机号码'));
+	        	} else {
+	        		callback();
+	        	}
+			};
 			return {
 				treeData: [],
 				defaultProps: {
@@ -403,7 +411,8 @@
 						{ required: true, message: '请输入姓名', trigger: 'blur' }
 					],
 					userAccount: [
-						{ required: true, message: '请输入手机', trigger: 'blur' }
+						{ required: true, message: '请输入手机', trigger: 'blur' },
+						{ validator: validateUserAccount }
 					],
 				}, 
 				editPersonDialogVisible: false,//编辑界面是否显示
@@ -419,7 +428,8 @@
 						{ required: true, message: '请选择部门类型', trigger: 'blur' }
 					],
 					userAccount: [
-						{ required: true, message: '请输入手机', trigger: 'blur' }
+						{ required: true, message: '请输入手机', trigger: 'blur' },
+						{ validator: validateUserAccount }
 					],
 				}, 
 				
@@ -467,8 +477,6 @@
 	        		}).catch(function (error) {
 	        			console.log(error);
 	        		}
-	        		
-	        		
 	        	);
 			}, 
 			//加载机构数据
@@ -492,7 +500,7 @@
 	        		}
 	        	);
 			}, 
-			//加载用机构数据
+			//加载用户机构数据
 			loadUserOrgData: function(orgId) {
 				let params = {
 					orgId:orgId
@@ -579,6 +587,19 @@
 			handlePersonClick: function (row, event, column) {
 				this.editPersonDialogVisible = true;
 				this.editPersonForm = Object.assign({}, row);
+				let params = {
+					orgId: row.orgId
+				};
+				let _this = this;
+				axios.post('/org/getDetail', params).then(function(response) {
+					let retCode = response.data.retCode;
+					let retMsg = response.data.retMsg;
+					if(retCode == '0000000') {
+						_this.editPersonForm.orgName = response.data.result.orgName;
+					} 
+				}).catch(function (error) {
+					console.log(error);
+				});
 			},
 			//显示查看界面
 			handleShow: function (index, row) {
@@ -953,18 +974,13 @@
 				this.editPersonForm.orgId = this.targetNodes.orgId;
 				this.editPersonForm.orgName = this.targetNodes.orgName;
 			},
-			
 		},
-		
 		mounted() {
-			this.$refs.tree.setCurrentKey(-1);
 		},
 		computed: {
 		},
 		watch: {
 		},
-		
-		
 	}
 </script>
 

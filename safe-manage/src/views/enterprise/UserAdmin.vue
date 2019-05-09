@@ -7,6 +7,9 @@
 					<el-input v-model.trim="userAdminForm.enterpriseName" placeholder="请输入企业名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
+					<el-button type="primary" icon="el-icon-search" size="small" @click="search">查询</el-button>
+				</el-form-item>
+				<el-form-item>
 					<el-button type="primary" icon="el-icon-plus" size="small" @click="handleAdd">新增主管理员</el-button>
 				</el-form-item>
 			</el-form>
@@ -18,7 +21,16 @@
 			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="userAccount" label="手机号码" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="userName" label="用户名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="adminName" label="管理员名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="adminName" label="管理员名称" header-align="center" align="center">
+				<template slot-scope="scope">
+					<el-tag :type="scope.row.adminType === 1 ? 'danger' : ''" close-transition>{{scope.row.adminName}}</el-tag>
+		    	</template>
+			</el-table-column>
+			<el-table-column label="操作" width="240" header-align="center" align="center">
+				<template slot-scope="scope">
+			        <el-button type="danger" size="small" @click="handleResetPassword(scope.$index, scope.row)">重置密码</el-button>
+		  		</template>
+			</el-table-column>
 			<!--
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
@@ -29,6 +41,22 @@
 			</el-table-column>
 			-->
 		</el-table>
+		
+		<br>
+		<!--分页开始-->
+		<div class="block">
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="currentPage"
+				:page-sizes="[10, 20, 30, 40]"
+				:page-size="pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total">
+			</el-pagination>
+			<br>
+		</div>
+	    <!--分页结束-->
 
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
@@ -38,9 +66,6 @@
 				</el-form-item>
 				<el-form-item label="手机号码" prop="userAccount">
 					<el-input v-model.trim="addForm.userAccount" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="用户名称" prop="userName">
-					<el-input v-model.trim="addForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -57,9 +82,6 @@
 				</el-form-item>
 				<el-form-item label="手机号码" prop="userAccount">
 					<el-input v-model.trim="editForm.userAccount" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="用户名称" prop="userName">
-					<el-input v-model.trim="editForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -88,6 +110,14 @@
 
 	export default {
 		data() {
+			let validateUserAccount = (rule, value, callback) => {
+		        let reg = /^1[0-9]{10}$/;
+		        if(!reg.test(value)) {
+		        	callback(new Error('请输入正确的手机号码'));
+	        	} else {
+	        		callback();
+	        	}
+			};
 			return {
 				userAdminForm: {},
 				tableData: [],
@@ -104,10 +134,8 @@
         			], 
 					userAccount: [
 		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
+		        		{ validator: validateUserAccount }
 	        		],
-	        		userName: [
-	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
-        			]
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
@@ -121,9 +149,6 @@
 					userAccount: [
 		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
 	        		],
-	        		userName: [
-	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
-        			]
 				}, 
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
@@ -157,11 +182,11 @@
 				let params = {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
-					userAdminName: this.userAdminForm.userAdminName
+					enterpriseName: this.userAdminForm.enterpriseName
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/user/admin/getList', params).then(function(response) {
+				axios.post('/user/admin/getListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						let retCode = response.data.retCode;
 						let retMsg = response.data.retMsg;
@@ -199,7 +224,7 @@
 							this.addLoading = true;
 							let params = this.addForm;
 							let _this = this;
-							axios.post('/user/admin/add', params).then(function(response) {
+							axios.post('/user/addAdminUser', params).then(function(response) {
 								_this.addLoading = false;
 								let retCode = response.data.retCode;
 								let retMsg = response.data.retMsg;
@@ -268,6 +293,35 @@
 						if(retCode == '0000000') {
 							_this.$message({
 								message: '删除成功',
+								type: 'success'
+							});
+							_this.loadData();
+						} else if(retCode == '00000002') {
+							_this.$message.error('保存失败');
+						} else {
+							_this.$message.error(retMsg);
+						}
+		              }).catch(function (error) {
+		                	console.log(error);
+		              });
+		        }).catch(() => {
+		        });
+			},
+			//重置密码
+			handleResetPassword: function (index, row) {
+				this.$confirm('确认重置密码吗？', '提示', { type: 'warning' }).then(() => {
+					this.listLoading = true;
+					let params = {
+						userId: row.userId
+					};
+					let _this = this;
+					axios.post('/user/resetAdminPassword', params).then(function(response) {
+						_this.listLoading = false;
+						let retCode = response.data.retCode;
+						let retMsg = response.data.retMsg;
+						if(retCode == '0000000') {
+							_this.$message({
+								message: '重置密码成功',
 								type: 'success'
 							});
 							_this.loadData();
