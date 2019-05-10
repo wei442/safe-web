@@ -103,16 +103,12 @@
 			return {
 				tableData: [{
 		            name: '企业管理',
-		            address: '上海市普陀区金沙江路 1518 弄'
 		          }, {
 		            name: '系统管理',
-		            address: '上海市普陀区金沙江路 1517 弄'
 		          }, {
 		            name: '资质管理',
-		            address: '上海市普陀区金沙江路 1519 弄'
 		          }, {
 		            name: '系统性文件',
-		            address: '上海市普陀区金沙江路 1516 弄'
 		          }],
 				userAdminForm: {},
 				labelPosition: 'right',

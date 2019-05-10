@@ -61,11 +61,14 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addDialogVisible">
 			<el-form ref="addForm" :model="addForm" :rules="addFormRules" label-width="120px">
-				<el-form-item label="企业名称" prop="enterpriseName">
-					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
-				</el-form-item>
 				<el-form-item label="手机号码" prop="userAccount">
 					<el-input v-model.trim="addForm.userAccount" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="用户名称" prop="userName">
+					<el-input v-model.trim="addForm.userName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业名称" prop="enterpriseName">
+					<el-input v-model.trim="addForm.enterpriseName" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -83,6 +86,9 @@
 				<el-form-item label="手机号码" prop="userAccount">
 					<el-input v-model.trim="editForm.userAccount" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="用户名称" prop="userName">
+					<el-input v-model.trim="editForm.userName" auto-complete="off"></el-input>
+					</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="editDialogVisible = false">取 消</el-button>
@@ -136,6 +142,9 @@
 		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
 		        		{ validator: validateUserAccount }
 	        		],
+	        		userName: [
+	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
+        			]
 				}, 
 				editDialogVisible: false,//编辑界面是否显示
 				//编辑界面数据
@@ -149,6 +158,9 @@
 					userAccount: [
 		        		{ required: true, message: '请输入手机号码', trigger: 'blur' },
 	        		],
+	        		userName: [
+	        			{ required: true, message: '请输入用户名称', trigger: 'blur' },
+        			]
 				}, 
 				showDialogVisible: false,//查看界面是否显示
 				showForm: {
@@ -186,7 +198,7 @@
 				};
 				this.listLoading = true;
 				let _this = this;
-				axios.post('/user/admin/getListByPage', params).then(function(response) {
+				axios.post('/user/admin/getManageListByPage', params).then(function(response) {
 						_this.listLoading = false;
 						let retCode = response.data.retCode;
 						let retMsg = response.data.retMsg;

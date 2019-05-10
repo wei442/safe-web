@@ -193,15 +193,15 @@
 				<h3 class="title">人员信息</h3>
 			</el-col>
 			<el-form ref="addPersonForm" :model="addPersonForm" :rules="addPersonFormRules" label-width="120px">
-				<el-form-item label="姓名" prop="userName">
-					<el-input v-model.trim="addPersonForm.userName" auto-complete="off"></el-input>
-				</el-form-item>
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="addPersonForm.userAccount" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="姓名" prop="userName">
+					<el-input v-model.trim="addPersonForm.userName" auto-complete="off"></el-input>
+				</el-form-item>
 				<el-form-item label="工号" prop="employeeNo">
 					<el-input v-model.trim="addPersonForm.employeeNo" auto-complete="off"></el-input>
-					</el-form-item>
+				</el-form-item>
 				<el-form-item label="部门" prop="orgName">
 					<el-input v-model.trim="addPersonForm.orgName" @focus="handlePersonAddParentPersonName" readonly="true" auto-complete="off"></el-input>
 				</el-form-item>
@@ -259,11 +259,11 @@
 				<h3 class="title">人员信息</h3>
 			</el-col>
 			<el-form ref="editPersonForm" :model="editPersonForm" :rules="editPersonFormRules" label-width="80px">
-				<el-form-item label="姓名" prop="userName">
-					<el-input v-model.trim="editPersonForm.userName" auto-complete="off"></el-input>
-				</el-form-item>
 				<el-form-item label="手机" prop="userAccount">
 					<el-input v-model.trim="editPersonForm.userAccount" auto-complete="off" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="姓名" prop="userName">
+					<el-input v-model.trim="editPersonForm.userName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="工号" prop="employeeNo">
 					<el-input v-model.trim="editPersonForm.employeeNo" auto-complete="off"></el-input>
@@ -484,10 +484,10 @@
 				let params = {
 					orgId:orgId
 				};
-				this.listPersonLoading = true;
+				this.listOrgLoading = true;
 				let _this = this;
 				axios.post('/org/getTreeList', params).then(function(response) {
-					_this.listPersonLoading = false;
+					_this.listOrgLoading = false;
 					let retCode = response.data.retCode;
 					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
@@ -521,7 +521,7 @@
 					}
 				);
 			}, 
-			
+			//树点击
 			handleNodeClick(data) {
 				this.loadOrgData(data.orgId);
 				this.loadUserOrgData(data.orgId);

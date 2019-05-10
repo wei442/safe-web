@@ -301,8 +301,12 @@
 			},
 			//显示编辑岗位界面
 			handlePostEdit: function () {
-				this.editPostDialogVisible = true;
-				this.editPostForm = Object.assign({}, this.postForm);
+				if(this.treeData == '') {
+					this.$message.error('请先新增岗位');
+				} else {
+					this.editPostDialogVisible = true;
+					this.editPostForm = Object.assign({}, this.postForm);
+				}
 			},
 			//搜索
 	        search: function(){
@@ -410,7 +414,11 @@
 			
 			//显示新增人员界面
 			handlePersonAdd() {
-				if(this.postForm.postId == null) {
+				
+				if(this.treeData == '') {
+					this.$message.error('请先新增岗位');
+				} else if(this.postForm.postId == null) {
+					this.editPostDialogVisible = true;
 					this.$message.error('请选择一个岗位，继续新增人员');
 				} else {
 					this.addUserDialogVisible = true;
@@ -431,7 +439,6 @@
 					this.targetNodes = [];
 					this.userData = [];
 				}
-				
 		   	},
 		   	handleAddOrgNodeClick(node) {
 		   		let params = {

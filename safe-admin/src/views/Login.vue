@@ -26,6 +26,21 @@
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="handlePassword" :loading="passwordLoading">提交</el-button>
 			</div>
+			
+			<el-form ref="passwordForm" :model="passwordForm" :rules="passwordFormRules" label-width="120px">
+				<h3 class="title">您好，这是您首次登录企业的管理后台，请先设置管理密码。</h3>
+				<el-form-item label="登录密码:" prop="password">
+					<el-input type="password" v-model.trim="passwordForm.password" placeholder="请输入登录密码" auto-complete="off"></el-input>
+					<span style="font-size:90%">密码长度为6到20位，必须包含数字、小写字母、大写字母</span>
+				</el-form-item>
+				<el-form-item label="确认密码:" prop="confirmPassword">
+					<el-input type="password" v-model.trim="passwordForm.confirmPassword" placeholder="请重复输入登录密码" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item style="text-align:right;" class="dialog-footer">
+					<el-button @click="addDialogVisible = false">取 消</el-button>
+					<el-button type="primary" @click="handlePassword" :loading="passwordLoading">提 交</el-button>
+				</el-form-item>
+			</el-form>
 		</el-dialog>
 	</el-form>
 	
@@ -72,6 +87,11 @@
 	    created: function () {
 	    },
 	    methods: {
+	    	//显示新增界面
+			handleAdd: function () {
+				this.addDialogVisible = true;
+				this.$refs.addForm.resetFields();
+			},
 	    	handleReset2() {
 	    		this.$refs.loginForm.resetFields();
 	    	},
@@ -110,7 +130,7 @@
 				});
 	      	},
 	      	//修改密码
-			handlePassword: function () {
+	      	passwordSubmit: function () {
 				this.$refs.passwordForm.validate((valid) => {
 					if (valid) {
 	    				if(this.passwordForm.password != this.passwordForm.confirmPassword) {

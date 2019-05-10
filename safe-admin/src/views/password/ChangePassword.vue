@@ -9,7 +9,8 @@
 			<el-input type="password" v-model.trim="passwordForm.confirmPassword" placeholder="请重复输入登录密码" auto-complete="off"></el-input>
 		</el-form-item>
 		<el-form-item style="text-align:right;" class="dialog-footer">
-			<el-button type="primary" @click="handlePassword" :loading="passwordLoading">提 交</el-button>
+			<el-button type="primary" @click="handleReturn">返回</el-button>
+			<el-button type="primary" @click="passwordSubmit" :loading="passwordLoading">提 交</el-button>
 		</el-form-item>
 	</el-form>
 </template>
@@ -52,7 +53,7 @@
 	    },
 	    methods: {
 	    	//新增
-			handlePassword: function () {
+			passwordSubmit: function () {
 				this.$refs.passwordForm.validate((valid) => {
 					if (valid) {
 						if(this.passwordForm.password != this.passwordForm.confirmPassword) {
@@ -91,9 +92,12 @@
 					}
 				});
 			},
+			//返回
+			handleReturn: function () {
+				this.$router.push('/login');
+			},
 	    }
 	}
-
 </script>
 
 

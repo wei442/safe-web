@@ -20,7 +20,6 @@
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 			        <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-			        <el-button size="small" @click="handleShow(scope.$index, scope.row)">查看</el-button>
 		  		</template>
 			</el-table-column>
 		</el-table>
@@ -158,20 +157,6 @@
 			</el-dialog>
 		</div>
 		
-		<!--查看界面-->
-		<el-dialog title="查看" :visible.sync="showDialogVisible">
-			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="企业编码">{{ showForm.userAdminCode }}</el-form-item>
-				<el-form-item label="企业名称">{{ showForm.userAdminName }}</el-form-item>
-				<el-form-item label="企业内容">{{ showForm.content }}</el-form-item>
-				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="企业类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="showDialogVisible = false">取 消</el-button>
-			</div>
-		</el-dialog>
-		
 	</section>
 </template>
 
@@ -286,7 +271,6 @@
 			handleAdd: function () {
 //				this.addDialogVisible = true;
 //				this.$refs.addForm.resetFields();
-				
 				this.$router.push('/slaveAdminAdd');
 			},
 			//显示编辑界面
@@ -414,10 +398,8 @@
 		   		let params = {
 					orgId:node.orgId
 				};
-				this.listPersonLoading = true;
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
-					_this.listPersonLoading = false;
 					let retCode = response.data.retCode;
 					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
@@ -463,14 +445,12 @@
 		   		let params = {
 					orgId:node.orgId
 				};
-				this.listPersonLoading = true;
 				let _this = this;
 				axios.post('/user/org/getList', params).then(function(response) {
-					_this.listPersonLoading = false;
 					let retCode = response.data.retCode;
 					let retMsg = response.data.retMsg;
 					if(retCode == '0000000') {
-						_this.userOrgData = response.data.result.dataList;
+						_this.userData = response.data.result.dataList;
 					} else {
 						_this.$message.error(retMsg);
 					}

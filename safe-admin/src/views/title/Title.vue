@@ -280,8 +280,12 @@
 			},
 			//显示编辑职务界面
 			handleTitleEdit: function () {
-				this.editTitleDialogVisible = true;
-				this.editTitleForm = Object.assign({}, this.titleForm);
+				if(this.treeData == '') {
+					this.$message.error('请先新增职务');
+				} else {
+					this.editTitleDialogVisible = true;
+					this.editTitleForm = Object.assign({}, this.titleForm);
+				}
 			},
 			//搜索
 	        search: function(){
@@ -388,7 +392,9 @@
 			
 			//新增人员
 			handlePersonAdd() {
-				if(this.titleForm.titleId == null) {
+				if(this.treeData == '') {
+					this.$message.error('请先新增职务');
+				} else if(this.titleForm.titleId == null) {
 					this.$message.error('请选择一个职务，继续新增人员');
 				} else {
 					this.addUserDialogVisible = true;

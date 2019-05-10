@@ -163,11 +163,10 @@
 								let retMsg = response.data.retMsg;
 								if(retCode == '0000000') {
 									_this.$message({
-										message: '保存成功',
+										message: '更换成功',
 										type: 'success'
 									});
-						         	_this.loadData();
-									_this.addDialogVisible = false;
+									_this.$router.push('/masterAdminFirst');
 								} else if(retCode == '00000002') {
 									_this.$message.error('保存失败');
 								} else {
