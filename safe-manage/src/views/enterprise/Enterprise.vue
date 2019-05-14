@@ -21,16 +21,17 @@
 		<el-table :data="tableData" border fit highlight-current-row v-loading="listLoading" stripe style="width:100%;" size="medium">
 			<el-table-column type="index" label="序号" width="50" header-align="center" align="center"></el-table-column>			
 			<el-table-column prop="enterpriseName" label="企业名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseType" label="企业类型" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseNature" label="企业性质" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseStatus" label="企业状态" :formatter="formatEnterpriseStatus" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseType" label="企业类型" :formatter="formatEnterpriseType" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseNature" label="企业性质" :formatter="formatEnterpriseNature" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enterpriseFax" label="企业传真" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseScale" label="行业规模" :formatter="formatEnterpriseScale" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+			        <!--
 			        <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+			        -->
 			        <el-button size="small" @click="handleShow(scope.$index, scope.row)">查看</el-button>
 		  		</template>
 			</el-table-column>
@@ -71,12 +72,11 @@
 				<el-form-item label="企业电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="addForm.enterpriseFax" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
-				</el-form-item>
+				<el-form-item label="行业规模" prop="enterpriseScale">
+					<el-select v-model.trim="addForm.enterpriseScale" placeholder="请选择">
+						<el-option v-for="item in enterpriseScaleOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item
 				<el-form-item label="企业地址" prop="enterpriseAddr">
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="addForm.enterpriseAddr" auto-complete="off"></el-input>
 				</el-form-item>
@@ -106,11 +106,10 @@
 				<el-form-item label="企业电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="企业传真" prop="enterpriseFax">
-					<el-input v-model.trim="editForm.enterpriseFax" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="版本号" prop="enterpriseTelphone">
-					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
+				<el-form-item label="行业规模" prop="enterpriseScale">
+					<el-select v-model.trim="editForm.enterpriseScale" placeholder="请选择">
+						<el-option v-for="item in enterpriseScaleOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="企业地址" prop="enterpriseAddr">
 					<el-input type="textarea" :autosize="{ minRows: 3, maxRows: 6}" v-model.trim="editForm.enterpriseAddr" auto-complete="off"></el-input>
@@ -124,12 +123,20 @@
 		
 		<!--查看界面-->
 		<el-dialog title="查看" :visible.sync="showDialogVisible">
-			<el-form :model="showForm" label-width="80px">
-				<el-form-item label="企业编码">{{ showForm.enterpriseCode }}</el-form-item>
+			<el-form :model="showForm" label-width="120px">
 				<el-form-item label="企业名称">{{ showForm.enterpriseName }}</el-form-item>
-				<el-form-item label="企业内容">{{ showForm.content }}</el-form-item>
-				<el-form-item label="版本号">{{ showForm.version }}</el-form-item>
-				<el-form-item label="企业类型">{{ showForm.type == 1 ? '单条' : showForm.type == 2 ? '多条' : '' }}</el-form-item>
+				<el-form-item label="企业类型">
+					{{ showForm.enterpriseType == 1 ? '政府部门' : showForm.enterpriseType == 2 ? '院校' : showForm.enterpriseType == 3 ? '科研所' : showForm.enterpriseType == 4 ? '国有企业' : showForm.enterpriseType == 5 ? '集体企业'  
+					: showForm.enterpriseType == 6 ? '股份合作企业' : showForm.enterpriseType == 7 ? '联营企业'  : showForm.enterpriseType == 8 ? '有限责任公司' : showForm.enterpriseType == 9 ? '股份有限公司'  
+					 : showForm.enterpriseType == 10 ? '私营企业' : showForm.enterpriseType == 11 ? '港、澳、台商投资企业' : showForm.enterpriseType == 12 ? '外商投资企业' : showForm.enterpriseType == 13 ? '其他' : '' }}
+				</el-form-item>
+				<el-form-item label="企业性质">
+					{{ showForm.enterpriseNature == 1 ? '国有' : showForm.enterpriseNature == 2 ? '合作' : showForm.enterpriseNature == 3 ? '合资' : showForm.enterpriseNature == 4 ? '独资' : showForm.enterpriseNature == 5 ? '集体'  
+					: showForm.enterpriseNature == 6 ? '私营' : showForm.enterpriseNature == 7 ? '个体工商户' : showForm.enterpriseNature == 8 ? '报关' : showForm.enterpriseNature == 9 ? '其他' : '' }}
+				</el-form-item>
+				<el-form-item label="企业电话">{{ showForm.enterpriseTelphone }}</el-form-item>
+				<el-form-item label="行业规模">{{ showForm.enterpriseScale == 1 ? '1-50人' : showForm.enterpriseScale == 2 ? '50-150人' : showForm.enterpriseScale == 3 ? '150-500人' : showForm.enterpriseScale == 4 ? '500-1000人' : showForm.enterpriseScale == 5 ? '1000人以上' : '' }}</el-form-item>
+				<el-form-item label="企业地址">{{ showForm.enterpriseAddr }}</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
@@ -270,6 +277,28 @@
 						label: '其他'
 					}
 				],
+				enterpriseScaleOptions: [
+					{
+						value: 1,
+						label: '1-50人'
+					},
+					{
+						value: 2,
+						label: '50-150人'
+					},
+					{
+						value: 3,
+						label: '50-500人'
+					},
+					{
+						value: 4,
+						label: '500-1000人'
+					},
+					{
+						value: 5,
+						label: '1000人以上'
+					},
+				],
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -287,9 +316,20 @@
         		this.pageSize = val;
         		this.search();
 	      	},
-	      	//企业内容显示转换
-	      	formatEnterpriseStatus: function (row, column) {
-				return row.enterpriseStatus == 1 ? '正常' : row.enterpriseStatus == 2 ? '冻结' : row.enterpriseStatus == 3 ? '注销': '';
+	      	//企业类型显示转换
+	      	formatEnterpriseType: function (row, column) {
+				return row.enterpriseType == 1 ? '政府部门' : row.enterpriseType == 2 ? '院校' : row.enterpriseType == 3 ? '科研所' : row.enterpriseType == 4 ? '国有企业' : row.enterpriseType == 5 ? '集体企业'  
+					: row.enterpriseType == 6 ? '股份合作企业' : row.enterpriseType == 7 ? '联营企业'  : row.enterpriseType == 8 ? '有限责任公司' : row.enterpriseType == 9 ? '股份有限公司'  
+					: row.enterpriseType == 10 ? '私营企业' : row.enterpriseType == 11 ? '港、澳、台商投资企业' : row.enterpriseType == 12 ? '外商投资企业' : row.enterpriseType == 13 ? '其他' : '';
+			},
+			//企业性质显示转换
+			formatEnterpriseNature: function (row, column) {
+				return row.enterpriseNature == 1 ? '国有' : row.enterpriseNature == 2 ? '合作' : row.enterpriseNature == 3 ? '合资' : row.enterpriseNature == 4 ? '独资' : row.enterpriseNature == 5 ? '集体'  
+					: row.enterpriseNature == 6 ? '私营' : row.enterpriseNature == 7 ? '个体工商户' : row.enterpriseNature == 8 ? '报关' : row.enterpriseNature == 9 ? '其他' : '';
+			},
+			//企业规模显示转换
+			formatEnterpriseScale: function (row, column) {
+				return row.enterpriseScale == 1 ? '1-50人' : row.enterpriseScale == 2 ? '50-150人' : row.enterpriseScale == 3 ? '150-500人' : row.enterpriseScale == 4 ? '500-1000人' : row.enterpriseScale == 5 ? '1000人以上' : '';
 			},
 			//搜索
 	        search: function(){

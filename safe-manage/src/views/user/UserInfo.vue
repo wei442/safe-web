@@ -27,7 +27,9 @@
 			<el-table-column label="操作" width="240" header-align="center" align="center">
 				<template slot-scope="scope">
 			        <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+			        <!--
 			        <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+			        -->
 			        <el-button size="small" @click="handleShow(scope.$index, scope.row)">查看</el-button>
 		  		</template>
 			</el-table-column>

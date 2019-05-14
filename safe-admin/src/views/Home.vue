@@ -102,13 +102,9 @@
 			      	},
 			      	{
 			      		path: '2',
-			      		name: '系统管理',
+			      		name: '基础数据管理',
 			            icon: 'el-icon-menu',
 			            child: [
-			            	{
-			            		path: '/enterprise',
-			            		name: '企业管理',
-			            	},
 			            	{
 			            		path: '/org',
 			            		name: '组织机构管理',

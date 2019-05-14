@@ -15,6 +15,10 @@
 			<el-table-column prop="enterpriseType" label="企业类型" :formatter="formatEnterpriseType" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseNature" label="企业性质" :formatter="formatEnterpriseNature" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseTelphone" label="企业电话" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="province" label="省份" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="city" label="城市" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseMainCategory" label="行业大类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="enterpriseSubCategory" label="行业小类" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseScale" label="行业规模" :formatter="formatEnterpriseScale" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enterpriseAddr" label="企业地址" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" width="240" header-align="center" align="center">
@@ -60,6 +64,18 @@
 				<el-form-item label="企业电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="addForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="所在省份" prop="province">
+					<el-input v-model.trim="addForm.province" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="所在城市" prop="city">
+					<el-input v-model.trim="addForm.city" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业大类" prop="enterpriseMainCategory">
+					<el-input v-model.trim="addForm.enterpriseMainCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业小类" prop="enterpriseSubCategory">
+					<el-input v-model.trim="addForm.enterpriseSubCategory" auto-complete="off"></el-input>
+				</el-form-item>
 				<el-form-item label="行业规模" prop="enterpriseScale">
 					<el-select v-model.trim="addForm.enterpriseScale" placeholder="请选择">
 						<el-option v-for="item in enterpriseScaleOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -94,6 +110,27 @@
 				<el-form-item label="企业电话" prop="enterpriseTelphone">
 					<el-input v-model.trim="editForm.enterpriseTelphone" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="所在省份" prop="province">
+				    <el-select v-model.trim="editForm.province" @change="choseProvince" placeholder="省级地区">
+				    	<el-option v-for="item in province" :key="item.id" :label="item.value" :value="item.id"></el-option>
+			    	</el-select>
+				</el-form-item>
+				<el-form-item label="所在城市" prop="city">
+					<el-select v-model="editForm.city" @change.trim="choseCity" placeholder="市级地区">
+						<el-option v-for="item in cityOptions" :key="item.id" :label="item.value" :value="item.id"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="所在地区" prop="district">
+					<el-select v-model="district" @change="choseBlock" placeholder="区级地区">
+						<el-option v-for="item in districtOptions" :key="item.id" :label="item.value" :value="item.id"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="行业大类" prop="enterpriseMainCategory">
+					<el-input v-model.trim="editForm.enterpriseMainCategory" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="行业小类" prop="enterpriseSubCategory">
+					<el-input v-model.trim="editForm.enterpriseSubCategory" auto-complete="off"></el-input>
+				</el-form-item>
 				<el-form-item label="行业规模" prop="enterpriseScale">
 					<el-select v-model.trim="editForm.enterpriseScale" placeholder="请选择">
 						<el-option v-for="item in enterpriseScaleOptions" key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -123,9 +160,13 @@
 					: showForm.enterpriseNature == 6 ? '私营' : showForm.enterpriseNature == 7 ? '个体工商户' : showForm.enterpriseNature == 8 ? '报关' : showForm.enterpriseNature == 9 ? '其他' : '' }}
 				</el-form-item>
 				<el-form-item label="企业电话">{{ showForm.enterpriseTelphone }}</el-form-item>
-				<el-form-item label="行业规模">{{ showForm.enterpriseScale == 1 ? '1-50人' : showForm.enterpriseScale == 2 ? '50-150人' : showForm.enterpriseScale == 3 ? '150-500人' : showForm.enterpriseScale == 4 ? '500-1000人' : showForm.enterpriseScale == 5 ? '1000人以上' : '' }}</el-form-item>
+				<el-form-item label="省份">{{ showForm.province }}</el-form-item>
+				<el-form-item label="城市">{{ showForm.city }}</el-form-item>
+				<el-form-item label="行业小类">{{ showForm.enterpriseMainCategory }}</el-form-item>
+				<el-form-item label="行业大类">{{ showForm.enterpriseSubCategory }}</el-form-item>
+				<el-form-item label="行业规模">{{ showForm.enterpriseScale }}</el-form-item>
 				<el-form-item label="企业地址">{{ showForm.enterpriseAddr }}</el-form-item>
-			</el-form>
+		</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="showDialogVisible = false">取 消</el-button>
 			</div>
@@ -136,6 +177,7 @@
 
 <script>
 	import axios from 'axios'
+	import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
 
 	export default {
 		data() {
@@ -287,6 +329,19 @@
 						label: '1000人以上'
 					},
 				],
+				
+				options: provinceAndCityData,
+		        selectedOptions: [],
+		        
+		        mapJson:'../static/json/map.json',
+		        province:'',
+		        sheng: '',
+		        shi: '',
+		        cityOptions: [],
+		        district: '',
+		        districtOptions: [],
+		        city:'',
+		        block:'',
 			}
 		},
 		/*生命周期钩子方法，创建的时候调用该方法*/
@@ -321,7 +376,7 @@
 			},
 			//企业规模显示转换
 			formatEnterpriseScale: function (row, column) {
-				return row.enterpriseScale == 1 ? '1-50人' : row.enterpriseScale == 2 ? '50-150人' : row.enterpriseScale == 3 ? '150-500人' : row.enterpriseScale == 4 ? '500-1000人' : row.enterpriseScale == 5 ? '1000人以上' : '';
+				return row.enterpriseNature == 1 ? '1-50人' : row.enterpriseNature == 2 ? '50-150人' : row.enterpriseNature == 3 ? '150-500人' : row.enterpriseNature == 4 ? '500-1000人' : row.enterpriseNature == 5 ? '1000人以上' : '';
 			},
 			//搜索
 	        search: function(){
@@ -398,6 +453,8 @@
 			},
 			//编辑
 			editSubmit: function () {
+				alert("his.editForm.province==="+this.editForm.province);
+				alert("his.editForm.city==="+this.editForm.city);
 				this.$refs.editForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认保存吗？', '提示', {}).then(() => {
@@ -456,6 +513,66 @@
 		        }).catch(() => {
 		        });
 			},
+			
+			// 加载china地点数据，三级
+			getCityData:function(){
+				var that = this;
+				axios.get(this.mapJson).then(function(response){
+					if (response.status==200) {
+						var data = response.data;
+						that.province = [];
+						that.city = [];
+						that.block = [];
+						// 省市区数据分类
+						for (var item in data) {
+							if (item.match(/0000$/)) {//省
+								that.province.push({id: item, value: data[item], children: []});
+							} else if (item.match(/00$/)) {//市
+								that.city.push({id: item, value: data[item], children: []});
+							} else {//区
+								that.block.push({id: item, value: data[item]});
+							}
+						}
+						// 分类市级
+						for (var index in that.province) {
+							for (var index1 in that.city) {
+								if (that.province[index].id.slice(0, 2) === that.city[index1].id.slice(0, 2)) {
+									that.province[index].children.push(that.city[index1]);
+								}
+							}
+						}
+						// 分类区级
+						for(var item1 in that.city) {
+							for(var item2 in that.block) {
+								if (that.block[item2].id.slice(0, 4) === that.city[item1].id.slice(0, 4)) {
+									that.city[item1].children.push(that.block[item2])
+								}
+							}
+						}
+					} else{
+						console.log(response.status)
+					}
+				}).catch(function(error){console.log(typeof+ error)})
+			},
+			// 选省
+			choseProvince: function (val) {
+    			for (var index2 in this.province) {
+    				if (val === this.province[index2].id) {
+    					this.cityOptions = this.province[index2].children;
+    					this.districtOptions =this.province[index2].children[0].children;
+    				}
+	        	}
+			},
+		    // 选市
+			choseCity:function(val) {
+		        for (var index3 in this.city) {
+		        	if (val === this.city[index3].id) {
+		        		this.blockptions = this.city[index3].children
+		        		this.district = this.city[index3].children[0].value
+		        	}
+	        	}
+			},
+		      
 		},
 	}
 </script>

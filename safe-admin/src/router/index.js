@@ -7,7 +7,6 @@ import Register from '@/views/register/Register'
 import ChangePassword from '@/views/password/ChangePassword'
 import Enterprise from '@/views/enterprise/Enterprise'
 import EnterpriseSetting from '@/views/enterprise/EnterpriseSetting'
-import MasterAdmin from '@/views/enterprise/MasterAdmin'
 import MasterAdminFirst from '@/views/enterprise/MasterAdminFirst'
 import MasterAdminSecond from '@/views/enterprise/MasterAdminSecond'
 import SlaveAdmin from '@/views/enterprise/SlaveAdmin'
@@ -112,15 +111,6 @@ export default new Router({
 	    			component: MasterAdminSecond,
 	    		},
 	    		{
-	    			path: '/masterAdmin',
-	    			name: 'masterAdmin',
-	    			meta: { 
-	    				title: ['企业管理', '更换主管理员'], 
-	    				requireAuth: true 
-	    			},
-	    			component: MasterAdmin,
-	    		},
-	    		{
 	    			path: '/slaveAdmin',
 	    			name: 'slaveAdmin',
 	    			meta: { 
@@ -142,7 +132,7 @@ export default new Router({
 	    			path: '/enterprise',
 	    			name: 'enterprise',
 	    			meta: { 
-	    				title: ['企业管理'], 
+	    				title: ['基础数据管理','企业管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Enterprise,
@@ -151,7 +141,7 @@ export default new Router({
 	    			path: '/org',
 	    			name: 'org',
 	    			meta: { 
-	    				title: ['组织机构管理'], 
+	    				title: ['基础数据管理','组织机构管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Org,
@@ -160,7 +150,7 @@ export default new Router({
 	    			path: '/post',
 	    			name: 'post',
 	    			meta: { 
-	    				title: ['岗位管理'], 
+	    				title: ['基础数据管理','岗位管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Post,
@@ -169,7 +159,7 @@ export default new Router({
 	    			path: '/title',
 	    			name: 'title',
 	    			meta: { 
-	    				title: ['职务管理'], 
+	    				title: ['基础数据管理','职务管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Title,
@@ -178,7 +168,7 @@ export default new Router({
 	    			path: '/dict',
 	    			name: 'dict',
 	    			meta: { 
-	    				title: ['字典管理'], 
+	    				title: ['基础数据管理','字典管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: Dict,
@@ -187,7 +177,7 @@ export default new Router({
 	    			path: '/dictItem',
 	    			name: 'dictItem',
 	    			meta: { 
-	    				title: ['字典子项管理'], 
+	    				title: ['基础数据管理','字典子项管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: DictItem,
@@ -197,7 +187,7 @@ export default new Router({
 	    			path: '/orgQuality',
 	    			name: 'orgQuality',
 	    			meta: { 
-	    				title: ['机构资质管理'], 
+	    				title: ['资质管理', '机构资质管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: OrgQuality,
@@ -206,7 +196,7 @@ export default new Router({
 	    			path: '/userQuality',
 	    			name: 'userQuality',
 	    			meta: { 
-	    				title: ['用户资质管理'], 
+	    				title: ['资质管理', '用户资质管理'], 
 	    				requireAuth: true 
 	    			},
 	    			component: UserQuality,
