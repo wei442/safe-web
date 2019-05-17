@@ -242,7 +242,7 @@
 				this.$confirm('确认退出吗？', '提示', {}).then(() => {
 					let params = {};
 					let _this = this;
-					axios.post('/user/logout', params).then(function(response) {
+					axios.post('/base/user/logout', params).then(function(response) {
 						let retCode = response.data.retCode;
 						let retMsg = response.data.retMsg;
 						if(retCode == '0000000') {
